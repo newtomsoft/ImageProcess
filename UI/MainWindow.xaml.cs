@@ -22,7 +22,7 @@ using CheckBox = System.Windows.Controls.CheckBox;
 using MessageBox = System.Windows.MessageBox;
 using Path = System.IO.Path;
 
-namespace IhmWpf
+namespace ImageProcessUI
 {
     /// <summary>
     /// Logique d'interaction pour MainWindow.xaml
