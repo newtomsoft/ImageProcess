@@ -1,0 +1,3 @@
+Restore all NuGet Package (not included in the versionning)
+Build in x86 mode
+Run
