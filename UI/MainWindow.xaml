@@ -1,0 +1,30 @@
+﻿<Window x:Class="IhmWpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:IhmWpf"
+        mc:Ignorable="d"
+        Title="Traitement d'images" Height="600" Width="1000">
+    <Grid>
+        <Button HorizontalAlignment="Left" Margin="217,5,0,0" VerticalAlignment="Top" Width="105" Click="ButtonFiles">Choisir fichier(s)</Button>
+        <CheckBox Content="Effacer les bordures" HorizontalAlignment="Left" Margin="217,33,0,0" VerticalAlignment="Top" Checked="CheckBoxStrips" Unchecked="CheckBoxStrips" RenderTransformOrigin="1.702,0.467"/>
+        <CheckBox Content="Effacer original(aux)" HorizontalAlignment="Left" Margin="217,53,0,0" VerticalAlignment="Top" Checked="CheckBoxDeleteOrigin" Unchecked="CheckBoxDeleteOrigin" RenderTransformOrigin="1.702,0.467"/>
+        <Button HorizontalAlignment="Left" Margin="217,74,0,0" VerticalAlignment="Top" Width="105" Click="ButtonStartProcess" Height="35">Lancer traitement</Button>
+        <StackPanel>
+            <RadioButton Name="same" Checked="RadioButtonFormat" Margin="0,0,786,0">Pas de conversion</RadioButton>
+            <RadioButton Name="webp"  Checked="RadioButtonFormat" Margin="0,0,786,0">Conversion en Webp</RadioButton>
+            <RadioButton Name="jp2"  Checked="RadioButtonFormat" Margin="0,0,786,0">Conversion en Jp2</RadioButton>
+            <RadioButton Name="jpg"  Checked="RadioButtonFormat" Margin="0,0,786,0">Conversion en Jpg</RadioButton>
+            <RadioButton Name="png"  Checked="RadioButtonFormat" Margin="0,0,786,0">Conversion en Png</RadioButton>
+            <RadioButton Name="tiff" Checked="RadioButtonFormat" Margin="0,0,786,0">Conversion en Tiff</RadioButton>
+            <RadioButton Name="gif"  Checked="RadioButtonFormat" Margin="0,0,786,0">Conversion en Gif</RadioButton>
+            <RadioButton Name="pdfFusion"  Checked="RadioButtonFormat" Margin="0,0,786,0">Conversion en un Pdf</RadioButton>
+            <RadioButton Name="pdfSingle"  Checked="RadioButtonFormat" Margin="0,0,786,0">Conversion en Pdf distincts</RadioButton>
+        </StackPanel>
+        <StackPanel Margin="10,144,10,10">
+            <!--<StackPanel x:Name="sp" Margin="40,180,872,40" Height="55"/>-->
+            <TextBox x:Name="TextBoxListFiles"  TextWrapping="Wrap" Height="694"/>
+        </StackPanel>
+    </Grid>
+</Window>
