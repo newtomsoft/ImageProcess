@@ -36,19 +36,18 @@ namespace ImageProcessUI
         private bool DeleteOrigin = false;
         private bool DeleteStrip = false;
         private string PathSave;
-        private List<string> FullNameOfImagesToProcess;
+        private List<string> FullNameOfImagesToProcess = new List<string>();
         private PdfDocument ThePdfDocument;
         FileFormat ImageFormatToSave = FileFormat.Unknow;
         #endregion
         public MainWindow()
         {
             InitializeComponent();
-            FullNameOfImagesToProcess = new List<string>();
         }
         private void ButtonFiles(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Images (*.BMP;*.JPG;*.GIF;*.PNG)|*.BMP;*.JPG;*.GIF;*.PNG|" + "All files (*.*)|*.*";
+            openFileDialog.Filter = "Images files |*.jpg;*.webp;*.bmp;*.jp2;*.png;*.tif;*.gif|" + "All files |*.*";
             openFileDialog.Multiselect = true;
             openFileDialog.Title = "Choisir les images à traiter";
             DialogResult dr = openFileDialog.ShowDialog();
@@ -193,6 +192,7 @@ namespace ImageProcessUI
                 MessageBox.Show(contentEnd, titleEnd, buttonEnd, iconEnd);
             }
             FullNameOfImagesToProcess.Clear();
+            TextBoxListFiles.Text = "";
         }
         private void InitPdfDocument()
         {
