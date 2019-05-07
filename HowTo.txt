@@ -1,3 +1,4 @@
 Restore all NuGet Package (not included in the versionning)
 Build
+Copy FreeImage.dll (in ToPutInBin) into bin directory
 Run
