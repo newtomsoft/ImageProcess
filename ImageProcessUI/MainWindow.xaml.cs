@@ -30,6 +30,8 @@ namespace ImageProcessUI
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        #region members
         private bool PdfFusion = false;
         private bool DeleteOrigin = false;
         private bool DeleteStrip = false;
@@ -37,6 +39,7 @@ namespace ImageProcessUI
         private List<string> FullNameOfImagesToProcess;
         private PdfDocument ThePdfDocument;
         FileFormat ImageFormatToSave = FileFormat.Unknow;
+        #endregion
         public MainWindow()
         {
             InitializeComponent();
