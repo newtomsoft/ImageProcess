@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI", "UI\UI.csproj", "{DA950807-D1CE-4355-BD6A-AED313A119BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageProcessLib", "ImageProcessLib\ImageProcessLib.csproj", "{9642BD09-FCCA-4C7D-9130-1ADD7967DDE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageProcessUI", "ImageProcessUI\ImageProcessUI.csproj", "{DA950807-D1CE-4355-BD6A-AED313A119BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,6 +13,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9642BD09-FCCA-4C7D-9130-1ADD7967DDE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9642BD09-FCCA-4C7D-9130-1ADD7967DDE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9642BD09-FCCA-4C7D-9130-1ADD7967DDE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9642BD09-FCCA-4C7D-9130-1ADD7967DDE3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DA950807-D1CE-4355-BD6A-AED313A119BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DA950807-D1CE-4355-BD6A-AED313A119BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA950807-D1CE-4355-BD6A-AED313A119BB}.Release|Any CPU.ActiveCfg = Release|Any CPU

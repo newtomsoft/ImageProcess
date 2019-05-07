@@ -2,7 +2,6 @@
 using ImageProcessor.Plugins.WebP.Imaging.Formats;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
-//using ImageProcessor.Plugins.WebP.Imaging.Formats;
 using System;
 using System.Drawing;
 using System.IO;
@@ -348,7 +347,6 @@ namespace ImageLib
                 }
             }
         }
-
         public void Resize(int width, int height)
         {
             Size size = new Size(width, height);

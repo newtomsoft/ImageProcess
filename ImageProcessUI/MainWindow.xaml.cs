@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Forms;
-using ImageLib;
+using ImageProcessLib;
 using System.IO;
 using PdfSharp.Pdf;
 using PdfSharp.Drawing;
@@ -21,6 +21,7 @@ using RadioButton = System.Windows.Controls.RadioButton;
 using CheckBox = System.Windows.Controls.CheckBox;
 using MessageBox = System.Windows.MessageBox;
 using Path = System.IO.Path;
+
 
 namespace ImageProcessUI
 {
