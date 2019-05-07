@@ -24,11 +24,10 @@
             <RadioButton Name="png"  Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en Png</RadioButton>
             <RadioButton Name="tiff" Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en Tiff</RadioButton>
             <RadioButton Name="gif"  Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en Gif</RadioButton>
-            <RadioButton Name="pdfFusion"  Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en un Pdf</RadioButton>
+            <RadioButton Name="pdfFusion"  Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion/fusion en un Pdf</RadioButton>
             <RadioButton Name="pdfSingle"  Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en Pdf distincts</RadioButton>
         </StackPanel>
         <StackPanel Margin="10,144,10,10">
-            <!--<StackPanel x:Name="sp" Margin="40,180,872,40" Height="55"/>-->
             <TextBox x:Name="TextBoxListFiles"  TextWrapping="Wrap" Height="694"/>
         </StackPanel>
     </Grid>
