@@ -54,71 +54,72 @@ namespace ImageProcessLib
             Height = Bitmap.Height;
         }
         void IDisposable.Dispose() => ((IDisposable)Bitmap).Dispose();
-        private int GetNumberOfSimilarColumnsAtLeft()
+        private int GetNumberOfSimilarColumnsAtLeft(int stripLevel)
         {
             int i = 0;
-            bool similarColors = IsColumnHaveSimilarColors(0);
+            bool similarColors = IsColumnHaveSimilarColors(0, stripLevel);
             while (similarColors)
             {
-                similarColors = IsColumnHaveSimilarColors(++i);
+                similarColors = IsColumnHaveSimilarColors(++i, stripLevel);
             }
             return i;
         }
-        private int GetNumberOfSimilarColumnsAtRight()
+        private int GetNumberOfSimilarColumnsAtRight(int stripLevel)
         {
             int i = Width - 1;
-            bool similarColors = IsColumnHaveSimilarColors(Width - 1);
+            bool similarColors = IsColumnHaveSimilarColors(Width - 1, stripLevel);
             while (similarColors)
             {
-                similarColors = IsColumnHaveSimilarColors(--i);
+                similarColors = IsColumnHaveSimilarColors(--i, stripLevel);
             }
             return Width - i - 1;
         }
-        private int GetNumberOfSimilarLinesAtBottom()
+        private int GetNumberOfSimilarLinesAtBottom(int stripLevel)
         {
             int i = Height - 1;
-            bool similarColors = IsLineHaveSimilarColors(Height - 1);
+            bool similarColors = IsLineHaveSimilarColors(Height - 1, stripLevel);
             while (similarColors)
             {
-                similarColors = IsLineHaveSimilarColors(--i);
+                similarColors = IsLineHaveSimilarColors(--i, stripLevel);
             }
             return Height - i - 1;
         }
-        private int GetNumberOfSimilarLinesAtTop()
+        private int GetNumberOfSimilarLinesAtTop(int stripLevel)
         {
             int i = 0;
-            bool similarColors = IsLineHaveSimilarColors(0);
+            bool similarColors = IsLineHaveSimilarColors(0, stripLevel);
             while (similarColors)
             {
-                similarColors = IsLineHaveSimilarColors(++i);
+                similarColors = IsLineHaveSimilarColors(++i, stripLevel);
             }
             return i;
         }
-        public void DeleteStrips()
+        public void DeleteStrips(int stripLevel)
         {
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
             {
-                int left = GetNumberOfSimilarColumnsAtLeft();
-                int right = GetNumberOfSimilarColumnsAtRight();
+                int left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
+                int right = GetNumberOfSimilarColumnsAtRight(stripLevel);
                 Bitmap = Bitmap.Copy(left, Height, Width - right, 0);
                 Width = Bitmap.Width;
                 Height = Bitmap.Height;
 
-                int bottom = GetNumberOfSimilarLinesAtBottom();
-                int top = GetNumberOfSimilarLinesAtTop();
+                int bottom = GetNumberOfSimilarLinesAtBottom(stripLevel);
+                int top = GetNumberOfSimilarLinesAtTop(stripLevel);
                 Bitmap = Bitmap.Copy(0, Height - top, Width, bottom);
                 Width = Bitmap.Width;
                 Height = Bitmap.Height;
 
-                left = GetNumberOfSimilarColumnsAtLeft();
-                right = GetNumberOfSimilarColumnsAtRight();
+                left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
+                right = GetNumberOfSimilarColumnsAtRight(stripLevel);
                 Bitmap = Bitmap.Copy(left, Height, Width - right, 0);
                 Width = Bitmap.Width;
                 Height = Bitmap.Height;
             }
         }
-        private bool IsColumnHaveSimilarColors(int indexCol)
+        private bool IsColumnHaveSimilarColors(int indexCol, int level)
         {
+            double minimumStdDeviation = level / 2 + 13;
             double step;
             int nbCount;
             int count;
@@ -133,7 +134,6 @@ namespace ImageProcessLib
                 nbCount = Height;
             }
 
-            const double minimumStdDeviation = 23;
             Color colorPixel;
             if (indexCol < 0 || indexCol >= Width)
             {
@@ -177,8 +177,9 @@ namespace ImageProcessLib
                 return false;
             }
         }
-        private bool IsLineHaveSimilarColors(int indexLine)
+        private bool IsLineHaveSimilarColors(int indexLine, int level)
         {
+            double minimumStdDeviation = level/2+13;
             double step;
             int nbCount;
             int count;
@@ -193,7 +194,6 @@ namespace ImageProcessLib
                 nbCount = Height;
             }
 
-            const double minimumStdDeviation = 23;
             Color colorPixel;
             if (indexLine < 0 || indexLine >= Height)
             {

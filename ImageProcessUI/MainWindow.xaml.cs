@@ -35,6 +35,7 @@ namespace ImageProcessUI
         private bool PdfFusion = false;
         private bool DeleteOrigin = false;
         private bool DeleteStrip = false;
+        private int StripLevel;
         private string PathSave;
         private List<string> FullNameOfImagesToProcess = new List<string>();
         private PdfDocument ThePdfDocument;
@@ -74,6 +75,23 @@ namespace ImageProcessUI
             else
             {
                 DeleteStrip = false;
+            }
+        }
+        private void RadioButtonStrip(object sender, RoutedEventArgs e)
+        {
+            RadioButton buttonStrip = sender as RadioButton;
+            string strip = buttonStrip.Name;
+            switch (strip)
+            {
+                case "low":
+                    StripLevel = 6;
+                    break;
+                case "medium":
+                    StripLevel = 50;
+                    break;
+                case "high":
+                    StripLevel = 100;
+                    break;
             }
         }
         private void RadioButtonFormat(object sender, RoutedEventArgs e)
@@ -147,7 +165,7 @@ namespace ImageProcessUI
                     {
                         if (DeleteStrip)
                         {
-                            imageToProcess.DeleteStrips();
+                            imageToProcess.DeleteStrips(StripLevel);
                         }
 
                         imageToProcess.SaveTo(ImageFormatToSave, PathSave);
@@ -240,6 +258,6 @@ namespace ImageProcessUI
             i.Source = src;
             i.Stretch = Stretch.Uniform;
             //sp.Children.Add(i);
-        }
+        }  
     }
 }
