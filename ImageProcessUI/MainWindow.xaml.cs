@@ -48,7 +48,7 @@ namespace ImageProcessUI
         private void ButtonFiles(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Images files |*.jpg;*.webp;*.bmp;*.jp2;*.png;*.tif;*.gif|" + "All files |*.*";
+            openFileDialog.Filter = "Images files |*.jpg;*.webp;*.bmp;*.jp2;*.png;*.tif;*.gif|" + "Pdf files |*.pdf|" + "All files |*.*";
             openFileDialog.Multiselect = true;
             openFileDialog.Title = "Choisir les images à traiter";
             DialogResult dr = openFileDialog.ShowDialog();
