@@ -28,7 +28,7 @@
             <RadioButton Name="pdfSingle"  Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en Pdf distincts</RadioButton>
         </StackPanel>
         <StackPanel Margin="10,144,10,10">
-            <TextBox x:Name="TextBoxListFiles"  TextWrapping="Wrap" Height="694"/>
+            <TextBox x:Name="TextBoxListFiles"  TextWrapping="Wrap"/>
         </StackPanel>
     </Grid>
 </Window>

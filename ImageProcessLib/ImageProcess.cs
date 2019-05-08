@@ -10,6 +10,7 @@ namespace ImageProcessLib
 {
     public class ImageProcess : IDisposable
     {
+        #region members
         public FreeImageBitmap Bitmap { get; private set; }
         public string FullNameOfFile { get; }
         public string NameOfFile { get; }
@@ -17,6 +18,7 @@ namespace ImageProcessLib
         public FREE_IMAGE_FORMAT FormatImage { get; }
         public int Width { get; private set; }
         public int Height { get; private set; }
+        #endregion
         public ImageProcess(string fullNameOfFile)
         {
             FullNameOfFile = fullNameOfFile;
@@ -261,12 +263,12 @@ namespace ImageProcessLib
                 }
                 catch
                 {
-                    Bitmap.Save(fullNameToSave + ".temp.bmp", FREE_IMAGE_FORMAT.FIF_BMP);
-                    bitmap = new Bitmap(fullNameToSave + ".temp.bmp");
+                    MemoryStream memoryStream = new MemoryStream();
+                    Bitmap.Save(memoryStream, FREE_IMAGE_FORMAT.FIF_BMP);
+                    bitmap = new Bitmap(memoryStream);
                 }
                 imageWebp.Save(fullNameToSave, bitmap, 24);
                 bitmap.Dispose();
-                File.Delete(fullNameToSave + ".temp.bmp");
             }
         }
         public void SaveTo(FileFormat outputFileFormat, string pathImageSave = @"Save\")
