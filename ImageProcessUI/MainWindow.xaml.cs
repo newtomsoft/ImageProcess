@@ -21,7 +21,7 @@ using RadioButton = System.Windows.Controls.RadioButton;
 using CheckBox = System.Windows.Controls.CheckBox;
 using MessageBox = System.Windows.MessageBox;
 using Path = System.IO.Path;
-
+using Test1;
 
 namespace ImageProcessUI
 {
@@ -161,20 +161,22 @@ namespace ImageProcessUI
             {
                 try
                 {
-                    using (ImageProcess imageToProcess = new ImageProcess(fullNameOfImage))
-                    {
-                        if (DeleteStrip)
-                        {
-                            imageToProcess.DeleteStrips(StripLevel);
-                        }
+                    PdfClown pdfclown = new PdfClown();
+                    pdfclown.InitiateProcess(fullNameOfImage);
+                    //using (ImageProcess imageToProcess = new ImageProcess(fullNameOfImage))
+                    //{
+                    //    if (DeleteStrip)
+                    //    {
+                    //        imageToProcess.DeleteStrips(StripLevel);
+                    //    }
 
-                        imageToProcess.SaveTo(ImageFormatToSave, PathSave);
+                    //    imageToProcess.SaveTo(ImageFormatToSave, PathSave);
 
-                        if (PdfFusion)
-                        {
-                            AddPageToPdfDocument(fullNameOfImage);
-                        }
-                    }
+                    //    if (PdfFusion)
+                    //    {
+                    //        AddPageToPdfDocument(fullNameOfImage);
+                    //    }
+                    //}
                     if (DeleteOrigin)
                     {
                         File.Delete(fullNameOfImage);

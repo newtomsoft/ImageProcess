@@ -2,6 +2,7 @@
 using ImageProcessor.Plugins.WebP.Imaging.Formats;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
 using System;
 using System.Drawing;
 using System.IO;
@@ -37,10 +38,30 @@ namespace ImageProcessLib
             }
             catch (Exception)
             {
-                FormatImage = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
-                Width = 0;
-                Height = 0;
+                try
+                {
+                    PdfDocument pdfDocument = PdfReader.Open(FullNameOfFile);
+                    PdfPages allPdfPages = pdfDocument.Pages;
+                    foreach (PdfPage pdfPage in allPdfPages)
+                    {
+                        var elements = pdfPage.Elements;
+                        foreach (var element in elements)
+                        {
+                            var toto1 = element.Key;
+                            var toto2 = element.Value;
+                        }
+                        var key_PdfItem = pdfPage.GetEnumerator();
+                    }
+                }
+                catch (Exception e)
+                {
+                    FormatImage = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
+                    Width = 0;
+                    Height = 0;
+                    throw e;
+                }
             }
+            
         }
         public ImageProcess(string nameOfFile, string nameOfDirectory) : this(nameOfDirectory + nameOfFile)
         {

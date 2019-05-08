@@ -177,6 +177,10 @@
       <Project>{9642bd09-fcca-4c7d-9130-1add7967dde3}</Project>
       <Name>ImageProcessLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TryPdfClown\TryPdfClown.csproj">
+      <Project>{e68d0645-9c9d-4435-98c1-9bee0302e857}</Project>
+      <Name>TryPdfClown</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
