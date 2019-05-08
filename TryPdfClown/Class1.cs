@@ -41,7 +41,6 @@ namespace Test1
             {
                 return;
             }
-
             PageStamper stamper = new PageStamper();
             foreach (Page page in document.Pages)
             {
@@ -60,30 +59,25 @@ namespace Test1
             while (level.MoveNext())
             {
                 ContentObject content = level.Current;
-
-                string aa = content.GetType().ToString();
-
                 if (content is ContainerObject)
                 {
                     Extract(level.ChildLevel, page);
                 }
                 else if (content is GraphicsObject)
                 {
-
                     ContentScanner.GraphicsObjectWrapper objectWrapper = level.CurrentWrapper;
                     if (objectWrapper == null)
                     {
                         continue;
                     }
-                    SizeF? imageSize = null; // Image native size.
+                    SizeF? imageSize = null;
                     if (objectWrapper is ContentScanner.XObjectWrapper)
                     {
                         ContentScanner.XObjectWrapper xObjectWrapper = (ContentScanner.XObjectWrapper)objectWrapper;
                         var xobject = xObjectWrapper.XObject;
-                        // Is the external object an image?
                         if (xobject is ImageXObject)
                         {
-                            imageSize = xobject.Size; // Image native size.
+                            imageSize = xobject.Size;
                             PdfDataObject dataObject = xobject.BaseDataObject;
                             PdfDictionary header = ((PdfStream)dataObject).Header;
                             if (header.ContainsKey(PdfName.Type) && header[PdfName.Type].Equals(PdfName.XObject) && header[PdfName.Subtype].Equals(PdfName.Image))
