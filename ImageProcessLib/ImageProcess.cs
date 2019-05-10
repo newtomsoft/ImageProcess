@@ -63,19 +63,42 @@ namespace ImageProcessLib
             }
             
         }
-        public ImageProcess(string nameOfFile, string nameOfDirectory) : this(nameOfDirectory + nameOfFile)
+        //public ImageProcess(string nameOfFile, string nameOfDirectory) : this(nameOfDirectory + nameOfFile)
+        //{
+        //}
+        //public ImageProcess(FreeImageBitmap theBitmap, string fullNameOfFile)
+        //{
+        //    FullNameOfFile = fullNameOfFile;
+        //    NameOfDirectory = @"./";
+        //    NameOfFile = FullNameOfFile.Substring(NameOfDirectory.Length);
+        //    Bitmap = theBitmap;
+        //    FormatImage = Bitmap.ImageFormat;
+        //    Width = Bitmap.Width;
+        //    Height = Bitmap.Height;
+        //}
+        //public ImageProcess(Bitmap theBitmap, string fullNameOfFile)
+        //{
+        //    FullNameOfFile = fullNameOfFile;
+        //    NameOfDirectory = @"./";
+        //    NameOfFile = FullNameOfFile.Substring(NameOfDirectory.Length);
+        //    Bitmap = new FreeImageBitmap(theBitmap);
+        //    FormatImage = Bitmap.ImageFormat;
+        //    Width = Bitmap.Width;
+        //    Height = Bitmap.Height;
+        //}
+        public ImageProcess(MemoryStream theStream, string fullNameOfImage)
         {
-        }
-        public ImageProcess(FreeImageBitmap theBitmap, string fullNameOfFile)
-        {
-            FullNameOfFile = fullNameOfFile;
-            NameOfDirectory = @"./";
-            NameOfFile = FullNameOfFile.Substring(NameOfDirectory.Length);
-            Bitmap = theBitmap;
+            FullNameOfFile = fullNameOfImage;
+            var indexSlash = FullNameOfFile.LastIndexOf('\\');
+            NameOfDirectory = FullNameOfFile.Substring(0, indexSlash + 1);
+            NameOfFile = FullNameOfFile.Substring(indexSlash + 1);
+
+            Bitmap = new FreeImageBitmap(theStream, FREE_IMAGE_FORMAT.FIF_JPEG);
             FormatImage = Bitmap.ImageFormat;
             Width = Bitmap.Width;
             Height = Bitmap.Height;
         }
+
         void IDisposable.Dispose() => ((IDisposable)Bitmap).Dispose();
         private int GetNumberOfSimilarColumnsAtLeft(int stripLevel)
         {

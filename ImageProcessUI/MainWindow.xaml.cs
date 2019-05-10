@@ -48,7 +48,7 @@ namespace ImageProcessUI
         private void ButtonFiles(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Images files |*.jpg;*.webp;*.bmp;*.jp2;*.png;*.tif;*.gif|" + "Pdf files |*.pdf|" + "All files |*.*";
+            openFileDialog.Filter = "Images files |*.jpg;*.webp;*.bmp;*.jp2;*.png;*.tif;*.gif;*.pdf|"  + "All files |*.*";
             openFileDialog.Multiselect = true;
             openFileDialog.Title = "Choisir les images à traiter";
             DialogResult dr = openFileDialog.ShowDialog();
@@ -161,25 +161,50 @@ namespace ImageProcessUI
             {
                 try
                 {
-                    PdfClown pdfclown = new PdfClown();
-                    pdfclown.InitiateProcess(fullNameOfImage);
-                    //using (ImageProcess imageToProcess = new ImageProcess(fullNameOfImage))
-                    //{
-                    //    if (DeleteStrip)
-                    //    {
-                    //        imageToProcess.DeleteStrips(StripLevel);
-                    //    }
-
-                    //    imageToProcess.SaveTo(ImageFormatToSave, PathSave);
-
-                    //    if (PdfFusion)
-                    //    {
-                    //        AddPageToPdfDocument(fullNameOfImage);
-                    //    }
-                    //}
-                    if (DeleteOrigin)
+                    PdfClown pdfFile = new PdfClown();
+                    List<MemoryStream> memorystreams = pdfFile.InitiateProcess(fullNameOfImage);
+                    if (memorystreams.Count() != 0)
                     {
-                        File.Delete(fullNameOfImage);
+                        int i = 0; // TODO cleancode
+                        foreach (MemoryStream memorystream in memorystreams)
+                        {
+                            i++;
+                            using (ImageProcess imageToProcess = new ImageProcess(memorystream, fullNameOfImage+i.ToString()))
+                            {
+                                if (DeleteStrip)
+                                {
+                                    imageToProcess.DeleteStrips(StripLevel);
+                                }
+
+                                imageToProcess.SaveTo(ImageFormatToSave, PathSave);
+
+                                if (PdfFusion)
+                                {
+                                    AddPageToPdfDocument(fullNameOfImage);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        using (ImageProcess imageToProcess = new ImageProcess(fullNameOfImage))
+                        {
+                            if (DeleteStrip)
+                            {
+                                imageToProcess.DeleteStrips(StripLevel);
+                            }
+
+                            imageToProcess.SaveTo(ImageFormatToSave, PathSave);
+
+                            if (PdfFusion)
+                            {
+                                AddPageToPdfDocument(fullNameOfImage);
+                            }
+                        }
+                        if (DeleteOrigin)
+                        {
+                            File.Delete(fullNameOfImage);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -187,7 +212,7 @@ namespace ImageProcessUI
                     MessageBoxButton button = MessageBoxButton.OK;
                     MessageBoxImage icon = MessageBoxImage.Error;
                     string title = "Erreur";
-                    string content ="Erreur : " + ex.Message + "sur image " + fullNameOfImage;
+                    string content = "Erreur : " + ex.Message + "sur image " + fullNameOfImage;
                     MessageBox.Show(content, title, button, icon);
                 }
             }

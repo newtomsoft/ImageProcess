@@ -28,8 +28,9 @@ namespace Test1
     {
         public int index;
 
-        public void InitiateProcess(string FileName)
+        public List<MemoryStream> InitiateProcess(string FileName)
         {
+            List<MemoryStream> memoryStreams = new List<MemoryStream>();
             org.pdfclown.files.File file;
             Document document;
             try
@@ -39,29 +40,31 @@ namespace Test1
             }
             catch
             {
-                return;
+                return memoryStreams;
             }
             PageStamper stamper = new PageStamper();
             foreach (Page page in document.Pages)
             {
                 stamper.Page = page;
-                Extract(new ContentScanner(page), page);
+                memoryStreams.AddRange(Extract(new ContentScanner(page), page));
                 stamper.Flush();
+                
             }
+            return memoryStreams;
         }
 
-        private void Extract(ContentScanner level, Page page)
+        private List<MemoryStream> Extract(ContentScanner level, Page page)
         {
-            string ctype = string.Empty;
+            List<MemoryStream> memoryStreams = new List<MemoryStream>();
             if (level == null)
-                return;
+                return memoryStreams;
 
             while (level.MoveNext())
             {
                 ContentObject content = level.Current;
                 if (content is ContainerObject)
                 {
-                    Extract(level.ChildLevel, page);
+                    memoryStreams.AddRange(Extract(level.ChildLevel, page));
                 }
                 else if (content is GraphicsObject)
                 {
@@ -83,7 +86,8 @@ namespace Test1
                             if (header.ContainsKey(PdfName.Type) && header[PdfName.Type].Equals(PdfName.XObject) && header[PdfName.Subtype].Equals(PdfName.Image))
                             {
                                 IBuffer body1 = ((PdfStream)dataObject).GetBody(false);
-                                ExportImage(body1, @"D:\" + "Image_" + (index++) + ".png");
+                                MemoryStream memoryStream = ExportImage(body1, @"D:\" + "Image_" + (index++) + ".png");
+                                memoryStreams.Add(memoryStream);
                             }
                         }
                     }
@@ -98,24 +102,16 @@ namespace Test1
                     }
                 }
             }
+            return memoryStreams;
         }
-        private void ExportImage(IBuffer data, string outputPath)
+        private MemoryStream ExportImage(IBuffer data, string outputPath)
         {
-            FileStream outputStream;
             try
             {
-                outputStream = new FileStream(outputPath, FileMode.CreateNew);
-            }
-            catch (Exception e)
-            {
-                throw new Exception(outputPath + " file couldn't be created.", e);
-            }
-            try
-            {
-                BinaryWriter writer = new BinaryWriter(outputStream);
-                writer.Write(data.ToByteArray());
-                writer.Close();
-                outputStream.Close();
+                MemoryStream memoryStream = new MemoryStream();
+                BinaryWriter memoryWriter = new BinaryWriter(memoryStream);
+                memoryWriter.Write(data.ToByteArray());
+                return memoryStream;
             }
             catch (Exception e)
             {
