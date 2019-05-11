@@ -176,11 +176,15 @@ namespace ImageProcessUI
                                     imageToProcess.DeleteStrips(StripLevel);
                                 }
 
-                                imageToProcess.SaveTo(ImageFormatToSave, PathSave);
-
                                 if (PdfFusion)
                                 {
-                                    AddPageToPdfDocument(fullNameOfImage);
+                                    MemoryStream memoryStream = new MemoryStream();
+                                    imageToProcess.SaveTo(ImageFormatToSave, memoryStream);
+                                    AddPageToPdfDocument(memoryStream);
+                                }
+                                else
+                                {
+                                    imageToProcess.SaveTo(ImageFormatToSave, PathSave);
                                 }
                             }
                         }
@@ -194,12 +198,17 @@ namespace ImageProcessUI
                                 imageToProcess.DeleteStrips(StripLevel);
                             }
 
-                            imageToProcess.SaveTo(ImageFormatToSave, PathSave);
-
                             if (PdfFusion)
                             {
-                                AddPageToPdfDocument(fullNameOfImage);
+                                MemoryStream memoryStream = new MemoryStream();
+                                imageToProcess.SaveTo(ImageFormatToSave, memoryStream);
+                                AddPageToPdfDocument(memoryStream);
                             }
+                            else
+                            {
+                                imageToProcess.SaveTo(ImageFormatToSave, PathSave);
+                            }
+
                         }
                         if (DeleteOrigin)
                         {
@@ -243,17 +252,14 @@ namespace ImageProcessUI
         {
             ThePdfDocument = new PdfDocument();
         }
-        private void AddPageToPdfDocument(string fullNameOfImage)
+        private void AddPageToPdfDocument(MemoryStream memoryStream)
         {
             try
             {
-                FileStream filestream = new FileStream(fullNameOfImage + ".jpg", FileMode.Open);
-                XImage img = XImage.FromStream(filestream);
+                XImage img = XImage.FromStream(memoryStream);
                 XGraphics xgr = XGraphics.FromPdfPage(ThePdfDocument.AddPage(new PdfPage { Width = img.PointWidth, Height = img.PointHeight }));
                 xgr.DrawImage(img, 0, 0);
                 xgr.Dispose();
-                filestream.Dispose();
-                File.Delete(fullNameOfImage + ".jpg");
             }
             catch
             {
