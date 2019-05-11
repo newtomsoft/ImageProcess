@@ -96,6 +96,7 @@ namespace ImageProcessUI
         }
         private void RadioButtonFormat(object sender, RoutedEventArgs e)
         {
+            PdfFusion = false;
             RadioButton buttonFormat = sender as RadioButton;
             string format = buttonFormat.Name;
             switch(format)
