@@ -125,7 +125,6 @@ namespace ImageProcessUI
                     PathSave = @"saveGif\";
                     break;
                 case "pdfFusion":
-                    ImageFormatToSave = FileFormat.Jpg; 
                     PathSave = "";
                     PdfFusion = true;
                     break;
@@ -179,7 +178,7 @@ namespace ImageProcessUI
                                 if (PdfFusion)
                                 {
                                     MemoryStream memoryStream = new MemoryStream();
-                                    imageToProcess.SaveTo(ImageFormatToSave, memoryStream);
+                                    imageToProcess.SaveTo(memoryStream);
                                     AddPageToPdfDocument(memoryStream);
                                 }
                                 else
@@ -201,7 +200,7 @@ namespace ImageProcessUI
                             if (PdfFusion)
                             {
                                 MemoryStream memoryStream = new MemoryStream();
-                                imageToProcess.SaveTo(ImageFormatToSave, memoryStream);
+                                imageToProcess.SaveTo(memoryStream);
                                 AddPageToPdfDocument(memoryStream);
                             }
                             else

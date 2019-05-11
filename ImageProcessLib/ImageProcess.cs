@@ -315,51 +315,33 @@ namespace ImageProcessLib
                 bitmap.Dispose();
             }
         }
-        public void SaveTo(FileFormat outputFileFormat, MemoryStream memoryStream)
+        public void SaveToWebp(MemoryStream MemoryStreamToSave)
         {
-            FREE_IMAGE_FORMAT outputFormat;
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
             {
-                switch (outputFileFormat)
-                {
-                    case FileFormat.Jp2:
-                        outputFormat = FREE_IMAGE_FORMAT.FIF_JP2;
-                        break;
-                    case FileFormat.Jpg:
-                        outputFormat = FREE_IMAGE_FORMAT.FIF_JPEG;
-                        break;
-                    case FileFormat.Png:
-                        outputFormat = FREE_IMAGE_FORMAT.FIF_PNG;
-                        break;
-                    case FileFormat.Tiff:
-                        outputFormat = FREE_IMAGE_FORMAT.FIF_TIFF;
-                        break;
-                    case FileFormat.Gif:
-                        outputFormat = FREE_IMAGE_FORMAT.FIF_GIF;
-                        break;
-                    case FileFormat.Bmp:
-                        outputFormat = FREE_IMAGE_FORMAT.FIF_BMP;
-                        break;
-                    case FileFormat.Webp:
-                        outputFormat = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
-                        break;
-                    case FileFormat.Pdf:
-                        outputFormat = FREE_IMAGE_FORMAT.FIF_JPEG;
-                        break;
-                    default:
-                        outputFormat = FormatImage;
-                        break;
-                }
+                Bitmap bitmap;
+                WebPFormat imageWebp = new WebPFormat();
                 try
                 {
-                    if (outputFormat != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
-                    {
-                        Bitmap.Save(memoryStream, outputFormat);
-                    }
-                    else
-                    {
-                        //SaveToWebp(memoryStream);
-                    }
+                    bitmap = new Bitmap(FullNameOfFile);
+                }
+                catch
+                {
+                    MemoryStream memoryStream = new MemoryStream();
+                    Bitmap.Save(memoryStream, FREE_IMAGE_FORMAT.FIF_BMP);
+                    bitmap = new Bitmap(memoryStream);
+                }
+                imageWebp.Save(MemoryStreamToSave, bitmap, 24);
+                bitmap.Dispose();
+            }
+        }
+        public void SaveTo(MemoryStream memoryStream)
+        {
+            if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
+            {
+                try
+                {
+                    Bitmap.Save(memoryStream, FREE_IMAGE_FORMAT.FIF_JPEG);
                 }
                 catch (Exception ex)
                 {
