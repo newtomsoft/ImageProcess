@@ -320,43 +320,33 @@ namespace ImageProcessLib
             FREE_IMAGE_FORMAT outputFormat;
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
             {
-                string fileExtension;
                 switch (outputFileFormat)
                 {
                     case FileFormat.Jp2:
                         outputFormat = FREE_IMAGE_FORMAT.FIF_JP2;
-                        fileExtension = ".jp2";
                         break;
                     case FileFormat.Jpg:
                         outputFormat = FREE_IMAGE_FORMAT.FIF_JPEG;
-                        fileExtension = ".jpg";
                         break;
                     case FileFormat.Png:
                         outputFormat = FREE_IMAGE_FORMAT.FIF_PNG;
-                        fileExtension = ".png";
                         break;
                     case FileFormat.Tiff:
                         outputFormat = FREE_IMAGE_FORMAT.FIF_TIFF;
-                        fileExtension = ".tif";
                         break;
                     case FileFormat.Gif:
                         outputFormat = FREE_IMAGE_FORMAT.FIF_GIF;
-                        fileExtension = ".gif";
                         break;
                     case FileFormat.Bmp:
                         outputFormat = FREE_IMAGE_FORMAT.FIF_BMP;
-                        fileExtension = ".bmp";
                         break;
                     case FileFormat.Webp:
                         outputFormat = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
-                        fileExtension = ".webp";
                         break;
                     case FileFormat.Pdf:
                         outputFormat = FREE_IMAGE_FORMAT.FIF_JPEG;
-                        fileExtension = ".jpg";
                         break;
                     default:
-                        fileExtension = "";
                         outputFormat = FormatImage;
                         break;
                 }
