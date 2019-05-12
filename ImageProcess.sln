@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageProcessLib", "ImagePro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageProcessUI", "ImageProcessUI\ImageProcessUI.csproj", "{DA950807-D1CE-4355-BD6A-AED313A119BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TryPdfClown", "TryPdfClown\TryPdfClown.csproj", "{E68D0645-9C9D-4435-98C1-9BEE0302E857}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPdf", "TryPdfClown\OpenPdf.csproj", "{E68D0645-9C9D-4435-98C1-9BEE0302E857}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

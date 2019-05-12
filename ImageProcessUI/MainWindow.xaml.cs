@@ -21,7 +21,6 @@ using RadioButton = System.Windows.Controls.RadioButton;
 using CheckBox = System.Windows.Controls.CheckBox;
 using MessageBox = System.Windows.MessageBox;
 using Path = System.IO.Path;
-using Test1;
 
 namespace ImageProcessUI
 {
