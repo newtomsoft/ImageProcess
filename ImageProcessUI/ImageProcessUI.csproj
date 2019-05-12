@@ -173,6 +173,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ImageProcessBack\ImageProcessBack.csproj">
+      <Project>{342250d2-2ec6-41f1-af2b-47acb9eaca1f}</Project>
+      <Name>ImageProcessBack</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ImageProcessLib\ImageProcessLib.csproj">
       <Project>{9642bd09-fcca-4c7d-9130-1add7967dde3}</Project>
       <Name>ImageProcessLib</Name>
