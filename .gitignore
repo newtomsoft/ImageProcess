@@ -330,5 +330,5 @@ ASALocalRun/
 .mfractor/
 /delPackageBinObj.bat
 /Samples/saveJp2
-/Samples/saveTiff
 /Samples/saveWebp
+/Samples/saveTiff

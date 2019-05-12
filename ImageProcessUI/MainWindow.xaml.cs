@@ -22,7 +22,6 @@ using CheckBox = System.Windows.Controls.CheckBox;
 using MessageBox = System.Windows.MessageBox;
 using Path = System.IO.Path;
 
-
 namespace ImageProcessUI
 {
     /// <summary>
@@ -32,36 +31,31 @@ namespace ImageProcessUI
     {
 
         #region members
-        private bool PdfFusion = false;
-        private bool DeleteOrigin = false;
-        private bool DeleteStrip = false;
-        private int StripLevel;
-        private string PathSave;
-        private List<string> FullNameOfImagesToProcess = new List<string>();
-        private PdfDocument ThePdfDocument;
-        FileFormat ImageFormatToSave = FileFormat.Unknow;
+        private ImageProcessBack ImageProcessBack;
         #endregion
         public MainWindow()
         {
+            ImageProcessBack = new ImageProcessBack();
             InitializeComponent();
+            same.IsChecked = true;
         }
         private void ButtonFiles(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Images files |*.jpg;*.webp;*.bmp;*.jp2;*.png;*.tif;*.gif|" + "All files |*.*";
+            openFileDialog.Filter = "Images files |*.jpg;*.webp;*.bmp;*.jp2;*.png;*.tif;*.gif;*.pdf|" + "All files |*.*";
             openFileDialog.Multiselect = true;
             openFileDialog.Title = "Choisir les images à traiter";
             DialogResult dr = openFileDialog.ShowDialog();
             if (dr == System.Windows.Forms.DialogResult.OK)
             {
                 //sp.Children.Clear();
-                FullNameOfImagesToProcess.Clear();
+                ImageProcessBack.FullNameOfImagesToProcess.Clear();
                 TextBoxListFiles.Text = "";
                 foreach (String fileName in openFileDialog.FileNames)
                 {
                     //ShowThumbnail(fileName);
-                    FullNameOfImagesToProcess.Add(fileName);
-                    TextBoxListFiles.Text += fileName+"\n";
+                    ImageProcessBack.FullNameOfImagesToProcess.Add(fileName);
+                    TextBoxListFiles.Text += fileName + "\n";
                 }
             }
         }
@@ -70,11 +64,15 @@ namespace ImageProcessUI
             CheckBox checkbox = sender as CheckBox;
             if (checkbox.IsChecked == true)
             {
-                DeleteStrip = true;
+                ImageProcessBack.DeleteStrip = true;
+                low.IsChecked = true;
             }
             else
             {
-                DeleteStrip = false;
+                ImageProcessBack.DeleteStrip = false;
+                low.IsChecked = false;
+                medium.IsChecked = false;
+                high.IsChecked = false;
             }
         }
         private void RadioButtonStrip(object sender, RoutedEventArgs e)
@@ -84,149 +82,96 @@ namespace ImageProcessUI
             switch (strip)
             {
                 case "low":
-                    StripLevel = 6;
+                    ImageProcessBack.StripLevel = 6;
                     break;
                 case "medium":
-                    StripLevel = 50;
+                    ImageProcessBack.StripLevel = 50;
                     break;
                 case "high":
-                    StripLevel = 100;
+                    ImageProcessBack.StripLevel = 100;
                     break;
             }
         }
         private void RadioButtonFormat(object sender, RoutedEventArgs e)
         {
+            ImageProcessBack.PdfFusion = false;
             RadioButton buttonFormat = sender as RadioButton;
             string format = buttonFormat.Name;
-            switch(format)
+            switch (format)
             {
                 case "same":
-                    ImageFormatToSave = FileFormat.Unknow;
-                    PathSave = @"save\";
+                    ImageProcessBack.ImageFormatToSave = FileFormat.Unknow;
+                    ImageProcessBack.PathSave = @"save\";
                     break;
                 case "png":
-                    ImageFormatToSave = FileFormat.Png;
-                    PathSave = @"savePng\";
+                    ImageProcessBack.ImageFormatToSave = FileFormat.Png;
+                    ImageProcessBack.PathSave = @"savePng\";
                     break;
                 case "jp2":
-                    ImageFormatToSave = FileFormat.Jp2;
-                    PathSave = @"saveJp2\";
+                    ImageProcessBack.ImageFormatToSave = FileFormat.Jp2;
+                    ImageProcessBack.PathSave = @"saveJp2\";
                     break;
                 case "jpg":
-                    ImageFormatToSave = FileFormat.Jpg;
-                    PathSave = @"saveJpg\";
+                    ImageProcessBack.ImageFormatToSave = FileFormat.Jpg;
+                    ImageProcessBack.PathSave = @"saveJpg\";
                     break;
                 case "tiff":
-                    ImageFormatToSave = FileFormat.Tiff;
-                    PathSave = @"saveTiff\";
+                    ImageProcessBack.ImageFormatToSave = FileFormat.Tiff;
+                    ImageProcessBack.PathSave = @"saveTiff\";
                     break;
                 case "gif":
-                    ImageFormatToSave = FileFormat.Gif;
-                    PathSave = @"saveGif\";
+                    ImageProcessBack.ImageFormatToSave = FileFormat.Gif;
+                    ImageProcessBack.PathSave = @"saveGif\";
                     break;
                 case "pdfFusion":
-                    ImageFormatToSave = FileFormat.Jpg; 
-                    PathSave = "";
-                    PdfFusion = true;
+                    ImageProcessBack.PathSave = "";
+                    ImageProcessBack.PdfFusion = true;
                     break;
                 case "pdfSingle":
-                    ImageFormatToSave = FileFormat.Pdf; 
-                    PathSave = @"savePdf\";
+                    ImageProcessBack.ImageFormatToSave = FileFormat.Pdf;
+                    ImageProcessBack.PathSave = @"savePdf\";
                     break;
                 case "webp":
-                    ImageFormatToSave = FileFormat.Webp;
-                    PathSave = @"saveWebp\";
+                    ImageProcessBack.ImageFormatToSave = FileFormat.Webp;
+                    ImageProcessBack.PathSave = @"saveWebp\";
                     break;
             }
         }
         private void CheckBoxDeleteOrigin(object sender, RoutedEventArgs e)
         {
             CheckBox checkbox = sender as CheckBox;
-            if(checkbox.IsChecked==true)
+            if (checkbox.IsChecked == true)
             {
-                DeleteOrigin = true;
+                ImageProcessBack.DeleteOrigin = true;
             }
             else
             {
-                DeleteOrigin = false;
+                ImageProcessBack.DeleteOrigin = false;
             }
         }
         private void ButtonStartProcess(object sender, RoutedEventArgs e)
         {
-            if (PdfFusion)
-            {
-                InitPdfDocument();
-            }
-            foreach (string fullNameOfImage in FullNameOfImagesToProcess)
-            {
-                try
-                {
-                    using (ImageProcess imageToProcess = new ImageProcess(fullNameOfImage))
-                    {
-                        if (DeleteStrip)
-                        {
-                            imageToProcess.DeleteStrips(StripLevel);
-                        }
-
-                        imageToProcess.SaveTo(ImageFormatToSave, PathSave);
-
-                        if (PdfFusion)
-                        {
-                            AddPageToPdfDocument(fullNameOfImage);
-                        }
-                    }
-                    if (DeleteOrigin)
-                    {
-                        File.Delete(fullNameOfImage);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBoxButton button = MessageBoxButton.OK;
-                    MessageBoxImage icon = MessageBoxImage.Error;
-                    string title = "Erreur";
-                    string content ="Erreur : " + ex.Message + "sur image " + fullNameOfImage;
-                    MessageBox.Show(content, title, button, icon);
-                }
-            }
-            if (FullNameOfImagesToProcess.Count == 0)
-            {
-                string title = "Erreur";
-                string content = "Merci de choisir des images";
-                MessageBoxButton button = MessageBoxButton.OK;
-                MessageBoxImage icon = MessageBoxImage.Warning;
-                MessageBox.Show(content, title, button, icon);
-            }
-            else
-            {
-                if (PdfFusion)
-                {
-                    SavePdfDocument();
-                }
-                MessageBoxButton buttonEnd = MessageBoxButton.OK;
-                MessageBoxImage iconEnd = MessageBoxImage.Information;
-                string titleEnd = "Traitement ok";
-                string contentEnd = "Fin de traitement";
-                MessageBox.Show(contentEnd, titleEnd, buttonEnd, iconEnd);
-            }
-            FullNameOfImagesToProcess.Clear();
+            string stringReturn = ImageProcessBack.Process();
+            MessageBoxButton buttonEnd = MessageBoxButton.OK;
+            MessageBoxImage iconEnd = MessageBoxImage.Information;
+            string titleEnd = "Traitement";
+            string contentEnd = stringReturn;
+            MessageBox.Show(contentEnd, titleEnd, buttonEnd, iconEnd);
+            ImageProcessBack.FullNameOfImagesToProcess.Clear();
             TextBoxListFiles.Text = "";
         }
         private void InitPdfDocument()
         {
-            ThePdfDocument = new PdfDocument();
+            ImageProcessBack.ThePdfDocument = new PdfDocument();
         }
-        private void AddPageToPdfDocument(string fullNameOfImage)
+        private void AddPageToPdfDocument(MemoryStream memoryStream)
         {
             try
             {
-                FileStream filestream = new FileStream(fullNameOfImage + ".jpg", FileMode.Open);
-                XImage img = XImage.FromStream(filestream);
-                XGraphics xgr = XGraphics.FromPdfPage(ThePdfDocument.AddPage(new PdfPage { Width = img.PointWidth, Height = img.PointHeight }));
+                XImage img = XImage.FromStream(memoryStream);
+                XGraphics xgr = XGraphics.FromPdfPage(ImageProcessBack.ThePdfDocument.AddPage(new PdfPage { Width = img.PointWidth, Height = img.PointHeight }));
                 xgr.DrawImage(img, 0, 0);
                 xgr.Dispose();
-                filestream.Dispose();
-                File.Delete(fullNameOfImage + ".jpg");
             }
             catch
             {
@@ -235,12 +180,12 @@ namespace ImageProcessUI
         }
         private void SavePdfDocument()
         {
-            string fullNameOfOneImage = FullNameOfImagesToProcess[0];
+            string fullNameOfOneImage = ImageProcessBack.FullNameOfImagesToProcess[0];
             string pathToSave = Path.GetDirectoryName(fullNameOfOneImage) + @"\SavePdf\";
             Directory.CreateDirectory(pathToSave);
-            ThePdfDocument.Save(pathToSave + "SavefromImages.pdf");
-            ThePdfDocument.Close();
-            ThePdfDocument.Dispose();
+            ImageProcessBack.ThePdfDocument.Save(pathToSave + "SavefromImages.pdf");
+            ImageProcessBack.ThePdfDocument.Close();
+            ImageProcessBack.ThePdfDocument.Dispose();
         }
         private void ShowThumbnail(string filename)
         {
@@ -258,6 +203,6 @@ namespace ImageProcessUI
             i.Source = src;
             i.Stretch = Stretch.Uniform;
             //sp.Children.Add(i);
-        }  
+        }
     }
 }

@@ -2,6 +2,7 @@
 using ImageProcessor.Plugins.WebP.Imaging.Formats;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
 using System;
 using System.Drawing;
 using System.IO;
@@ -37,24 +38,67 @@ namespace ImageProcessLib
             }
             catch (Exception)
             {
-                FormatImage = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
-                Width = 0;
-                Height = 0;
+                try
+                {
+                    PdfDocument pdfDocument = PdfReader.Open(FullNameOfFile);
+                    PdfPages allPdfPages = pdfDocument.Pages;
+                    foreach (PdfPage pdfPage in allPdfPages)
+                    {
+                        var elements = pdfPage.Elements;
+                        foreach (var element in elements)
+                        {
+                            var toto1 = element.Key;
+                            var toto2 = element.Value;
+                        }
+                        var key_PdfItem = pdfPage.GetEnumerator();
+                    }
+                }
+                catch (Exception e)
+                {
+                    FormatImage = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
+                    Width = 0;
+                    Height = 0;
+                    throw e;
+                }
             }
+            
         }
-        public ImageProcess(string nameOfFile, string nameOfDirectory) : this(nameOfDirectory + nameOfFile)
+        //public ImageProcess(string nameOfFile, string nameOfDirectory) : this(nameOfDirectory + nameOfFile)
+        //{
+        //}
+        //public ImageProcess(FreeImageBitmap theBitmap, string fullNameOfFile)
+        //{
+        //    FullNameOfFile = fullNameOfFile;
+        //    NameOfDirectory = @"./";
+        //    NameOfFile = FullNameOfFile.Substring(NameOfDirectory.Length);
+        //    Bitmap = theBitmap;
+        //    FormatImage = Bitmap.ImageFormat;
+        //    Width = Bitmap.Width;
+        //    Height = Bitmap.Height;
+        //}
+        //public ImageProcess(Bitmap theBitmap, string fullNameOfFile)
+        //{
+        //    FullNameOfFile = fullNameOfFile;
+        //    NameOfDirectory = @"./";
+        //    NameOfFile = FullNameOfFile.Substring(NameOfDirectory.Length);
+        //    Bitmap = new FreeImageBitmap(theBitmap);
+        //    FormatImage = Bitmap.ImageFormat;
+        //    Width = Bitmap.Width;
+        //    Height = Bitmap.Height;
+        //}
+        public ImageProcess(MemoryStream theStream, string fullNameOfImage)
         {
-        }
-        public ImageProcess(FreeImageBitmap theBitmap, string fullNameOfFile)
-        {
-            FullNameOfFile = fullNameOfFile;
-            NameOfDirectory = @"./";
-            NameOfFile = FullNameOfFile.Substring(NameOfDirectory.Length);
-            Bitmap = theBitmap;
+            FullNameOfFile = fullNameOfImage;
+            var indexSlash = FullNameOfFile.LastIndexOf('\\');
+            NameOfDirectory = FullNameOfFile.Substring(0, indexSlash + 1);
+            NameOfFile = FullNameOfFile.Substring(indexSlash + 1);
+
+            Bitmap = new FreeImageBitmap(theStream, FREE_IMAGE_FORMAT.FIF_JPEG);
             FormatImage = Bitmap.ImageFormat;
             Width = Bitmap.Width;
             Height = Bitmap.Height;
         }
+
         void IDisposable.Dispose() => ((IDisposable)Bitmap).Dispose();
         private int GetNumberOfSimilarColumnsAtLeft(int stripLevel)
         {
@@ -96,36 +140,13 @@ namespace ImageProcessLib
             }
             return i;
         }
-        public void DeleteStrips(int stripLevel)
-        {
-            if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
-            {
-                int left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
-                int right = GetNumberOfSimilarColumnsAtRight(stripLevel);
-                Bitmap = Bitmap.Copy(left, Height, Width - right, 0);
-                Width = Bitmap.Width;
-                Height = Bitmap.Height;
-
-                int bottom = GetNumberOfSimilarLinesAtBottom(stripLevel);
-                int top = GetNumberOfSimilarLinesAtTop(stripLevel);
-                Bitmap = Bitmap.Copy(0, Height - top, Width, bottom);
-                Width = Bitmap.Width;
-                Height = Bitmap.Height;
-
-                left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
-                right = GetNumberOfSimilarColumnsAtRight(stripLevel);
-                Bitmap = Bitmap.Copy(left, Height, Width - right, 0);
-                Width = Bitmap.Width;
-                Height = Bitmap.Height;
-            }
-        }
         private bool IsColumnHaveSimilarColors(int indexCol, int level)
         {
             double minimumStdDeviation = level / 2 + 13;
             double step;
             int nbCount;
             int count;
-            if (Height>400)
+            if (Height > 400)
             {
                 step = (double)Height / 400;
                 nbCount = 400;
@@ -142,7 +163,7 @@ namespace ImageProcessLib
                 return false;
             }
             ulong sumColorR = 0, sumColorG = 0, sumColorB = 0;
-            
+
             double jDouble = 0;
             int j;
             for (count = 0; count < nbCount; count++)
@@ -181,7 +202,7 @@ namespace ImageProcessLib
         }
         private bool IsLineHaveSimilarColors(int indexLine, int level)
         {
-            double minimumStdDeviation = level/2+13;
+            double minimumStdDeviation = level / 2 + 13;
             double step;
             int nbCount;
             int count;
@@ -193,7 +214,7 @@ namespace ImageProcessLib
             else
             {
                 step = 1;
-                nbCount = Height;
+                nbCount = Width;
             }
 
             Color colorPixel;
@@ -242,6 +263,68 @@ namespace ImageProcessLib
             }
 
         }
+        public void DeleteStrips(int stripLevel)
+        {
+            if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
+            {
+                int left, top, right, bottom;
+                FreeImageBitmap bitmapTemp;
+
+                left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
+                bitmapTemp = Bitmap.Copy(left, Height, Width, 0);
+                if(bitmapTemp==null)
+                {
+                    return;
+                }
+                Bitmap = bitmapTemp;
+                Width = Bitmap.Width;
+
+                right = GetNumberOfSimilarColumnsAtRight(stripLevel);
+                bitmapTemp = Bitmap.Copy(0, Height, Width - right, 0);
+                if (bitmapTemp == null)
+                {
+                    return;
+                }
+                Bitmap = bitmapTemp;
+                Width = Bitmap.Width;
+
+                bottom = GetNumberOfSimilarLinesAtBottom(stripLevel);
+                bitmapTemp = Bitmap.Copy(0, Height, Width, bottom);
+                if (bitmapTemp == null)
+                {
+                    return;
+                }
+                Bitmap = bitmapTemp;
+                Height = Bitmap.Height;
+
+                top = GetNumberOfSimilarLinesAtTop(stripLevel);
+                bitmapTemp = Bitmap.Copy(0, Height - top, Width, 0);
+                if (bitmapTemp == null)
+                {
+                    return;
+                }
+                Bitmap = bitmapTemp;
+                Height = Bitmap.Height;
+
+                left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
+                bitmapTemp = Bitmap.Copy(left, Height, Width, 0);
+                if (bitmapTemp == null)
+                {
+                    return;
+                }
+                Bitmap = bitmapTemp;
+                Width = Bitmap.Width;
+
+                right = GetNumberOfSimilarColumnsAtRight(stripLevel);
+                bitmapTemp = Bitmap.Copy(0, Height, Width - right, 0);
+                if (bitmapTemp == null)
+                {
+                    return;
+                }
+                Bitmap = bitmapTemp;
+                Width = Bitmap.Width;
+            }
+        }
         public void SaveToWebpFree(string pathImageSave = @"Save_webp\")
         {
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
@@ -271,6 +354,41 @@ namespace ImageProcessLib
                 bitmap.Dispose();
             }
         }
+        public void SaveToWebp(MemoryStream MemoryStreamToSave)
+        {
+            if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
+            {
+                Bitmap bitmap;
+                WebPFormat imageWebp = new WebPFormat();
+                try
+                {
+                    bitmap = new Bitmap(FullNameOfFile);
+                }
+                catch
+                {
+                    MemoryStream memoryStream = new MemoryStream();
+                    Bitmap.Save(memoryStream, FREE_IMAGE_FORMAT.FIF_BMP);
+                    bitmap = new Bitmap(memoryStream);
+                }
+                imageWebp.Save(MemoryStreamToSave, bitmap, 24);
+                bitmap.Dispose();
+            }
+        }
+        public void SaveTo(MemoryStream memoryStream)
+        {
+            if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
+            {
+                try
+                {
+                    Bitmap.Save(memoryStream, FREE_IMAGE_FORMAT.FIF_JPEG);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
         public void SaveTo(FileFormat outputFileFormat, string pathImageSave = @"Save\")
         {
             FREE_IMAGE_FORMAT outputFormat;
