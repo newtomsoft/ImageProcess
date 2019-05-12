@@ -72,10 +72,14 @@ namespace ImageProcessUI
             if (checkbox.IsChecked == true)
             {
                 DeleteStrip = true;
+                low.IsChecked = true;
             }
             else
             {
                 DeleteStrip = false;
+                low.IsChecked = false;
+                medium.IsChecked = false;
+                high.IsChecked = false;
             }
         }
         private void RadioButtonStrip(object sender, RoutedEventArgs e)
