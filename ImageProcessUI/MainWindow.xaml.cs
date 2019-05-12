@@ -44,6 +44,7 @@ namespace ImageProcessUI
         public MainWindow()
         {
             InitializeComponent();
+            same.IsChecked = true;
         }
         private void ButtonFiles(object sender, RoutedEventArgs e)
         {

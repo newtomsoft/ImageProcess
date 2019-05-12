@@ -323,9 +323,6 @@ namespace ImageProcessLib
                 }
                 Bitmap = bitmapTemp;
                 Width = Bitmap.Width;
-
-                
-
             }
         }
         public void SaveToWebpFree(string pathImageSave = @"Save_webp\")
