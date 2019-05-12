@@ -140,36 +140,13 @@ namespace ImageProcessLib
             }
             return i;
         }
-        public void DeleteStrips(int stripLevel)
-        {
-            if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
-            {
-                int left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
-                int right = GetNumberOfSimilarColumnsAtRight(stripLevel);
-                Bitmap = Bitmap.Copy(left, Height, Width - right, 0);
-                Width = Bitmap.Width;
-                Height = Bitmap.Height;
-
-                int bottom = GetNumberOfSimilarLinesAtBottom(stripLevel);
-                int top = GetNumberOfSimilarLinesAtTop(stripLevel);
-                Bitmap = Bitmap.Copy(0, Height - top, Width, bottom);
-                Width = Bitmap.Width;
-                Height = Bitmap.Height;
-
-                left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
-                right = GetNumberOfSimilarColumnsAtRight(stripLevel);
-                Bitmap = Bitmap.Copy(left, Height, Width - right, 0);
-                Width = Bitmap.Width;
-                Height = Bitmap.Height;
-            }
-        }
         private bool IsColumnHaveSimilarColors(int indexCol, int level)
         {
             double minimumStdDeviation = level / 2 + 13;
             double step;
             int nbCount;
             int count;
-            if (Height>400)
+            if (Height > 400)
             {
                 step = (double)Height / 400;
                 nbCount = 400;
@@ -186,7 +163,7 @@ namespace ImageProcessLib
                 return false;
             }
             ulong sumColorR = 0, sumColorG = 0, sumColorB = 0;
-            
+
             double jDouble = 0;
             int j;
             for (count = 0; count < nbCount; count++)
@@ -225,7 +202,7 @@ namespace ImageProcessLib
         }
         private bool IsLineHaveSimilarColors(int indexLine, int level)
         {
-            double minimumStdDeviation = level/2+13;
+            double minimumStdDeviation = level / 2 + 13;
             double step;
             int nbCount;
             int count;
@@ -237,7 +214,7 @@ namespace ImageProcessLib
             else
             {
                 step = 1;
-                nbCount = Height;
+                nbCount = Width;
             }
 
             Color colorPixel;
@@ -285,6 +262,71 @@ namespace ImageProcessLib
                 return false;
             }
 
+        }
+        public void DeleteStrips(int stripLevel)
+        {
+            if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
+            {
+                int left, top, right, bottom;
+                FreeImageBitmap bitmapTemp;
+
+                left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
+                bitmapTemp = Bitmap.Copy(left, Height, Width, 0);
+                if(bitmapTemp==null)
+                {
+                    return;
+                }
+                Bitmap = bitmapTemp;
+                Width = Bitmap.Width;
+
+                right = GetNumberOfSimilarColumnsAtRight(stripLevel);
+                bitmapTemp = Bitmap.Copy(0, Height, Width - right, 0);
+                if (bitmapTemp == null)
+                {
+                    return;
+                }
+                Bitmap = bitmapTemp;
+                Width = Bitmap.Width;
+
+                bottom = GetNumberOfSimilarLinesAtBottom(stripLevel);
+                bitmapTemp = Bitmap.Copy(0, Height, Width, bottom);
+                if (bitmapTemp == null)
+                {
+                    return;
+                }
+                Bitmap = bitmapTemp;
+                Height = Bitmap.Height;
+
+                top = GetNumberOfSimilarLinesAtTop(stripLevel);
+                bitmapTemp = Bitmap.Copy(0, Height - top, Width, 0);
+                if (bitmapTemp == null)
+                {
+                    return;
+                }
+                Bitmap = bitmapTemp;
+                Height = Bitmap.Height;
+
+                left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
+                bitmapTemp = Bitmap.Copy(left, Height, Width, 0);
+                if (bitmapTemp == null)
+                {
+                    return;
+                }
+                Bitmap = bitmapTemp;
+                Width = Bitmap.Width;
+
+                right = GetNumberOfSimilarColumnsAtRight(stripLevel);
+                bitmapTemp = Bitmap.Copy(0, Height, Width - right, 0);
+                if (bitmapTemp == null)
+                {
+                    return;
+                }
+                Bitmap = bitmapTemp;
+                Width = Bitmap.Width;
+
+                
+
+            }
         }
         public void SaveToWebpFree(string pathImageSave = @"Save_webp\")
         {
