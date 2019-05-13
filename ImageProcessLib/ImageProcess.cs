@@ -19,6 +19,7 @@ namespace ImageProcessLib
         public FREE_IMAGE_FORMAT FormatImage { get; }
         public int Width { get; private set; }
         public int Height { get; private set; }
+        private const int MaxNumberOfPointsForEstimateSimilarColors = 400;
         #endregion
         public ImageProcess(string fullNameOfFile)
         {
@@ -63,29 +64,6 @@ namespace ImageProcessLib
             }
             
         }
-        //public ImageProcess(string nameOfFile, string nameOfDirectory) : this(nameOfDirectory + nameOfFile)
-        //{
-        //}
-        //public ImageProcess(FreeImageBitmap theBitmap, string fullNameOfFile)
-        //{
-        //    FullNameOfFile = fullNameOfFile;
-        //    NameOfDirectory = @"./";
-        //    NameOfFile = FullNameOfFile.Substring(NameOfDirectory.Length);
-        //    Bitmap = theBitmap;
-        //    FormatImage = Bitmap.ImageFormat;
-        //    Width = Bitmap.Width;
-        //    Height = Bitmap.Height;
-        //}
-        //public ImageProcess(Bitmap theBitmap, string fullNameOfFile)
-        //{
-        //    FullNameOfFile = fullNameOfFile;
-        //    NameOfDirectory = @"./";
-        //    NameOfFile = FullNameOfFile.Substring(NameOfDirectory.Length);
-        //    Bitmap = new FreeImageBitmap(theBitmap);
-        //    FormatImage = Bitmap.ImageFormat;
-        //    Width = Bitmap.Width;
-        //    Height = Bitmap.Height;
-        //}
         public ImageProcess(MemoryStream theStream, string fullNameOfImage)
         {
             FullNameOfFile = fullNameOfImage;
@@ -146,10 +124,10 @@ namespace ImageProcessLib
             double step;
             int nbCount;
             int count;
-            if (Height > 400)
+            if (Height > MaxNumberOfPointsForEstimateSimilarColors)
             {
-                step = (double)Height / 400;
-                nbCount = 400;
+                step = (double)Height / MaxNumberOfPointsForEstimateSimilarColors;
+                nbCount = MaxNumberOfPointsForEstimateSimilarColors;
             }
             else
             {
@@ -206,10 +184,10 @@ namespace ImageProcessLib
             double step;
             int nbCount;
             int count;
-            if (Width > 400)
+            if (Width > MaxNumberOfPointsForEstimateSimilarColors)
             {
-                step = (double)Width / 400;
-                nbCount = 400;
+                step = (double)Width / MaxNumberOfPointsForEstimateSimilarColors;
+                nbCount = MaxNumberOfPointsForEstimateSimilarColors;
             }
             else
             {
