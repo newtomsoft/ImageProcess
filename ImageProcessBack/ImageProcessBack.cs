@@ -2,25 +2,50 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ImageProcessLib;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 
+/// <summary>
+/// back of the solution
+/// manage image processing and call libraries that decode / encode images
+/// </summary>
 public class ImageProcessBack
 {
     #region members
+    /// <summary>
+    /// true if we want to generate un pdf file containing all images 
+    /// </summary>
     public bool PdfFusion;
+    /// <summary>
+    /// true if we want to delete orginales files
+    /// </summary>
     public bool DeleteOrigin;
+    /// <summary>
+    /// true if we want to delete strip around the image
+    /// </summary>
     public bool DeleteStrip;
+    /// <summary>
+    /// Tolerance level for strips removal
+    /// </summary>
     public int StripLevel;
+    /// <summary>
+    /// relative directory path where save image(s)
+    /// </summary>
     public string PathSave;
+    /// <summary>
+    /// full name of all images we want to process
+    /// </summary>
     public List<string> FullNameOfImagesToProcess;
+    /// <summary>
+    /// The pdf document if we convert image into this format
+    /// </summary>
     public PdfDocument ThePdfDocument;
+    /// <summary>
+    /// format of image or document we want to save (jpg, png, pdf)
+    /// </summary>
     public FileFormat ImageFormatToSave;
     #endregion
-
     public ImageProcessBack()
     {
         PdfFusion = false;
@@ -29,6 +54,10 @@ public class ImageProcessBack
         FullNameOfImagesToProcess = new List<string>();
         ImageFormatToSave = FileFormat.Unknow;
     }
+    /// <summary>
+    /// process all images or files containing images in <c>FullNameOfImagesToProcess</c>
+    /// </summary>
+    /// <returns>string with all warning and errors for show in a MessageBox or similar to alert user</returns>
     public string Process()
     {
         string listErrors = "";
@@ -130,10 +159,17 @@ public class ImageProcessBack
         //TextBoxListFiles.Text = "";
         return contentEnd + listErrors;
     }
+    /// <summary>
+    /// create new pdf document to put image into it after that
+    /// </summary>
     public void InitPdfDocument()
     {
         ThePdfDocument = new PdfDocument();
     }
+    /// <summary>
+    /// add a page into the pdf document witch is into the <c>memoryStream</c>
+    /// </summary>
+    /// <param name="memoryStream"></param>
     public void AddPageToPdfDocument(MemoryStream memoryStream)
     {
         try
@@ -148,6 +184,9 @@ public class ImageProcessBack
             Console.WriteLine("Image not supported by tool. Please convert before in jpg/gif/png/tiff");
         }
     }
+    /// <summary>
+    /// save the pdf document after adding all images into
+    /// </summary>
     public void SavePdfDocument()
     {
         string fullNameOfOneImage = FullNameOfImagesToProcess[0];
