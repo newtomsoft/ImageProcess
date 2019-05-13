@@ -250,56 +250,32 @@ namespace ImageProcessLib
 
                 left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
                 bitmapTemp = Bitmap.Copy(left, Height, Width, 0);
-                if(bitmapTemp==null)
-                {
-                    return;
-                }
-                Bitmap = bitmapTemp;
+                Bitmap = bitmapTemp ?? throw new Exception("All culumns are similar");
                 Width = Bitmap.Width;
 
                 right = GetNumberOfSimilarColumnsAtRight(stripLevel);
                 bitmapTemp = Bitmap.Copy(0, Height, Width - right, 0);
-                if (bitmapTemp == null)
-                {
-                    return;
-                }
-                Bitmap = bitmapTemp;
+                Bitmap = bitmapTemp ?? throw new Exception("All culumns are similar");
                 Width = Bitmap.Width;
 
                 bottom = GetNumberOfSimilarLinesAtBottom(stripLevel);
                 bitmapTemp = Bitmap.Copy(0, Height, Width, bottom);
-                if (bitmapTemp == null)
-                {
-                    return;
-                }
-                Bitmap = bitmapTemp;
+                Bitmap = bitmapTemp ?? throw new Exception("All lines are similar");
                 Height = Bitmap.Height;
 
                 top = GetNumberOfSimilarLinesAtTop(stripLevel);
                 bitmapTemp = Bitmap.Copy(0, Height - top, Width, 0);
-                if (bitmapTemp == null)
-                {
-                    return;
-                }
-                Bitmap = bitmapTemp;
+                Bitmap = bitmapTemp ?? throw new Exception("All lines are similar");
                 Height = Bitmap.Height;
 
                 left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
                 bitmapTemp = Bitmap.Copy(left, Height, Width, 0);
-                if (bitmapTemp == null)
-                {
-                    return;
-                }
-                Bitmap = bitmapTemp;
+                Bitmap = bitmapTemp ?? throw new Exception("All culumns are similar");
                 Width = Bitmap.Width;
 
                 right = GetNumberOfSimilarColumnsAtRight(stripLevel);
                 bitmapTemp = Bitmap.Copy(0, Height, Width - right, 0);
-                if (bitmapTemp == null)
-                {
-                    return;
-                }
-                Bitmap = bitmapTemp;
+                Bitmap = bitmapTemp ?? throw new Exception("All culumns are similar");
                 Width = Bitmap.Width;
             }
         }

@@ -58,7 +58,14 @@ public class ImageProcessBack
                         {
                             if (DeleteStrip)
                             {
-                                imageToProcess.DeleteStrips(StripLevel);
+                                try
+                                {
+                                    imageToProcess.DeleteStrips(StripLevel);
+                                }
+                                catch (Exception ex)
+                                {
+                                    listErrors += "Erreur : " + ex.Message + " sur image " + fullNameOfImage + " => bordures inchangées\n";
+                                }
                             }
 
                             if (PdfFusion)
@@ -80,7 +87,14 @@ public class ImageProcessBack
                     {
                         if (DeleteStrip)
                         {
-                            imageToProcess.DeleteStrips(StripLevel);
+                            try
+                            {
+                                imageToProcess.DeleteStrips(StripLevel);
+                            }
+                            catch (Exception ex)
+                            {
+                                listErrors += "Erreur : " + ex.Message + " sur image " + fullNameOfImage + " => bordures inchangées\n";
+                            }
                         }
 
                         if (PdfFusion)
