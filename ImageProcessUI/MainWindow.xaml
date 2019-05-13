@@ -17,15 +17,15 @@
             <Button HorizontalAlignment="Left"  Width="105" Click="ButtonStartProcess" Height="35">Lancer traitement</Button>
         </StackPanel>
         <StackPanel>
-            <RadioButton Name="same" Checked="RadioButtonFormat" Margin="10,0,807,0">Pas de conversion</RadioButton>
-            <RadioButton Name="webp" Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en Webp</RadioButton>
-            <RadioButton Name="jp2"  Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en Jp2</RadioButton>
-            <RadioButton Name="jpg"  Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en Jpg</RadioButton>
-            <RadioButton Name="png"  Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en Png</RadioButton>
-            <RadioButton Name="tiff" Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en Tiff</RadioButton>
-            <RadioButton Name="gif"  Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en Gif</RadioButton>
-            <RadioButton Name="pdfFusion"  Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion/fusion en un Pdf</RadioButton>
-            <RadioButton Name="pdfSingle"  Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en Pdf distincts</RadioButton>
+            <RadioButton Name="ButtonFormatSame" Checked="RadioButtonFormat" Margin="10,0,807,0">Pas de conversion</RadioButton>
+            <RadioButton Name="ButtonFormatWebp" Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en Webp</RadioButton>
+            <RadioButton Name="ButtonFormatJp2"  Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en Jp2</RadioButton>
+            <RadioButton Name="ButtonFormatJpg"  Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en Jpg</RadioButton>
+            <RadioButton Name="ButtonFormatPng"  Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en Png</RadioButton>
+            <RadioButton Name="ButtonFormatTiff" Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en Tiff</RadioButton>
+            <RadioButton Name="ButtonFormatGif"  Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en Gif</RadioButton>
+            <RadioButton Name="ButtonFormatPdfFusion"  Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion/fusion en un Pdf</RadioButton>
+            <RadioButton Name="ButtonFormatPdfSingle"  Checked="RadioButtonFormat" Margin="10,0,807,0">Conversion en Pdf distincts</RadioButton>
         </StackPanel>
         <StackPanel Margin="10,144,10,10">
             <TextBox x:Name="TextBoxListFiles"  TextWrapping="Wrap"/>
