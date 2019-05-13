@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using ImageProcessLib;
 using PdfSharp.Drawing;
@@ -73,46 +74,34 @@ public class ImageProcessBack
         }
         foreach (string fullNameOfImage in FullNameOfImagesToProcess)
         {
+            List<MemoryStream> memoryStreams = new List<MemoryStream>();
             try
             {
-                PdfClown pdfFile = new PdfClown();
-                List<MemoryStream> memorystreams = pdfFile.InitiateProcess(fullNameOfImage);
-                if (memorystreams.Count() != 0)
+                memoryStreams = Open(fullNameOfImage);
+            }
+            catch
+            {
+                try
                 {
-                    int i = 0; // TODO cleancode
-                    foreach (MemoryStream memorystream in memorystreams)
-                    {
-                        i++;
-                        using (ImageProcess imageToProcess = new ImageProcess(memorystream, fullNameOfImage + i.ToString()))
-                        {
-                            if (DeleteStrip)
-                            {
-                                try
-                                {
-                                    imageToProcess.DeleteStrips(StripLevel);
-                                }
-                                catch (Exception ex)
-                                {
-                                    listErrors += "Erreur : " + ex.Message + " sur image " + fullNameOfImage + " => bordures inchangées\n";
-                                }
-                            }
-
-                            if (PdfFusion)
-                            {
-                                MemoryStream memoryStream = new MemoryStream();
-                                imageToProcess.SaveTo(memoryStream);
-                                AddPageToPdfDocument(memoryStream);
-                            }
-                            else
-                            {
-                                imageToProcess.SaveTo(ImageFormatToSave, PathSave);
-                            }
-                        }
-                    }
+                    PdfClown pdfFile = new PdfClown();
+                    memoryStreams = pdfFile.InitiateProcess(fullNameOfImage);
                 }
-                else
+                catch
                 {
-                    using (ImageProcess imageToProcess = new ImageProcess(fullNameOfImage))
+                    Stream fs = File.OpenRead(fullNameOfImage);
+                    MemoryStream singleMemoryStream = fs as MemoryStream;
+                    memoryStreams.Add(singleMemoryStream);
+                }
+            }
+
+
+            try
+            {
+                int i = 0; // TODO cleancode
+                foreach (MemoryStream memorystream in memoryStreams)
+                {
+                    i++;
+                    using (ImageProcess imageToProcess = new ImageProcess(memorystream, fullNameOfImage + i.ToString()))
                     {
                         if (DeleteStrip)
                         {
@@ -136,11 +125,6 @@ public class ImageProcessBack
                         {
                             imageToProcess.SaveTo(ImageFormatToSave, PathSave);
                         }
-
-                    }
-                    if (DeleteOrigin)
-                    {
-                        File.Delete(fullNameOfImage);
                     }
                 }
             }
@@ -159,6 +143,26 @@ public class ImageProcessBack
         //TextBoxListFiles.Text = "";
         return contentEnd + listErrors;
     }
+
+    private List<MemoryStream> Open(string fullNameOfImage)
+    {
+        List<MemoryStream> memoryStreams = new List<MemoryStream>();
+        ZipArchive zip;
+        try
+        {
+            zip = ZipFile.Open(fullNameOfImage, ZipArchiveMode.Read);
+            foreach (var entrie in zip.Entries)
+            {
+                memoryStreams.Add((MemoryStream)entrie.Open());
+            }
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+        return memoryStreams;
+    }
+
     /// <summary>
     /// create new pdf document to put image into it after that
     /// </summary>

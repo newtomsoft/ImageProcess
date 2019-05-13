@@ -26,7 +26,7 @@ public class PdfClown
         }
         catch
         {
-            return memoryStreams;
+            throw;
         }
         PageStamper stamper = new PageStamper();
         foreach (Page page in document.Pages)
@@ -43,7 +43,7 @@ public class PdfClown
     {
         List<MemoryStream> memoryStreams = new List<MemoryStream>();
         if (level == null)
-            return memoryStreams;
+            return null;
 
         while (level.MoveNext())
         {
