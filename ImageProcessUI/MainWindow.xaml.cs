@@ -160,33 +160,6 @@ namespace ImageProcessUI
             ImageProcessBack.FullNameOfImagesToProcess.Clear();
             TextBoxListFiles.Text = "";
         }
-        private void InitPdfDocument()
-        {
-            ImageProcessBack.ThePdfDocument = new PdfDocument();
-        }
-        private void AddPageToPdfDocument(MemoryStream memoryStream)
-        {
-            try
-            {
-                XImage img = XImage.FromStream(memoryStream);
-                XGraphics xgr = XGraphics.FromPdfPage(ImageProcessBack.ThePdfDocument.AddPage(new PdfPage { Width = img.PointWidth, Height = img.PointHeight }));
-                xgr.DrawImage(img, 0, 0);
-                xgr.Dispose();
-            }
-            catch
-            {
-                Console.WriteLine("Image not supported by tool. Please convert before in jpg/gif/png/tiff");
-            }
-        }
-        private void SavePdfDocument()
-        {
-            string fullNameOfOneImage = ImageProcessBack.FullNameOfImagesToProcess[0];
-            string pathToSave = Path.GetDirectoryName(fullNameOfOneImage) + @"\SavePdf\";
-            Directory.CreateDirectory(pathToSave);
-            ImageProcessBack.ThePdfDocument.Save(pathToSave + "SavefromImages.pdf");
-            ImageProcessBack.ThePdfDocument.Close();
-            ImageProcessBack.ThePdfDocument.Dispose();
-        }
         private void ShowThumbnail(string filename)
         {
             //TODO
