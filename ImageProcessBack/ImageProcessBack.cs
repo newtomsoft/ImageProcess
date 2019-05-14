@@ -77,7 +77,7 @@ public class ImageProcessBack
             List<MemoryStream> memoryStreams = new List<MemoryStream>();
             try
             {
-                memoryStreams = Open(fullNameOfImage);
+                memoryStreams = OpenToMemoryStreams(fullNameOfImage);
             }
             catch
             {
@@ -89,7 +89,8 @@ public class ImageProcessBack
                 catch
                 {
                     Stream fs = File.OpenRead(fullNameOfImage);
-                    MemoryStream singleMemoryStream = fs as MemoryStream;
+                    MemoryStream singleMemoryStream = new MemoryStream();
+                    fs.CopyTo(singleMemoryStream);
                     memoryStreams.Add(singleMemoryStream);
                 }
             }
@@ -144,7 +145,7 @@ public class ImageProcessBack
         return contentEnd + listErrors;
     }
 
-    private List<MemoryStream> Open(string fullNameOfImage)
+    private List<MemoryStream> OpenToMemoryStreams(string fullNameOfImage)
     {
         List<MemoryStream> memoryStreams = new List<MemoryStream>();
         ZipArchive zip;
@@ -152,8 +153,11 @@ public class ImageProcessBack
         {
             zip = ZipFile.Open(fullNameOfImage, ZipArchiveMode.Read);
             foreach (var entrie in zip.Entries)
-            {
-                memoryStreams.Add((MemoryStream)entrie.Open());
+            {              
+                Stream stream = entrie.Open();
+                MemoryStream memoryStream = new MemoryStream();
+                stream.CopyTo(memoryStream);
+                memoryStreams.Add(memoryStream);
             }
         }
         catch (Exception ex)
