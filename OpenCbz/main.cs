@@ -10,7 +10,7 @@ namespace OpenCbz
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             ZipArchive zip;
             MemoryStream memoryStream = new MemoryStream();

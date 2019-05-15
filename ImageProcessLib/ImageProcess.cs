@@ -81,41 +81,53 @@ namespace ImageProcessLib
         private int GetNumberOfSimilarColumnsAtLeft(int stripLevel)
         {
             int i = 0;
-            bool similarColors = IsColumnHaveSimilarColors(0, stripLevel);
-            while (similarColors)
-            {
-                similarColors = IsColumnHaveSimilarColors(++i, stripLevel);
-            }
+            //bool similarColors = IsColumnHaveSimilarColors(0, stripLevel);
+            //while (similarColors)
+            //{
+            //    similarColors = IsColumnHaveSimilarColors(++i, stripLevel);
+            //}
+            ////return i;
+            while (IsColumnHaveSimilarColors(i++, stripLevel)) ;
             return i;
+
+
         }
         private int GetNumberOfSimilarColumnsAtRight(int stripLevel)
         {
             int i = Width - 1;
-            bool similarColors = IsColumnHaveSimilarColors(Width - 1, stripLevel);
-            while (similarColors)
-            {
-                similarColors = IsColumnHaveSimilarColors(--i, stripLevel);
-            }
+            //bool similarColors = IsColumnHaveSimilarColors(Width - 1, stripLevel);
+            //while (similarColors)
+            //{
+            //    similarColors = IsColumnHaveSimilarColors(--i, stripLevel);
+            //}
+            //return Width - i - 1;
+
+            while (IsColumnHaveSimilarColors(i--, stripLevel)) ;
             return Width - i - 1;
+
         }
         private int GetNumberOfSimilarLinesAtBottom(int stripLevel)
         {
             int i = Height - 1;
-            bool similarColors = IsLineHaveSimilarColors(Height - 1, stripLevel);
-            while (similarColors)
-            {
-                similarColors = IsLineHaveSimilarColors(--i, stripLevel);
-            }
+            //bool similarColors = IsLineHaveSimilarColors(Height - 1, stripLevel);
+            //while (similarColors)
+            //{
+            //    similarColors = IsLineHaveSimilarColors(--i, stripLevel);
+            //}
+            //return Height - i - 1;
+            while (IsLineHaveSimilarColors(i--, stripLevel));
             return Height - i - 1;
         }
         private int GetNumberOfSimilarLinesAtTop(int stripLevel)
         {
             int i = 0;
-            bool similarColors = IsLineHaveSimilarColors(0, stripLevel);
-            while (similarColors)
-            {
-                similarColors = IsLineHaveSimilarColors(++i, stripLevel);
-            }
+            //bool similarColors = IsLineHaveSimilarColors(0, stripLevel);
+            //while (similarColors)
+            //{
+            //    similarColors = IsLineHaveSimilarColors(++i, stripLevel);
+            //}
+            //return i;
+            while (IsLineHaveSimilarColors(i++, stripLevel)) ;
             return i;
         }
         private bool IsColumnHaveSimilarColors(int indexCol, int level)

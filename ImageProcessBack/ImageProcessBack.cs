@@ -160,7 +160,7 @@ public class ImageProcessBack
                 memoryStreams.Add(memoryStream);
             }
         }
-        catch (Exception ex)
+        catch 
         {
             throw;
         }
