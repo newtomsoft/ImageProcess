@@ -65,31 +65,10 @@ namespace ImageProcessUI
             if (checkbox.IsChecked == true)
             {
                 ImageProcessBack.DeleteStrip = true;
-                low.IsChecked = true;
             }
             else
             {
                 ImageProcessBack.DeleteStrip = false;
-                low.IsChecked = false;
-                medium.IsChecked = false;
-                high.IsChecked = false;
-            }
-        }
-        private void RadioButtonStrip(object sender, RoutedEventArgs e)
-        {
-            RadioButton buttonStrip = sender as RadioButton;
-            string strip = buttonStrip.Name;
-            switch (strip)
-            {
-                case "low":
-                    ImageProcessBack.StripLevel = 6;
-                    break;
-                case "medium":
-                    ImageProcessBack.StripLevel = 50;
-                    break;
-                case "high":
-                    ImageProcessBack.StripLevel = 100;
-                    break;
             }
         }
         private void RadioButtonFormat(object sender, RoutedEventArgs e)
@@ -148,6 +127,10 @@ namespace ImageProcessUI
             {
                 ImageProcessBack.DeleteOrigin = false;
             }
+        }
+        private void LevelDeleteStrips(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            ImageProcessBack.StripLevel = (int)slDeleteStrips.Value;
         }
         private void ButtonStartProcess(object sender, RoutedEventArgs e)
         {

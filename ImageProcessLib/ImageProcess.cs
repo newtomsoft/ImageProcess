@@ -104,7 +104,7 @@ namespace ImageProcessLib
         }
         private bool IsColumnHaveSimilarColors(int indexCol, int level)
         {
-            double minimumStdDeviation = level / 2 + 13;
+            double minimumStdDeviation = level;
             double step;
             int nbCount;
             int count;
@@ -164,7 +164,7 @@ namespace ImageProcessLib
         }
         private bool IsLineHaveSimilarColors(int indexLine, int level)
         {
-            double minimumStdDeviation = level / 2 + 13;
+            double minimumStdDeviation = level;
             double step;
             int nbCount;
             int count;

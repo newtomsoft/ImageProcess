@@ -10,9 +10,10 @@
         <StackPanel Margin="200,0,0,0">
             <Button HorizontalAlignment="Left"   Width="105" Click="ButtonFiles">Choisir fichier(s)</Button>
             <CheckBox Content="Effacer les bordures" HorizontalAlignment="Left"  VerticalAlignment="Top" Checked="CheckBoxStrips" Unchecked="CheckBoxStrips" RenderTransformOrigin="1.702,0.467"/>
-            <RadioButton Name="low" Checked="RadioButtonStrip" Margin="17,0,-17,0" >Low</RadioButton>
-            <RadioButton Name="medium"  Checked="RadioButtonStrip" Margin="17,0,-17,0" >Medium</RadioButton>
-            <RadioButton Name="high"  Checked="RadioButtonStrip" Margin="17,0,-17,0" >High</RadioButton>
+            <DockPanel VerticalAlignment="Center" Margin="10">
+                <TextBox Text="{Binding ElementName=slDeleteStrips, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
+                <Slider Maximum="100" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" Name="slDeleteStrips" ValueChanged="LevelDeleteStrips" />
+            </DockPanel>
             <CheckBox Content="Effacer original(aux)" HorizontalAlignment="Left"  VerticalAlignment="Top" Checked="CheckBoxDeleteOrigin" Unchecked="CheckBoxDeleteOrigin" RenderTransformOrigin="1.702,0.467"/>
             <Button HorizontalAlignment="Left"  Width="105" Click="ButtonStartProcess" Height="35">Lancer traitement</Button>
         </StackPanel>
