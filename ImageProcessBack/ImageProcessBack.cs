@@ -93,9 +93,6 @@ public class ImageProcessBack
                     break;
             }
 
-
-
-
             if (memorystreams.Count() != 0)
             {
                 int i = 0; // TODO cleancode
@@ -161,12 +158,9 @@ public class ImageProcessBack
                     {
                         File.Delete(fullNameOfImage);
                     }
-                }
+                
             }
-            catch (Exception ex)
-            {
-                listErrors += "Erreur : " + ex.Message + "sur image " + fullNameOfImage + "\n";
-            }
+            
         }
 
         if (PdfFusion)

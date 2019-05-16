@@ -265,8 +265,6 @@ namespace ImageProcessLib
                 bitmapTemp = Bitmap.Copy(left, Height, Width, 0);
                 Bitmap = bitmapTemp ?? throw new Exception("All culumns are similar");
                 Width = Bitmap.Width;
-
-                }
             }
         }
         public void SaveToWebpFree(string pathImageSave = @"Save_webp\")
