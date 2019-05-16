@@ -237,7 +237,7 @@ namespace ImageProcessLib
 
                     if (left + right < Width && bottom + top < Height)
                     {
-                        bool ret = Bitmap.EnlargeCanvas<bool>(-left, -top, -right, -bottom, null);
+                        Bitmap.EnlargeCanvas<bool>(-left, -top, -right, -bottom, null);
                         if (Width != Bitmap.Width || Height != Bitmap.Height)
                         {
                             Width = Bitmap.Width;
