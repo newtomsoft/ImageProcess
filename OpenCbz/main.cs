@@ -10,17 +10,18 @@ namespace OpenCbz
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             ZipArchive zip;
-            MemoryStream memoryStream;
+            MemoryStream memoryStream = new MemoryStream();
             try
             {
                 zip = ZipFile.Open("test.cbr", ZipArchiveMode.Read);
                 foreach (var entrie in zip.Entries)
                 {
                     Console.WriteLine(entrie.FullName);
-                    memoryStream = (MemoryStream)entrie.Open();
+                    Stream stream = entrie.Open();
+                    stream.CopyTo(memoryStream);
                 }
             }
             catch (Exception ex)

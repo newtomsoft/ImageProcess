@@ -26,7 +26,7 @@ public class PdfClown
         }
         catch
         {
-            return memoryStreams;
+            throw;
         }
         PageStamper stamper = new PageStamper();
         foreach (Page page in document.Pages)
@@ -43,7 +43,7 @@ public class PdfClown
     {
         List<MemoryStream> memoryStreams = new List<MemoryStream>();
         if (level == null)
-            return memoryStreams;
+            return null;
 
         while (level.MoveNext())
         {
@@ -59,14 +59,11 @@ public class PdfClown
                 {
                     continue;
                 }
-                SizeF? imageSize = null;
-                if (objectWrapper is ContentScanner.XObjectWrapper)
+                if (objectWrapper is ContentScanner.XObjectWrapper xObjectWrapper)
                 {
-                    ContentScanner.XObjectWrapper xObjectWrapper = (ContentScanner.XObjectWrapper)objectWrapper;
                     var xobject = xObjectWrapper.XObject;
                     if (xobject is ImageXObject)
                     {
-                        imageSize = xobject.Size;
                         PdfDataObject dataObject = xobject.BaseDataObject;
                         PdfDictionary header = ((PdfStream)dataObject).Header;
                         if (header.ContainsKey(PdfName.Type) && header[PdfName.Type].Equals(PdfName.XObject) && header[PdfName.Subtype].Equals(PdfName.Image))
@@ -76,15 +73,6 @@ public class PdfClown
                             memoryStreams.Add(memoryStream);
                         }
                     }
-                }
-                else if (objectWrapper is ContentScanner.InlineImageWrapper)
-                {
-                    InlineImage inlineImage = ((ContentScanner.InlineImageWrapper)objectWrapper).InlineImage;
-                    imageSize = inlineImage.Size; // Image native size.
-                }
-                if (imageSize.HasValue)
-                {
-                    RectangleF box = objectWrapper.Box.Value; // Image position (location and size) on the page.
                 }
             }
         }

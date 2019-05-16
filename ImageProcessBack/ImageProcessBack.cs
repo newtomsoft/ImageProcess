@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ImageProcessLib;
@@ -144,22 +145,27 @@ public class ImageProcessBack
                         }
                     }
 
-                    if (PdfFusion)
-                    {
-                        MemoryStream memoryStream = new MemoryStream();
-                        imageToProcess.SaveTo(memoryStream);
-                        AddPageToPdfDocument(memoryStream);
-                    }
-                    else
-                    {
-                        imageToProcess.SaveTo(ImageFormatToSave, PathSave);
-                    }
+                        if (PdfFusion)
+                        {
+                            MemoryStream memoryStream = new MemoryStream();
+                            imageToProcess.SaveTo(memoryStream);
+                            AddPageToPdfDocument(memoryStream);
+                        }
+                        else
+                        {
+                            imageToProcess.SaveTo(ImageFormatToSave, PathSave);
+                        }
 
+                    }
+                    if (DeleteOrigin)
+                    {
+                        File.Delete(fullNameOfImage);
+                    }
                 }
-                if (DeleteOrigin)
-                {
-                    File.Delete(fullNameOfImage);
-                }
+            }
+            catch (Exception ex)
+            {
+                listErrors += "Erreur : " + ex.Message + "sur image " + fullNameOfImage + "\n";
             }
         }
 
@@ -171,6 +177,28 @@ public class ImageProcessBack
         FullNameOfImagesToProcess.Clear();
         //TextBoxListFiles.Text = "";
         return contentEnd + listErrors;
+    }
+
+    private List<MemoryStream> OpenToMemoryStreams(string fullNameOfImage)
+    {
+        List<MemoryStream> memoryStreams = new List<MemoryStream>();
+        ZipArchive zip;
+        try
+        {
+            zip = ZipFile.Open(fullNameOfImage, ZipArchiveMode.Read);
+            foreach (var entrie in zip.Entries)
+            {              
+                Stream stream = entrie.Open();
+                MemoryStream memoryStream = new MemoryStream();
+                stream.CopyTo(memoryStream);
+                memoryStreams.Add(memoryStream);
+            }
+        }
+        catch 
+        {
+            throw;
+        }
+        return memoryStreams;
     }
 
     /// <summary>

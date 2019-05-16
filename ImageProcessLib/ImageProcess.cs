@@ -81,8 +81,12 @@ namespace ImageProcessLib
         private int GetNumberOfSimilarColumnsAtLeft(int stripLevel)
         {
             int i = 0;
-            while (IsColumnHaveSimilarColors(i++, stripLevel)) ;
-            return i - 1;
+            bool similarColors = IsColumnHaveSimilarColors(0, stripLevel);
+            while (similarColors)
+            {
+                similarColors = IsColumnHaveSimilarColors(++i, stripLevel);
+            }
+            return i;
         }
         private int GetNumberOfSimilarColumnsAtRight(int stripLevel)
         {
@@ -93,14 +97,22 @@ namespace ImageProcessLib
         private int GetNumberOfSimilarLinesAtBottom(int stripLevel)
         {
             int i = Height - 1;
-            while (IsLineHaveSimilarColors(i--, stripLevel)) ;
-            return Height - i - 2;
+            bool similarColors = IsLineHaveSimilarColors(Height - 1, stripLevel);
+            while (similarColors)
+            {
+                similarColors = IsLineHaveSimilarColors(--i, stripLevel);
+            }
+            return Height - i - 1;
         }
         private int GetNumberOfSimilarLinesAtTop(int stripLevel)
         {
             int i = 0;
-            while (IsLineHaveSimilarColors(i++, stripLevel)) ;
-            return i - 1;
+            bool similarColors = IsLineHaveSimilarColors(0, stripLevel);
+            while (similarColors)
+            {
+                similarColors = IsLineHaveSimilarColors(++i, stripLevel);
+            }
+            return i;
         }
         private bool IsColumnHaveSimilarColors(int indexCol, int level)
         {
@@ -227,32 +239,32 @@ namespace ImageProcessLib
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
             {
                 int left, top, right, bottom;
-                bool toDelete = true;
-                while (toDelete)
-                {
-                    left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
-                    top = GetNumberOfSimilarLinesAtTop(stripLevel);
-                    right = GetNumberOfSimilarColumnsAtRight(stripLevel);
-                    bottom = GetNumberOfSimilarLinesAtBottom(stripLevel);
+                FreeImageBitmap bitmapTemp;
 
-                    if (left + right < Width && bottom + top < Height)
-                    {
-                        Bitmap.EnlargeCanvas<bool>(-left, -top, -right, -bottom, null);
-                        if (Width != Bitmap.Width || Height != Bitmap.Height)
-                        {
-                            Width = Bitmap.Width;
-                            Height = Bitmap.Height;
-                            toDelete = true;
-                        }
-                        else
-                        {
-                            toDelete = false;
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("All pixels are similar");
-                    }
+                left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
+                bitmapTemp = Bitmap.Copy(left, Height, Width, 0);
+                Bitmap = bitmapTemp ?? throw new Exception("All culumns are similar");
+                Width = Bitmap.Width;
+
+                right = GetNumberOfSimilarColumnsAtRight(stripLevel);
+                bitmapTemp = Bitmap.Copy(0, Height, Width - right, 0);
+                Bitmap = bitmapTemp ?? throw new Exception("All culumns are similar");
+                Width = Bitmap.Width;
+
+                bottom = GetNumberOfSimilarLinesAtBottom(stripLevel);
+                bitmapTemp = Bitmap.Copy(0, Height, Width, bottom);
+                Bitmap = bitmapTemp ?? throw new Exception("All lines are similar");
+                Height = Bitmap.Height;
+
+                top = GetNumberOfSimilarLinesAtTop(stripLevel);
+                bitmapTemp = Bitmap.Copy(0, Height - top, Width, 0);
+                Bitmap = bitmapTemp ?? throw new Exception("All lines are similar");
+                Height = Bitmap.Height;
+
+                left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
+                bitmapTemp = Bitmap.Copy(left, Height, Width, 0);
+                Bitmap = bitmapTemp ?? throw new Exception("All culumns are similar");
+                Width = Bitmap.Width;
 
                 }
             }

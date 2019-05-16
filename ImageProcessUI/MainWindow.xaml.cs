@@ -31,7 +31,7 @@ namespace ImageProcessUI
     {
 
         #region members
-        private ImageProcessBack ImageProcessBack;
+        private readonly ImageProcessBack ImageProcessBack;
         #endregion
         public MainWindow()
         {
@@ -41,10 +41,12 @@ namespace ImageProcessUI
         }
         private void ButtonFiles(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Images files |*.jpg;*.webp;*.bmp;*.jp2;*.png;*.tif;*.gif;*.pdf|" + "All files |*.*";
-            openFileDialog.Multiselect = true;
-            openFileDialog.Title = "Choisir les images à traiter";
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "Images files |*.jpg;*.webp;*.bmp;*.jp2;*.png;*.tif;*.gif;*.pdf|" + "All files |*.*",
+                Multiselect = true,
+                Title = "Choisir les images à traiter"
+            };
             DialogResult dr = openFileDialog.ShowDialog();
             if (dr == System.Windows.Forms.DialogResult.OK)
             {
