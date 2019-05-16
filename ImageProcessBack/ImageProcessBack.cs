@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using ImageProcessLib;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
@@ -73,46 +74,34 @@ public class ImageProcessBack
         }
         foreach (string fullNameOfImage in FullNameOfImagesToProcess)
         {
-            try
+            string mimeType = MimeType.getFromFile(fullNameOfImage);
+            List<MemoryStream> memorystreams = new List<MemoryStream>();
+            switch (mimeType)
             {
-                PdfClown pdfFile = new PdfClown();
-                List<MemoryStream> memorystreams = pdfFile.InitiateProcess(fullNameOfImage);
-                if (memorystreams.Count() != 0)
-                {
-                    int i = 0; // TODO cleancode
-                    foreach (MemoryStream memorystream in memorystreams)
-                    {
-                        i++;
-                        using (ImageProcess imageToProcess = new ImageProcess(memorystream, fullNameOfImage + i.ToString()))
-                        {
-                            if (DeleteStrip)
-                            {
-                                try
-                                {
-                                    imageToProcess.DeleteStrips(StripLevel);
-                                }
-                                catch (Exception ex)
-                                {
-                                    listErrors += "Erreur : " + ex.Message + " sur image " + fullNameOfImage + " => bordures inchangées\n";
-                                }
-                            }
+                case "application/pdf":
+                    PdfClown pdfFile = new PdfClown();
+                    memorystreams = pdfFile.InitiateProcess(fullNameOfImage);
+                    break;
+                case var someVal when new Regex(@"application/x-zip.*").IsMatch(someVal):
+                    int b = 6;
+                    break;
+                case var someVal when new Regex(@"image/.*").IsMatch(someVal):
+                    int c = 5;
+                    break;
+                default:
+                    break;
+            }
 
-                            if (PdfFusion)
-                            {
-                                MemoryStream memoryStream = new MemoryStream();
-                                imageToProcess.SaveTo(memoryStream);
-                                AddPageToPdfDocument(memoryStream);
-                            }
-                            else
-                            {
-                                imageToProcess.SaveTo(ImageFormatToSave, PathSave);
-                            }
-                        }
-                    }
-                }
-                else
+
+
+
+            if (memorystreams.Count() != 0)
+            {
+                int i = 0; // TODO cleancode
+                foreach (MemoryStream memorystream in memorystreams)
                 {
-                    using (ImageProcess imageToProcess = new ImageProcess(fullNameOfImage))
+                    i++;
+                    using (ImageProcess imageToProcess = new ImageProcess(memorystream, fullNameOfImage + i.ToString()))
                     {
                         if (DeleteStrip)
                         {
@@ -136,17 +125,41 @@ public class ImageProcessBack
                         {
                             imageToProcess.SaveTo(ImageFormatToSave, PathSave);
                         }
-
-                    }
-                    if (DeleteOrigin)
-                    {
-                        File.Delete(fullNameOfImage);
                     }
                 }
             }
-            catch (Exception ex)
+            else
             {
-                listErrors += "Erreur : " + ex.Message + "sur image " + fullNameOfImage + "\n";
+                using (ImageProcess imageToProcess = new ImageProcess(fullNameOfImage))
+                {
+                    if (DeleteStrip)
+                    {
+                        try
+                        {
+                            imageToProcess.DeleteStrips(StripLevel);
+                        }
+                        catch (Exception ex)
+                        {
+                            listErrors += "Erreur : " + ex.Message + " sur image " + fullNameOfImage + " => bordures inchangées\n";
+                        }
+                    }
+
+                    if (PdfFusion)
+                    {
+                        MemoryStream memoryStream = new MemoryStream();
+                        imageToProcess.SaveTo(memoryStream);
+                        AddPageToPdfDocument(memoryStream);
+                    }
+                    else
+                    {
+                        imageToProcess.SaveTo(ImageFormatToSave, PathSave);
+                    }
+
+                }
+                if (DeleteOrigin)
+                {
+                    File.Delete(fullNameOfImage);
+                }
             }
         }
 
@@ -159,6 +172,7 @@ public class ImageProcessBack
         //TextBoxListFiles.Text = "";
         return contentEnd + listErrors;
     }
+
     /// <summary>
     /// create new pdf document to put image into it after that
     /// </summary>
