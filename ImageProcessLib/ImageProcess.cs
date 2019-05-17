@@ -62,7 +62,7 @@ namespace ImageProcessLib
                     throw e;
                 }
             }
-            
+
         }
         public ImageProcess(MemoryStream theStream, string fullNameOfImage)
         {
@@ -82,7 +82,7 @@ namespace ImageProcessLib
         {
             int i = 0;
             while (IsColumnHaveSimilarColors(i++, stripLevel)) ;
-            return i-1;
+            return i - 1;
         }
         private int GetNumberOfSimilarColumnsAtRight(int stripLevel)
         {
@@ -90,21 +90,21 @@ namespace ImageProcessLib
             while (IsColumnHaveSimilarColors(i--, stripLevel)) ;
             return Width - i - 2;
         }
-        private int GetNumberOfSimilarLinesAtBottom(int stripLevel)
+        private int GetNumberOfSimilarLinesAtTop(int stripLevel)
         {
             int i = Height - 1;
-            while (IsLineHaveSimilarColors(i--, stripLevel));
+            while (IsLineHaveSimilarColors(i--, stripLevel)) ;
             return Height - i - 2;
         }
-        private int GetNumberOfSimilarLinesAtTop(int stripLevel)
+        private int GetNumberOfSimilarLinesAtBottom(int stripLevel)
         {
             int i = 0;
             while (IsLineHaveSimilarColors(i++, stripLevel)) ;
-            return i-1;
+            return i - 1;
         }
         private bool IsColumnHaveSimilarColors(int indexCol, int level)
         {
-            double minimumStdDeviation = level / 2 + 13;
+            double minimumStdDeviation = level;
             double step;
             int nbCount;
             int count;
@@ -153,7 +153,7 @@ namespace ImageProcessLib
                 jDouble += step;
             }
             double stdDeviationR = Math.Sqrt(R2 / nbCount), stdDeviationG = Math.Sqrt(G2 / nbCount), stdDeviationB = Math.Sqrt(B2 / nbCount);
-            if (stdDeviationR < minimumStdDeviation && stdDeviationG < minimumStdDeviation && stdDeviationB < minimumStdDeviation)
+            if (stdDeviationR <= minimumStdDeviation && stdDeviationG <= minimumStdDeviation && stdDeviationB <= minimumStdDeviation)
             {
                 return true;
             }
@@ -164,7 +164,7 @@ namespace ImageProcessLib
         }
         private bool IsLineHaveSimilarColors(int indexLine, int level)
         {
-            double minimumStdDeviation = level / 2 + 13;
+            double minimumStdDeviation = level;
             double step;
             int nbCount;
             int count;
@@ -211,8 +211,8 @@ namespace ImageProcessLib
                 B2 += Math.Pow(colorPixel.B - averageB, 2);
                 iDouble += step;
             }
-            double stdDeviationR = Math.Sqrt(R2 / nbCount), stdDeviationG = Math.Sqrt(G2 / nbCount), stdDeviationB = Math.Sqrt(B2 / Width);
-            if (stdDeviationR < minimumStdDeviation && stdDeviationG < minimumStdDeviation && stdDeviationB < minimumStdDeviation)
+            double stdDeviationA = Math.Sqrt(A2 / nbCount), stdDeviationR = Math.Sqrt(R2 / nbCount), stdDeviationG = Math.Sqrt(G2 / nbCount), stdDeviationB = Math.Sqrt(B2 / Width);
+            if (stdDeviationA < minimumStdDeviation && stdDeviationR < minimumStdDeviation && stdDeviationG < minimumStdDeviation && stdDeviationB < minimumStdDeviation)
             {
                 return true;
             }
@@ -227,32 +227,32 @@ namespace ImageProcessLib
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
             {
                 int left, top, right, bottom;
-                bool toDelete = true;
-                while (toDelete)
-                {
-                    left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
-                    top = GetNumberOfSimilarLinesAtTop(stripLevel);
-                    right = GetNumberOfSimilarColumnsAtRight(stripLevel);
-                    bottom = GetNumberOfSimilarLinesAtBottom(stripLevel);
-                    
-                    if (left + right < Width && bottom + top < Height)
-                    {
-                        bool ret = Bitmap.EnlargeCanvas<bool>(-left, -top, -right, -bottom, null);
-                        if(Width != Bitmap.Width || Height != Bitmap.Height)
-                        {
-                            Width = Bitmap.Width;
-                            Height = Bitmap.Height;
-                            toDelete = true; //TODO
-                        }
-                        else
-                        {
-                            toDelete = false;
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("All pixels are similar");
-                    }
+                FreeImageBitmap bitmapTemp;
+
+                left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
+                bitmapTemp = Bitmap.Copy(left, Height, Width, 0);
+                Bitmap = bitmapTemp ?? throw new Exception("All culumns are similar");
+                Width = Bitmap.Width;
+
+                right = GetNumberOfSimilarColumnsAtRight(stripLevel);
+                bitmapTemp = Bitmap.Copy(0, Height, Width - right, 0);
+                Bitmap = bitmapTemp ?? throw new Exception("All culumns are similar");
+                Width = Bitmap.Width;
+
+                bottom = GetNumberOfSimilarLinesAtBottom(stripLevel);
+                bitmapTemp = Bitmap.Copy(0, Height, Width, bottom);
+                Bitmap = bitmapTemp ?? throw new Exception("All lines are similar");
+                Height = Bitmap.Height;
+
+                top = GetNumberOfSimilarLinesAtTop(stripLevel);
+                bitmapTemp = Bitmap.Copy(0, Height - top, Width, 0);
+                Bitmap = bitmapTemp ?? throw new Exception("All lines are similar");
+                Height = Bitmap.Height;
+
+                left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
+                bitmapTemp = Bitmap.Copy(left, Height, Width, 0);
+                Bitmap = bitmapTemp ?? throw new Exception("All culumns are similar");
+                Width = Bitmap.Width;
 
                 }
             }
@@ -370,7 +370,7 @@ namespace ImageProcessLib
                 try
                 {
                     string fullNameToSave = NameOfDirectory + pathImageSave + NameOfFile + fileExtension;
-                    if(outputFormat!= FREE_IMAGE_FORMAT.FIF_UNKNOWN)
+                    if (outputFormat != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
                     {
                         Bitmap.Save(fullNameToSave, outputFormat);
                     }
@@ -388,12 +388,12 @@ namespace ImageProcessLib
                         xgr.Dispose();
                         filestream.Dispose();
                         File.Delete(fullNameToSave);
-                        thePdfDocument.Save(NameOfDirectory + pathImageSave + NameOfFile +".pdf");
+                        thePdfDocument.Save(NameOfDirectory + pathImageSave + NameOfFile + ".pdf");
                         thePdfDocument.Close();
                         thePdfDocument.Dispose();
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     throw ex;
                 }
@@ -402,7 +402,7 @@ namespace ImageProcessLib
         public void Resize(int width, int height)
         {
             Size size = new Size(width, height);
-            Bitmap.Rescale(size,FREE_IMAGE_FILTER.FILTER_LANCZOS3);
+            Bitmap.Rescale(size, FREE_IMAGE_FILTER.FILTER_LANCZOS3);
         }
     }
 }
