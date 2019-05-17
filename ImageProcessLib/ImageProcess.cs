@@ -296,7 +296,7 @@ namespace ImageProcessLib
                 bitmap.Dispose();
             }
         }
-        public void SaveTo(MemoryStream memoryStream)
+        public void Save(MemoryStream memoryStream)
         {
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
             {

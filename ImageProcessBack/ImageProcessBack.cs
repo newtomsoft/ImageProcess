@@ -115,7 +115,7 @@ public class ImageProcessBack
                         if (PdfFusion)
                         {
                             MemoryStream memoryStream = new MemoryStream();
-                            imageToProcess.SaveTo(memoryStream);
+                            imageToProcess.Save(memoryStream);
                             AddPageToPdfDocument(memoryStream);
                         }
                         else
@@ -144,7 +144,7 @@ public class ImageProcessBack
                         if (PdfFusion)
                         {
                             MemoryStream memoryStream = new MemoryStream();
-                            imageToProcess.SaveTo(memoryStream);
+                            imageToProcess.Save(memoryStream);
                             AddPageToPdfDocument(memoryStream);
                         }
                         else
