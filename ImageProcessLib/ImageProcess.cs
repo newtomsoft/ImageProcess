@@ -242,7 +242,7 @@ namespace ImageProcessLib
                         {
                             Width = Bitmap.Width;
                             Height = Bitmap.Height;
-                            toDelete = true;
+                            toDelete = false; //TODO
                         }
                         else
                         {
