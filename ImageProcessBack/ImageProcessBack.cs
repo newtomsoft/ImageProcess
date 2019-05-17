@@ -68,7 +68,6 @@ public class ImageProcessBack
             listErrors = "Erreur\nMerci de choisir des images";
             return listErrors;
         }
-
         if (PdfFusion)
         {
             InitPdfDocument();
@@ -81,7 +80,7 @@ public class ImageProcessBack
             {
                 case "application/pdf":
                     PdfClown pdfFile = new PdfClown();
-                    memorystreams = pdfFile.InitiateProcess(fullNameOfImage);
+                    memorystreams = pdfFile.GetImages(fullNameOfImage);
                     break;
                 case var someVal when new Regex(@"application/x-zip.*").IsMatch(someVal):
                     int b = 6;
