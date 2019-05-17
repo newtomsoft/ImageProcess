@@ -35,32 +35,14 @@ namespace ImageProcessLib
                 Width = Bitmap.Width;
                 Height = Bitmap.Height;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                try
-                {
-                    PdfDocument pdfDocument = PdfReader.Open(FullNameOfFile);
-                    PdfPages allPdfPages = pdfDocument.Pages;
-                    foreach (PdfPage pdfPage in allPdfPages)
-                    {
-                        var elements = pdfPage.Elements;
-                        foreach (var element in elements)
-                        {
-                            var toto1 = element.Key;
-                            var toto2 = element.Value;
-                        }
-                        var key_PdfItem = pdfPage.GetEnumerator();
-                    }
-                }
-                catch (Exception e)
-                {
-                    FormatImage = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
-                    Width = 0;
-                    Height = 0;
-                    throw e;
-                }
-            }
 
+                FormatImage = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
+                Width = 0;
+                Height = 0;
+                throw e;
+            }
         }
         public ImageProcess(MemoryStream theStream, string fullNameOfImage)
         {
@@ -68,8 +50,8 @@ namespace ImageProcessLib
             var indexSlash = FullNameOfFile.LastIndexOf('\\');
             NameOfDirectory = FullNameOfFile.Substring(0, indexSlash + 1);
             NameOfFile = FullNameOfFile.Substring(indexSlash + 1);
-
             Bitmap = new FreeImageBitmap(theStream, FREE_IMAGE_FORMAT.FIF_JPEG);
+            Bitmap.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP);
             FormatImage = Bitmap.ImageFormat;
             Width = Bitmap.Width;
             Height = Bitmap.Height;
