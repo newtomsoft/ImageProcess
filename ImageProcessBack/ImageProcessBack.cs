@@ -76,29 +76,61 @@ public class ImageProcessBack
         {
             string mimeType = MimeType.getFromFile(fullNameOfImage);
             List<MemoryStream> memorystreams = new List<MemoryStream>();
+            FileFormat fileToReadType = FileFormat.Unknow;
             switch (mimeType)
             {
                 case "application/pdf":
                     PdfClown pdfFile = new PdfClown();
                     memorystreams = pdfFile.GetImages(fullNameOfImage);
+                    fileToReadType = FileFormat.Pdf;
                     break;
                 case var someVal when new Regex(@"application/x-zip.*").IsMatch(someVal):
-                    int b = 6;
+                    fileToReadType = FileFormat.Zip;
                     break;
                 case var someVal when new Regex(@"image/.*").IsMatch(someVal):
-                    int c = 5;
+                    fileToReadType = FileFormat.Image;
                     break;
                 default:
                     break;
             }
 
-            if (memorystreams.Count() != 0)
+            switch (fileToReadType)
             {
-                int i = 0; // TODO cleancode
-                foreach (MemoryStream memorystream in memorystreams)
-                {
-                    i++;
-                    using (ImageProcess imageToProcess = new ImageProcess(memorystream, fullNameOfImage + i.ToString()))
+                case FileFormat.Pdf:
+                    int i = 0; // TODO cleancode
+                    foreach (MemoryStream memorystream in memorystreams)
+                    {
+                        i++;
+                        using (ImageProcess imageToProcess = new ImageProcess(memorystream, fullNameOfImage + i.ToString()))
+                        {
+                            if (DeleteStrip)
+                            {
+                                try
+                                {
+                                    imageToProcess.DeleteStrips(StripLevel);
+                                }
+                                catch (Exception ex)
+                                {
+                                    listErrors += "Erreur : " + ex.Message + " sur " + fullNameOfImage + "(image " + i + ") => bordures inchangées\n";
+                                }
+                            }
+
+                            if (PdfFusion)
+                            {
+                                MemoryStream memoryStream = new MemoryStream();
+                                imageToProcess.Save(memoryStream);
+                                AddPageToPdfDocument(memoryStream);
+                            }
+                            else
+                            {
+                                imageToProcess.SaveTo(ImageFormatToSave, PathSave);
+                            }
+                        }
+                    }
+                    break;
+
+                case FileFormat.Image:
+                    using (ImageProcess imageToProcess = new ImageProcess(fullNameOfImage))
                     {
                         if (DeleteStrip)
                         {
@@ -122,44 +154,20 @@ public class ImageProcessBack
                         {
                             imageToProcess.SaveTo(ImageFormatToSave, PathSave);
                         }
-                    }
-                }
-            }
-            else
-            {
-                using (ImageProcess imageToProcess = new ImageProcess(fullNameOfImage))
-                {
-                    if (DeleteStrip)
-                    {
-                        try
-                        {
-                            imageToProcess.DeleteStrips(StripLevel);
-                        }
-                        catch (Exception ex)
-                        {
-                            listErrors += "Erreur : " + ex.Message + " sur image " + fullNameOfImage + " => bordures inchangées\n";
-                        }
-                    }
-
-                        if (PdfFusion)
-                        {
-                            MemoryStream memoryStream = new MemoryStream();
-                            imageToProcess.Save(memoryStream);
-                            AddPageToPdfDocument(memoryStream);
-                        }
-                        else
-                        {
-                            imageToProcess.SaveTo(ImageFormatToSave, PathSave);
-                        }
 
                     }
                     if (DeleteOrigin)
                     {
                         File.Delete(fullNameOfImage);
                     }
-                
+                    break;
+
+                case FileFormat.Zip:
+
+                    break;
             }
-            
+
+
         }
 
         if (PdfFusion)
@@ -180,14 +188,14 @@ public class ImageProcessBack
         {
             zip = ZipFile.Open(fullNameOfImage, ZipArchiveMode.Read);
             foreach (var entrie in zip.Entries)
-            {              
+            {
                 Stream stream = entrie.Open();
                 MemoryStream memoryStream = new MemoryStream();
                 stream.CopyTo(memoryStream);
                 memoryStreams.Add(memoryStream);
             }
         }
-        catch 
+        catch
         {
             throw;
         }
