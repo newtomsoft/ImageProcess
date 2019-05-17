@@ -85,6 +85,7 @@ public class ImageProcessBack
                     fileToReadType = FileFormat.Pdf;
                     break;
                 case var someVal when new Regex(@"application/x-zip.*").IsMatch(someVal):
+                    memorystreams = OpenZipToMemoryStreams(fullNameOfImage);
                     fileToReadType = FileFormat.Zip;
                     break;
                 case var someVal when new Regex(@"image/.*").IsMatch(someVal):
@@ -97,6 +98,7 @@ public class ImageProcessBack
             switch (fileToReadType)
             {
                 case FileFormat.Pdf:
+                case FileFormat.Zip:
                     int i = 0; // TODO cleancode
                     foreach (MemoryStream memorystream in memorystreams)
                     {
@@ -162,9 +164,7 @@ public class ImageProcessBack
                     }
                     break;
 
-                case FileFormat.Zip:
 
-                    break;
             }
 
 
@@ -180,7 +180,7 @@ public class ImageProcessBack
         return contentEnd + listErrors;
     }
 
-    private List<MemoryStream> OpenToMemoryStreams(string fullNameOfImage)
+    private List<MemoryStream> OpenZipToMemoryStreams(string fullNameOfImage)
     {
         List<MemoryStream> memoryStreams = new List<MemoryStream>();
         ZipArchive zip;

@@ -51,6 +51,7 @@ namespace ImageProcessLib
             NameOfDirectory = FullNameOfFile.Substring(0, indexSlash + 1);
             NameOfFile = FullNameOfFile.Substring(indexSlash + 1);
             Bitmap = new FreeImageBitmap(theStream, FREE_IMAGE_FORMAT.FIF_JPEG);
+            //Bitmap = new FreeImageBitmap(theStream);
             Bitmap.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP);
             FormatImage = Bitmap.ImageFormat;
             Width = Bitmap.Width;
