@@ -94,7 +94,7 @@ namespace ImageProcessLib
             while (IsColumnHaveSimilarColors(i--, stripLevel)) ;
             return Width - i - 2;
         }
-        private int GetNumberOfSimilarLinesAtBottom(int stripLevel)
+        private int GetNumberOfSimilarLinesAtTop(int stripLevel)
         {
             int i = Height - 1;
             bool similarColors = IsLineHaveSimilarColors(Height - 1, stripLevel);
@@ -104,7 +104,7 @@ namespace ImageProcessLib
             }
             return Height - i - 1;
         }
-        private int GetNumberOfSimilarLinesAtTop(int stripLevel)
+        private int GetNumberOfSimilarLinesAtBottom(int stripLevel)
         {
             int i = 0;
             bool similarColors = IsLineHaveSimilarColors(0, stripLevel);
@@ -165,7 +165,7 @@ namespace ImageProcessLib
                 jDouble += step;
             }
             double stdDeviationR = Math.Sqrt(R2 / nbCount), stdDeviationG = Math.Sqrt(G2 / nbCount), stdDeviationB = Math.Sqrt(B2 / nbCount);
-            if (stdDeviationR < minimumStdDeviation && stdDeviationG < minimumStdDeviation && stdDeviationB < minimumStdDeviation)
+            if (stdDeviationR <= minimumStdDeviation && stdDeviationG <= minimumStdDeviation && stdDeviationB <= minimumStdDeviation)
             {
                 return true;
             }
@@ -224,7 +224,7 @@ namespace ImageProcessLib
                 iDouble += step;
             }
             double stdDeviationR = Math.Sqrt(R2 / nbCount), stdDeviationG = Math.Sqrt(G2 / nbCount), stdDeviationB = Math.Sqrt(B2 / Width);
-            if (stdDeviationR < minimumStdDeviation && stdDeviationG < minimumStdDeviation && stdDeviationB < minimumStdDeviation)
+            if (stdDeviationR <= minimumStdDeviation && stdDeviationG <= minimumStdDeviation && stdDeviationB <= minimumStdDeviation)
             {
                 return true;
             }
