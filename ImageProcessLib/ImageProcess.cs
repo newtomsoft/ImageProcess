@@ -31,11 +31,7 @@ namespace ImageProcessLib
             {
                 Bitmap = new FreeImageBitmap(FullNameOfFile);
                 FormatImage = Bitmap.ImageFormat;
-                //FreeImageBitmap bitmapTemp = new FreeImageBitmap(Bitmap.GetColorConvertedInstance(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP));
                 Bitmap.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP);
-
-                //Bitmap.Dispose();
-                //Bitmap = bitmapTemp;
                 Width = Bitmap.Width;
                 Height = Bitmap.Height;
             }
