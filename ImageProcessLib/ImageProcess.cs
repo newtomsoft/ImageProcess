@@ -234,7 +234,7 @@ namespace ImageProcessLib
                     top = GetNumberOfSimilarLinesAtTop(stripLevel);
                     right = GetNumberOfSimilarColumnsAtRight(stripLevel);
                     bottom = GetNumberOfSimilarLinesAtBottom(stripLevel);
-
+                    
                     if (left + right < Width && bottom + top < Height)
                     {
                         Bitmap.EnlargeCanvas<bool>(-left, -top, -right, -bottom, null);
