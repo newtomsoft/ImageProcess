@@ -90,13 +90,13 @@ namespace ImageProcessLib
             while (IsColumnHaveSimilarColors(i--, stripLevel)) ;
             return Width - i - 2;
         }
-        private int GetNumberOfSimilarLinesAtBottom(int stripLevel)
+        private int GetNumberOfSimilarLinesAtTop(int stripLevel)
         {
             int i = Height - 1;
             while (IsLineHaveSimilarColors(i--, stripLevel)) ;
             return Height - i - 2;
         }
-        private int GetNumberOfSimilarLinesAtTop(int stripLevel)
+        private int GetNumberOfSimilarLinesAtBottom(int stripLevel)
         {
             int i = 0;
             while (IsLineHaveSimilarColors(i++, stripLevel)) ;
@@ -242,7 +242,7 @@ namespace ImageProcessLib
                         {
                             Width = Bitmap.Width;
                             Height = Bitmap.Height;
-                            toDelete = true; //TODO
+                            toDelete = true;
                         }
                         else
                         {
