@@ -77,6 +77,10 @@ public class ImageProcessBack
             string mimeType = MimeType.getFromFile(fullNameOfImage);
             List<MemoryStream> memorystreams = new List<MemoryStream>();
             FileFormat fileToReadType = FileFormat.Unknow;
+
+
+            // TODO clean code 2 switchs / factorize
+            // TODO use temp file for archives / pdf ?
             switch (mimeType)
             {
                 case "application/pdf":
