@@ -24,9 +24,8 @@ namespace ImageProcessLib
         public ImageProcess(string fullNameOfFile)
         {
             FullNameOfFile = fullNameOfFile;
-            var indexSlash = FullNameOfFile.LastIndexOf('\\');
-            NameOfDirectory = FullNameOfFile.Substring(0, indexSlash + 1);
-            NameOfFile = FullNameOfFile.Substring(indexSlash + 1);
+            NameOfDirectory = Path.GetDirectoryName(FullNameOfFile) + "\\";
+            NameOfFile = Path.GetFileName(FullNameOfFile);
             try
             {
                 Bitmap = new FreeImageBitmap(FullNameOfFile);
@@ -47,9 +46,8 @@ namespace ImageProcessLib
         public ImageProcess(MemoryStream theStream, string fullNameOfImage)
         {
             FullNameOfFile = fullNameOfImage;
-            var indexSlash = FullNameOfFile.LastIndexOf('\\');
-            NameOfDirectory = FullNameOfFile.Substring(0, indexSlash + 1);
-            NameOfFile = FullNameOfFile.Substring(indexSlash + 1);
+            NameOfDirectory = Path.GetDirectoryName(FullNameOfFile) + "\\";
+            NameOfFile = Path.GetFileName(FullNameOfFile);
             Bitmap = new FreeImageBitmap(theStream, FREE_IMAGE_FORMAT.FIF_JPEG);
             //Bitmap = new FreeImageBitmap(theStream);
             Bitmap.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP);
