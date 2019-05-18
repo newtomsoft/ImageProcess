@@ -76,6 +76,7 @@ public class ImageProcessBack
         {
             string mimeType = MimeType.getFromFile(fullNameOfImage);
             List<MemoryStream> memorystreams = new List<MemoryStream>();
+            List<string> fullNamesOfimages = new List<string>();
             FileFormat fileToReadType = FileFormat.Unknow;
 
 
@@ -90,6 +91,8 @@ public class ImageProcessBack
                     break;
                 case var someVal when new Regex(@"application/x-zip.*").IsMatch(someVal):
                     memorystreams = OpenZipToMemoryStreams(fullNameOfImage);
+                    fullNamesOfimages = OpenZipToTempFiles(fullNameOfImage);
+                    // TODO : exploit files created instrad of memorystreams
                     fileToReadType = FileFormat.Zip;
                     break;
                 case var someVal when new Regex(@"image/.*").IsMatch(someVal):
@@ -204,6 +207,31 @@ public class ImageProcessBack
             throw;
         }
         return memoryStreams;
+    }
+    private List<string> OpenZipToTempFiles(string fullNameOfImage)
+    {
+        List<string> fullNamesOfFiles = new List<string>();
+        ZipArchive zip;
+        try
+        {
+            zip = ZipFile.Open(fullNameOfImage, ZipArchiveMode.Read);
+            foreach (var entrie in zip.Entries)
+            {
+                string fileName = entrie.FullName;
+                Stream stream = entrie.Open();
+                fullNamesOfFiles.Add(fileName);
+                using (FileStream fileStream = new FileStream(Path.Combine(Path.GetTempPath(),fileName), FileMode.Create, FileAccess.Write))
+                {
+                    stream.CopyTo(fileStream);
+                }
+
+            }
+        }
+        catch
+        {
+            throw;
+        }
+        return fullNamesOfFiles;
     }
 
     /// <summary>
