@@ -220,32 +220,34 @@ namespace ImageProcessLib
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
             {
                 int left, top, right, bottom;
-                FreeImageBitmap bitmapTemp;
+                bool toDelete = true;
+                while (toDelete)
+                {
+                    left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
+                    top = GetNumberOfSimilarLinesAtTop(stripLevel);
+                    right = GetNumberOfSimilarColumnsAtRight(stripLevel);
+                    bottom = GetNumberOfSimilarLinesAtBottom(stripLevel);
 
-                left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
-                bitmapTemp = Bitmap.Copy(left, Height, Width, 0);
-                Bitmap = bitmapTemp ?? throw new Exception("All culumns are similar");
-                Width = Bitmap.Width;
+                    if (left + right < Width && bottom + top < Height)
+                    {
+                        Bitmap.EnlargeCanvas<bool>(-left, -top, -right, -bottom, null);
+                        if (Width != Bitmap.Width || Height != Bitmap.Height)
+                        {
+                            Width = Bitmap.Width;
+                            Height = Bitmap.Height;
+                            toDelete = true;
+                        }
+                        else
+                        {
+                            toDelete = false;
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("All pixels are similar");
+                    }
 
-                right = GetNumberOfSimilarColumnsAtRight(stripLevel);
-                bitmapTemp = Bitmap.Copy(0, Height, Width - right, 0);
-                Bitmap = bitmapTemp ?? throw new Exception("All culumns are similar");
-                Width = Bitmap.Width;
-
-                bottom = GetNumberOfSimilarLinesAtBottom(stripLevel);
-                bitmapTemp = Bitmap.Copy(0, Height, Width, bottom);
-                Bitmap = bitmapTemp ?? throw new Exception("All lines are similar");
-                Height = Bitmap.Height;
-
-                top = GetNumberOfSimilarLinesAtTop(stripLevel);
-                bitmapTemp = Bitmap.Copy(0, Height - top, Width, 0);
-                Bitmap = bitmapTemp ?? throw new Exception("All lines are similar");
-                Height = Bitmap.Height;
-
-                left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
-                bitmapTemp = Bitmap.Copy(left, Height, Width, 0);
-                Bitmap = bitmapTemp ?? throw new Exception("All culumns are similar");
-                Width = Bitmap.Width;
+                }
             }
         }
         public void SaveToWebpFree(string pathImageSave = @"Save_webp\")
