@@ -24,7 +24,7 @@ namespace ImageProcessLib
         public ImageProcess(string fullNameOfFile)
         {
             FullNameOfFile = fullNameOfFile;
-            NameOfDirectory = Path.GetDirectoryName(FullNameOfFile) + "\\";
+            NameOfDirectory = Path.GetDirectoryName(FullNameOfFile);
             NameOfFile = Path.GetFileName(FullNameOfFile);
             try
             {
@@ -253,7 +253,7 @@ namespace ImageProcessLib
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
             {
                 string fileExtension = ".webp";
-                Directory.CreateDirectory(NameOfDirectory + pathImageSave);
+                Directory.CreateDirectory(Path.Combine(NameOfDirectory, pathImageSave));
                 Bitmap.Save(NameOfDirectory + pathImageSave + NameOfFile + "free" + fileExtension, FREE_IMAGE_FORMAT.FIF_UNKNOWN); //TODO
             }
         }
@@ -311,7 +311,6 @@ namespace ImageProcessLib
                 }
             }
         }
-
         public void SaveTo(FileFormat outputFileFormat, string pathImageSave = @"Save\")
         {
             FREE_IMAGE_FORMAT outputFormat;
@@ -357,10 +356,10 @@ namespace ImageProcessLib
                         outputFormat = FormatImage;
                         break;
                 }
-                Directory.CreateDirectory(NameOfDirectory + pathImageSave);
+                Directory.CreateDirectory(Path.Combine(NameOfDirectory, pathImageSave));
                 try
                 {
-                    string fullNameToSave = NameOfDirectory + pathImageSave + NameOfFile + fileExtension;
+                    string fullNameToSave = Path.Combine(NameOfDirectory, pathImageSave, NameOfFile+fileExtension);
                     if (outputFormat != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
                     {
                         Bitmap.Save(fullNameToSave, outputFormat);
@@ -379,7 +378,7 @@ namespace ImageProcessLib
                         xgr.Dispose();
                         filestream.Dispose();
                         File.Delete(fullNameToSave);
-                        thePdfDocument.Save(NameOfDirectory + pathImageSave + NameOfFile + ".pdf");
+                        thePdfDocument.Save(Path.Combine(NameOfDirectory, pathImageSave, NameOfFile+".pdf"));
                         thePdfDocument.Close();
                         thePdfDocument.Dispose();
                     }
