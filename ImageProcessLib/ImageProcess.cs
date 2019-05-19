@@ -60,28 +60,28 @@ namespace ImageProcessLib
         private int GetNumberOfSimilarColumnsAtLeft(int thickness, int stripLevel)
         {
             int i = 0;
-            while (IsColumnHaveSimilarColors(i++, thickness, stripLevel)) ;
+            while (IsColumnsHaveSimilarColors(i++, thickness, stripLevel)) ;
             return i-1;
         }
         private int GetNumberOfSimilarColumnsAtRight(int thickness, int stripLevel)
         {
             int i = Width - 1;
-            while (IsColumnHaveSimilarColors(i--, thickness, stripLevel)) ;
+            while (IsColumnsHaveSimilarColors(i--, thickness, stripLevel)) ;
             return Width - i - 2;
         }
         private int GetNumberOfSimilarLinesAtTop(int thickness, int stripLevel)
         {
             int i = Height - 1;
-            while (IsLineHaveSimilarColors(i--, thickness, stripLevel)) ;
+            while (IsLinesHaveSimilarColors(i--, thickness, stripLevel)) ;
             return Height - i - 2;
         }
         private int GetNumberOfSimilarLinesAtBottom(int thickness, int stripLevel)
         {
             int i = 0;
-            while (IsLineHaveSimilarColors(i++, thickness, stripLevel)) ;
+            while (IsLinesHaveSimilarColors(i++, thickness, stripLevel)) ;
             return i-1;
         }
-        private bool IsColumnHaveSimilarColors(int indexCol, int thickness, int level)
+        private bool IsColumnsHaveSimilarColors(int indexCol, int thickness, int level)
         {
             double minimumStdDeviation = level;
             double step;
@@ -141,7 +141,7 @@ namespace ImageProcessLib
                 return false;
             }
         }
-        private bool IsLineHaveSimilarColors(int indexLine, int thickness, int level)
+        private bool IsLinesHaveSimilarColors(int indexLine, int thickness, int level)
         {
             double minimumStdDeviation = level;
             double step;
