@@ -57,43 +57,31 @@ namespace ImageProcessLib
         }
 
         void IDisposable.Dispose() => ((IDisposable)Bitmap).Dispose();
-        private int GetNumberOfSimilarColumnsAtLeft(int stripLevel)
+        private int GetNumberOfSimilarColumnsAtLeft(int thickness, int stripLevel)
         {
             int i = 0;
-            bool similarColors = IsColumnHaveSimilarColors(0, stripLevel);
-            while (similarColors)
-            {
-                similarColors = IsColumnHaveSimilarColors(++i, stripLevel);
-            }
-            return i;
+            while (IsColumnHaveSimilarColors(i++, thickness, stripLevel)) ;
+            return i-1;
         }
-        private int GetNumberOfSimilarColumnsAtRight(int stripLevel)
+        private int GetNumberOfSimilarColumnsAtRight(int thickness, int stripLevel)
         {
             int i = Width - 1;
-            while (IsColumnHaveSimilarColors(i--, stripLevel)) ;
+            while (IsColumnHaveSimilarColors(i--, thickness, stripLevel)) ;
             return Width - i - 2;
         }
-        private int GetNumberOfSimilarLinesAtTop(int stripLevel)
+        private int GetNumberOfSimilarLinesAtTop(int thickness, int stripLevel)
         {
             int i = Height - 1;
-            bool similarColors = IsLineHaveSimilarColors(Height - 1, stripLevel);
-            while (similarColors)
-            {
-                similarColors = IsLineHaveSimilarColors(--i, stripLevel);
-            }
-            return Height - i - 1;
+            while (IsLineHaveSimilarColors(i--, thickness, stripLevel)) ;
+            return Height - i - 2;
         }
-        private int GetNumberOfSimilarLinesAtBottom(int stripLevel)
+        private int GetNumberOfSimilarLinesAtBottom(int thickness, int stripLevel)
         {
             int i = 0;
-            bool similarColors = IsLineHaveSimilarColors(0, stripLevel);
-            while (similarColors)
-            {
-                similarColors = IsLineHaveSimilarColors(++i, stripLevel);
-            }
-            return i;
+            while (IsLineHaveSimilarColors(i++, thickness, stripLevel)) ;
+            return i-1;
         }
-        private bool IsColumnHaveSimilarColors(int indexCol, int level)
+        private bool IsColumnHaveSimilarColors(int indexCol, int thickness, int level)
         {
             double minimumStdDeviation = level;
             double step;
@@ -153,7 +141,7 @@ namespace ImageProcessLib
                 return false;
             }
         }
-        private bool IsLineHaveSimilarColors(int indexLine, int level)
+        private bool IsLineHaveSimilarColors(int indexLine, int thickness, int level)
         {
             double minimumStdDeviation = level;
             double step;
@@ -217,14 +205,14 @@ namespace ImageProcessLib
         {
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
             {
-                int left, top, right, bottom;
+                int left, top, right, bottom, thickness = 1 ;
                 bool toDelete = true;
                 while (toDelete)
                 {
-                    left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
-                    top = GetNumberOfSimilarLinesAtTop(stripLevel);
-                    right = GetNumberOfSimilarColumnsAtRight(stripLevel);
-                    bottom = GetNumberOfSimilarLinesAtBottom(stripLevel);
+                    left = GetNumberOfSimilarColumnsAtLeft(thickness, stripLevel);
+                    top = GetNumberOfSimilarLinesAtTop(thickness, stripLevel);
+                    right = GetNumberOfSimilarColumnsAtRight(thickness, stripLevel);
+                    bottom = GetNumberOfSimilarLinesAtBottom(thickness, stripLevel);
 
                     if (left + right < Width && bottom + top < Height)
                     {
