@@ -205,10 +205,68 @@ namespace ImageProcessLib
         {
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
             {
-                int left, top, right, bottom, thickness = 1 ;
+                int left, top, right, bottom;
                 bool toDelete = true;
+                int thickness = 256;
+                const int initialThickness = 256;
+                int thicknessRight = initialThickness;
+                int thicknessLeft = initialThickness;
+                int thicknessTop = initialThickness;
+                int thicknessBottom = initialThickness;
+                bool boolLeft = true;
+                bool boolRight = true;
+                bool boolTop = true;
+                bool boolBottom = true;
+
+
+                { //while general
+                //while(toDelete)
+                //boolFeft = IsColumnsHaveSimilarColorsAtLeft(thicknessLeft, level);
+                //if (!boolLeft)
+                //{
+                //    thicknessLeft /= 2;
+                //}
+                //if (thicknessLeft==0)
+                //{
+                //    toDelete = false;
+                //}
+                //if (boolLeft)
+                //{
+                //    left = thicknessLeft;
+                //    toDelete = false;
+                //    thicknessLeft = initialThickness;
+                //}
+                //}
+
+                //idem others
+                //boolRight = IsColumnsHaveSimilarColorsAtRight(thicknessRight, level);
+                //boolTop = IsLinesHaveSimilarColorsAtTop(thicknessTop, level);
+                //boolBottom = IsLinesHaveSimilarColorsAtBottom(thicknessBottom, level);
+
+                //if (left + right < Width && bottom + top < Height)
+                //{
+                //    Bitmap.EnlargeCanvas<bool>(-left, -top, -right, -bottom, null);
+                //    if (Width != Bitmap.Width || Height != Bitmap.Height)
+                //    {
+                //        Width = Bitmap.Width;
+                //        Height = Bitmap.Height;
+                //        toDelete = true;
+                //    }
+                //    else
+                //    {
+                //        toDelete = false;
+                //    }
+                //}
+                //else
+                //{
+                //    throw new Exception("All pixels are similar");
+                //}
+                }
+
+
                 while (toDelete)
                 {
+
                     left = GetNumberOfSimilarColumnsAtLeft(thickness, stripLevel);
                     top = GetNumberOfSimilarLinesAtTop(thickness, stripLevel);
                     right = GetNumberOfSimilarColumnsAtRight(thickness, stripLevel);
