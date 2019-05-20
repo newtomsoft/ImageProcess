@@ -57,150 +57,7 @@ namespace ImageProcessLib
         }
 
         void IDisposable.Dispose() => ((IDisposable)Bitmap).Dispose();
-        private int GetNumberOfSimilarColumnsAtLeft(int thickness, int stripLevel)
-        {
-            int i = 0;
-            while (IsColumnsHaveSimilarColors(i++, thickness, stripLevel)) ;
-            return i - 1;
-        }
-        private int GetNumberOfSimilarColumnsAtRight(int thickness, int stripLevel)
-        {
-            int i = Width - 1;
-            while (IsColumnsHaveSimilarColors(i--, thickness, stripLevel)) ;
-            return Width - i - 2;
-        }
-        private int GetNumberOfSimilarLinesAtTop(int thickness, int stripLevel)
-        {
-            int i = Height - 1;
-            while (IsLinesHaveSimilarColors(i--, thickness, stripLevel)) ;
-            return Height - i - 2;
-        }
-        private int GetNumberOfSimilarLinesAtBottom(int thickness, int stripLevel)
-        {
-            int i = 0;
-            while (IsLinesHaveSimilarColors(i++, thickness, stripLevel)) ;
-            return i - 1;
-        }
-        private bool IsColumnsHaveSimilarColors(int indexCol, int thickness, int level)
-        {
-            double minimumStdDeviation = level;
-            double step;
-            int nbCount;
-            int count;
-            if (Height > MaxNumberOfPointsForEstimateSimilarColors)
-            {
-                step = (double)Height / MaxNumberOfPointsForEstimateSimilarColors;
-                nbCount = MaxNumberOfPointsForEstimateSimilarColors;
-            }
-            else
-            {
-                step = 1;
-                nbCount = Height;
-            }
 
-            Color colorPixel;
-            if (indexCol < 0 || indexCol >= Width)
-            {
-                return false;
-            }
-            ulong sumColorR = 0, sumColorG = 0, sumColorB = 0;
-
-            double jDouble = 0;
-            int j;
-            for (count = 0; count < nbCount; count++)
-            {
-                j = (int)Math.Round(jDouble);
-                colorPixel = Bitmap.GetPixel(indexCol, j);
-                sumColorR += colorPixel.R;
-                sumColorG += colorPixel.G;
-                sumColorB += colorPixel.B;
-                jDouble += step;
-            }
-            double averageR = sumColorR / (double)nbCount;
-            double averageG = sumColorG / (double)nbCount;
-            double averageB = sumColorB / (double)nbCount;
-
-            double R2 = 0, G2 = 0, B2 = 0;
-            jDouble = 0;
-            for (count = 0; count < nbCount; count++)
-            {
-                j = (int)Math.Round(jDouble);
-                colorPixel = Bitmap.GetPixel(indexCol, j);
-                R2 += Math.Pow(colorPixel.R - averageR, 2);
-                G2 += Math.Pow(colorPixel.G - averageG, 2);
-                B2 += Math.Pow(colorPixel.B - averageB, 2);
-                jDouble += step;
-            }
-            double stdDeviationR = Math.Sqrt(R2 / nbCount), stdDeviationG = Math.Sqrt(G2 / nbCount), stdDeviationB = Math.Sqrt(B2 / nbCount);
-            if (stdDeviationR <= minimumStdDeviation && stdDeviationG <= minimumStdDeviation && stdDeviationB <= minimumStdDeviation)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        private bool IsLinesHaveSimilarColors(int indexLine, int thickness, int level)
-        {
-            double minimumStdDeviation = level;
-            double step;
-            int nbCount;
-            int count;
-            if (Width > MaxNumberOfPointsForEstimateSimilarColors)
-            {
-                step = (double)Width / MaxNumberOfPointsForEstimateSimilarColors;
-                nbCount = MaxNumberOfPointsForEstimateSimilarColors;
-            }
-            else
-            {
-                step = 1;
-                nbCount = Width;
-            }
-
-            Color colorPixel;
-            if (indexLine < 0 || indexLine >= Height)
-            {
-                return false;
-            }
-            ulong sumColorR = 0, sumColorG = 0, sumColorB = 0;
-            double iDouble = 0;
-            int i;
-            for (count = 0; count < nbCount; count++)
-            {
-                i = (int)Math.Round(iDouble);
-                colorPixel = Bitmap.GetPixel(i, indexLine);
-                sumColorR += colorPixel.R;
-                sumColorG += colorPixel.G;
-                sumColorB += colorPixel.B;
-                iDouble += step;
-            }
-            double averageR = sumColorR / (double)nbCount;
-            double averageG = sumColorG / (double)nbCount;
-            double averageB = sumColorB / (double)nbCount;
-
-            double R2 = 0, G2 = 0, B2 = 0;
-            iDouble = 0;
-            for (count = 0; count < nbCount; count++)
-            {
-                i = (int)Math.Round(iDouble);
-                colorPixel = Bitmap.GetPixel(i, indexLine);
-                R2 += Math.Pow(colorPixel.R - averageR, 2);
-                G2 += Math.Pow(colorPixel.G - averageG, 2);
-                B2 += Math.Pow(colorPixel.B - averageB, 2);
-                iDouble += step;
-            }
-            double stdDeviationR = Math.Sqrt(R2 / nbCount), stdDeviationG = Math.Sqrt(G2 / nbCount), stdDeviationB = Math.Sqrt(B2 / Width);
-            if (stdDeviationR <= minimumStdDeviation && stdDeviationG <= minimumStdDeviation && stdDeviationB <= minimumStdDeviation)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
-        }
         private bool IsColumnsHaveSimilarColorsAtLeft(int thickness, int level)
         {
             double minimumStdDeviation = level;
@@ -486,22 +343,11 @@ namespace ImageProcessLib
         {
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
             {
-                bool toDelete = true;
-                bool toDeleteLeft = true;
-                bool toDeleteRight = true;
-                bool toDeleteTop = true;
-                bool toDeleteBottom = true;
                 const int initialThickness = 256;
-                int thicknessRight = initialThickness;
-                int thicknessLeft = initialThickness;
-                int thicknessTop = initialThickness;
-                int thicknessBottom = initialThickness;
+                int thicknessRight = initialThickness, thicknessLeft = initialThickness, thicknessTop = initialThickness, thicknessBottom = initialThickness;
+                bool toDelete = true, toDeleteLeft = true, toDeleteRight = true, toDeleteTop = true, toDeleteBottom = true;
                 int left = 0, top = 0, right = 0, bottom = 0;
-                bool boolLeft = true;
-                bool boolRight = true;
-                bool boolTop = true;
-                bool boolBottom = true;
-
+                bool boolLeft = true, boolRight = true, boolTop = true, boolBottom = true;
                 while (toDelete)
                 { 
                     while (toDeleteLeft)
