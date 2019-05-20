@@ -171,87 +171,40 @@ namespace ImageProcessLib
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
             {
                 const int initialThickness = 256;
-                int thicknessRight = initialThickness, thicknessLeft = initialThickness, thicknessTop = initialThickness, thicknessBottom = initialThickness;
-                bool toDelete = true, toDeleteLeft = true, toDeleteRight = true, toDeleteTop = true, toDeleteBottom = true;
-                int left = 0, top = 0, right = 0, bottom = 0;
-                bool boolLeft, boolRight, boolTop, boolBottom;
+                int currentThickness;
+                bool toDelete = true, toDeleteEdge;
+                int edgeValue = 0, left = 0, top = 0, right = 0, bottom = 0;
+                int[] crop = new int[4];
+                bool boolEdge;
                 while (toDelete)
                 {
-                    while (toDeleteLeft)
+                    for (ImageEdge currentEdge = ImageEdge.left; currentEdge <= ImageEdge.bottom; currentEdge++)
                     {
-                        boolLeft = IsEdgeHaveSimilarColors(thicknessLeft, ImageEdge.left, stripLevel);
-                        if (!boolLeft)
+                        toDeleteEdge = true;
+                        currentThickness = initialThickness;
+                        while (toDeleteEdge)
                         {
-                            thicknessLeft /= 2;
-                            left = thicknessLeft;
+                            boolEdge = IsEdgeHaveSimilarColors(currentThickness, currentEdge, stripLevel);
+
+                            if (!boolEdge)
+                            {
+                                currentThickness /= 2;
+                            }
+                            else
+                            {
+                                toDeleteEdge = false;
+                            }
+                            if (currentThickness == 0)
+                            {
+                                toDeleteEdge = false;
+                            }
+                            edgeValue = currentThickness;
                         }
-                        if (thicknessLeft == 0)
-                        {
-                            toDeleteLeft = false;
-                        }
-                        if (boolLeft)
-                        {
-                            left = thicknessLeft;
-                            toDeleteLeft = false;
-                            thicknessLeft = initialThickness;
-                        }
-                    }
-                    while (toDeleteRight)
-                    {
-                        boolRight = IsEdgeHaveSimilarColors(thicknessRight, ImageEdge.right, stripLevel);
-                        if (!boolRight)
-                        {
-                            thicknessRight /= 2;
-                            right = thicknessRight;
-                        }
-                        if (thicknessRight == 0)
-                        {
-                            toDeleteRight = false;
-                        }
-                        if (boolRight)
-                        {
-                            right = thicknessRight;
-                            toDeleteRight = false;
-                            thicknessRight = initialThickness;
-                        }
-                    }
-                    while (toDeleteTop)
-                    {
-                        boolTop = IsEdgeHaveSimilarColors(thicknessTop, ImageEdge.top, stripLevel);
-                        if (!boolTop)
-                        {
-                            thicknessTop /= 2;
-                            top = thicknessTop;
-                        }
-                        if (thicknessTop == 0)
-                        {
-                            toDeleteTop = false;
-                        }
-                        if (boolTop)
-                        {
-                            top = thicknessTop;
-                            toDeleteTop = false;
-                            thicknessTop = initialThickness;
-                        }
-                    }
-                    while (toDeleteBottom)
-                    {
-                        boolBottom = IsEdgeHaveSimilarColors(thicknessBottom, ImageEdge.bottom, stripLevel);
-                        if (!boolBottom)
-                        {
-                            thicknessBottom /= 2;
-                            bottom = thicknessBottom;
-                        }
-                        if (thicknessBottom == 0)
-                        {
-                            toDeleteBottom = false;
-                        }
-                        if (boolBottom)
-                        {
-                            bottom = thicknessBottom;
-                            toDeleteBottom = false;
-                            thicknessBottom = initialThickness;
-                        }
+                        crop[(int)currentEdge] = edgeValue;
+                        left = crop[(int)ImageEdge.left];
+                        top = crop[(int)ImageEdge.top];
+                        right = crop[(int)ImageEdge.right];
+                        bottom = crop[(int)ImageEdge.bottom];
                     }
                     if (left + right < Width && bottom + top < Height)
                     {
@@ -271,10 +224,6 @@ namespace ImageProcessLib
                     {
                         throw new Exception("All pixels are similar");
                     }
-                    toDeleteLeft = true;
-                    toDeleteRight = true;
-                    toDeleteTop = true;
-                    toDeleteBottom = true;
                 }
             }
         }
