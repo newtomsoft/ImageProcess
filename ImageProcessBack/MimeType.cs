@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 class MimeType
 {
     [DllImport(@"urlmon.dll", CharSet = CharSet.Auto)]
-    private extern static System.UInt32 FindMimeFromData(
-    System.UInt32 pBC,
+    private static extern uint FindMimeFromData(
+    IntPtr pBC,
     [MarshalAs(UnmanagedType.LPStr)] System.String pwzUrl,
     [MarshalAs(UnmanagedType.LPArray)] byte[] pBuffer,
     System.UInt32 cbSize,
@@ -37,13 +37,13 @@ class MimeType
         try
         {
             uint mimetype;
-            FindMimeFromData(0, null, buffer, 256, null, 0, out mimetype, 0);
+            FindMimeFromData((IntPtr)0, null, buffer, 256, null, 0, out mimetype, 0);
             System.IntPtr mimeTypePtr = new IntPtr(mimetype);
             string mime = Marshal.PtrToStringUni(mimeTypePtr);
             Marshal.FreeCoTaskMem(mimeTypePtr);
             return mime;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return "unknown/unknown";
         }
