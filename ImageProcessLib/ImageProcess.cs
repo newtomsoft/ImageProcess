@@ -102,59 +102,59 @@ namespace ImageProcessLib
 
             Color colorPixel;
             ulong sumColorR = 0, sumColorG = 0, sumColorB = 0;
-            double jDouble = 0;
-            int j;
+            double indexStepWithDot = 0;
+            int indexStepInt;
             int indexStrip = beginIndexStrip;
             for (count = 0; count < nbCount; count++)
             {
-                j = (int)Math.Round(jDouble);
-                if (j >= heightOrWidth)
+                indexStepInt = (int)Math.Round(indexStepWithDot);
+                if (indexStepInt >= heightOrWidth)
                 {
                     indexStrip += moveStrip;
-                    j -= heightOrWidth;
-                    jDouble -= heightOrWidth;
+                    indexStepInt -= heightOrWidth;
+                    indexStepWithDot -= heightOrWidth;
                 }
                 if(edge == ImageEdge.bottom || edge == ImageEdge.top)
                 {
-                    colorPixel = Bitmap.GetPixel(j, indexStrip);
+                    colorPixel = Bitmap.GetPixel(indexStepInt, indexStrip);
                 }
                 else
                 {
-                    colorPixel = Bitmap.GetPixel(indexStrip, j);
+                    colorPixel = Bitmap.GetPixel(indexStrip, indexStepInt);
                 }
                 sumColorR += colorPixel.R;
                 sumColorG += colorPixel.G;
                 sumColorB += colorPixel.B;
-                jDouble += step;
+                indexStepWithDot += step;
             }
             double averageR = sumColorR / (double)nbCount;
             double averageG = sumColorG / (double)nbCount;
             double averageB = sumColorB / (double)nbCount;
 
             double R2 = 0, G2 = 0, B2 = 0;
-            jDouble = 0;
+            indexStepWithDot = 0;
             indexStrip = beginIndexStrip;
             for (count = 0; count < nbCount; count++)
             {
-                j = (int)Math.Round(jDouble);
-                if (j >= heightOrWidth)
+                indexStepInt = (int)Math.Round(indexStepWithDot);
+                if (indexStepInt >= heightOrWidth)
                 {
                     indexStrip += moveStrip;
-                    j -= heightOrWidth;
-                    jDouble -= heightOrWidth;
+                    indexStepInt -= heightOrWidth;
+                    indexStepWithDot -= heightOrWidth;
                 }
                 if (edge == ImageEdge.bottom || edge == ImageEdge.top)
                 {
-                    colorPixel = Bitmap.GetPixel(j, indexStrip);
+                    colorPixel = Bitmap.GetPixel(indexStepInt, indexStrip);
                 }
                 else
                 {
-                    colorPixel = Bitmap.GetPixel(indexStrip, j);
+                    colorPixel = Bitmap.GetPixel(indexStrip, indexStepInt);
                 }
                 R2 += Math.Pow(colorPixel.R - averageR, 2);
                 G2 += Math.Pow(colorPixel.G - averageG, 2);
                 B2 += Math.Pow(colorPixel.B - averageB, 2);
-                jDouble += step;
+                indexStepWithDot += step;
             }
             double stdDeviationR = Math.Sqrt(R2 / nbCount), stdDeviationG = Math.Sqrt(G2 / nbCount), stdDeviationB = Math.Sqrt(B2 / nbCount);
             if (stdDeviationR <= minimumStdDeviation && stdDeviationG <= minimumStdDeviation && stdDeviationB <= minimumStdDeviation)
