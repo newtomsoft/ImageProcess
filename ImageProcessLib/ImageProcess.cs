@@ -168,44 +168,40 @@ namespace ImageProcessLib
         }
         public void DeleteStrips(int stripLevel)
         {
+            const int initialThickness = 256;
+            int currentThickness;
+            bool toDelete = true, toDeleteEdge;
+            int edgeValue = 0, left, top, right, bottom;
+            int[] ltrb = new int[4];
+            bool boolEdge;
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
             {
-                const int initialThickness = 256;
-                int currentThickness;
-                bool toDelete = true, toDeleteEdge;
-                int edgeValue = 0, left = 0, top = 0, right = 0, bottom = 0;
-                int[] crop = new int[4];
-                bool boolEdge;
                 while (toDelete)
                 {
-                    for (ImageEdge currentEdge = ImageEdge.left; currentEdge <= ImageEdge.bottom; currentEdge++)
+                    foreach (ImageEdge currentEdge in Enum.GetValues(typeof(ImageEdge)))
                     {
                         toDeleteEdge = true;
                         currentThickness = initialThickness;
                         while (toDeleteEdge)
                         {
                             boolEdge = IsEdgeHaveSimilarColors(currentThickness, currentEdge, stripLevel);
-
-                            if (!boolEdge)
+                            if (boolEdge)
                             {
-                                currentThickness /= 2;
+                                toDeleteEdge = false;
                             }
                             else
                             {
-                                toDeleteEdge = false;
-                            }
-                            if (currentThickness == 0)
-                            {
-                                toDeleteEdge = false;
+                                currentThickness /= 2;
+                                toDeleteEdge = currentThickness==0?false:true;
                             }
                             edgeValue = currentThickness;
                         }
-                        crop[(int)currentEdge] = edgeValue;
-                        left = crop[(int)ImageEdge.left];
-                        top = crop[(int)ImageEdge.top];
-                        right = crop[(int)ImageEdge.right];
-                        bottom = crop[(int)ImageEdge.bottom];
+                        ltrb[(int)currentEdge] = edgeValue;
                     }
+                    left = ltrb[(int)ImageEdge.left];
+                    top = ltrb[(int)ImageEdge.top];
+                    right = ltrb[(int)ImageEdge.right];
+                    bottom = ltrb[(int)ImageEdge.bottom];
                     if (left + right < Width && bottom + top < Height)
                     {
                         Bitmap.EnlargeCanvas<bool>(-left, -top, -right, -bottom, null);
