@@ -213,11 +213,18 @@ public class ImageProcessBack
         try
         {
             zip = ZipFile.Open(fullNameOfImage, ZipArchiveMode.Read);
-            foreach (var entrie in zip.Entries)
+            var entries = zip.Entries;
+            bool recurse;
+            //TODO recurse
+            parseZip(entries);
+
+
+            foreach (var entrie in entries)
             {
                 string fileName = entrie.FullName;
                 Stream stream = entrie.Open();
                 string fullName = Path.Combine(Path.GetTempPath(), fileName);
+                string filename = Path.GetFileName(fullName);
                 fullNamesOfFiles.Add(fullName);
                 using (FileStream fileStream = new FileStream(fullName, FileMode.Create, FileAccess.Write))
                 {
@@ -232,6 +239,31 @@ public class ImageProcessBack
         }
         return fullNamesOfFiles;
     }
+
+    string parseZip(IReadOnlyCollection<ZipArchiveEntry> entries)
+    {
+        foreach (var entrie in entries)
+        {
+            string fileName = entrie.FullName;
+            Stream stream = entrie.Open();
+            string fullName = Path.Combine(Path.GetTempPath(), fileName);
+            string filename = Path.GetFileName(fullName);
+            if (filename == "")
+            {
+                var toto2 = entrie.GetType();
+            }
+            //fullNamesOfFiles.Add(fullName);
+            using (FileStream fileStream = new FileStream(fullName, FileMode.Create, FileAccess.Write))
+            {
+                stream.CopyTo(fileStream);
+            }
+
+        }
+
+        string toto = "";
+        return toto;
+    }
+
 
     /// <summary>
     /// create new pdf document to put image into it after that
