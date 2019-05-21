@@ -79,8 +79,6 @@ public class ImageProcessBack
             List<string> imagesFullNames = new List<string>();
             FileFormat fileToReadType = FileFormat.Unknow;
 
-
-            // TODO clean code 2 switchs / factorize
             // TODO use temp file for pdf
             switch (mimeType)
             {
@@ -90,7 +88,6 @@ public class ImageProcessBack
                     fileToReadType = FileFormat.Pdf;
                     break;
                 case var someVal when new Regex(@"application/x-zip.*").IsMatch(someVal):
-                    memorystreams = OpenZipToMemoryStreams(fullNameOfImage);
                     imagesFullNames = OpenZipToTempFiles(fullNameOfImage);
                     fileToReadType = FileFormat.Zip;
                     break;
@@ -101,7 +98,6 @@ public class ImageProcessBack
                 default:
                     break;
             }
-
             switch (fileToReadType)
             {
                 case FileFormat.Pdf:
@@ -184,54 +180,29 @@ public class ImageProcessBack
         //TextBoxListFiles.Text = "";
         return contentEnd + listErrors;
     }
-
-    private List<MemoryStream> OpenZipToMemoryStreams(string fullNameOfImage)
-    {
-        List<MemoryStream> memoryStreams = new List<MemoryStream>();
-        ZipArchive zip;
-        try
-        {
-            zip = ZipFile.Open(fullNameOfImage, ZipArchiveMode.Read);
-            foreach (var entrie in zip.Entries)
-            {
-                Stream stream = entrie.Open();
-                MemoryStream memoryStream = new MemoryStream();
-                stream.CopyTo(memoryStream);
-                memoryStreams.Add(memoryStream);
-            }
-        }
-        catch
-        {
-            throw;
-        }
-        return memoryStreams;
-    }
-    private List<string> OpenZipToTempFiles(string fullNameOfImage)
+    private List<string> OpenZipToTempFiles(string fileZip)
     {
         List<string> fullNamesOfFiles = new List<string>();
         ZipArchive zip;
         try
         {
-            zip = ZipFile.Open(fullNameOfImage, ZipArchiveMode.Read);
+            zip = ZipFile.Open(fileZip, ZipArchiveMode.Read);
             var entries = zip.Entries;
-            bool recurse;
-            //TODO recurse
-            parseZip(entries);
-
-
+            List<ZipArchiveEntry> listFiles = new List<ZipArchiveEntry>();
             foreach (var entrie in entries)
             {
                 string fileName = entrie.FullName;
-                Stream stream = entrie.Open();
                 string fullName = Path.Combine(Path.GetTempPath(), fileName);
-                string filename = Path.GetFileName(fullName);
+                if (Path.GetFileName(fullName) == "") continue;
                 fullNamesOfFiles.Add(fullName);
+                Stream stream = entrie.Open();
+                Directory.CreateDirectory(Path.GetDirectoryName(fullName));
                 using (FileStream fileStream = new FileStream(fullName, FileMode.Create, FileAccess.Write))
                 {
                     stream.CopyTo(fileStream);
                 }
-
             }
+            zip.Dispose();
         }
         catch
         {
@@ -239,31 +210,6 @@ public class ImageProcessBack
         }
         return fullNamesOfFiles;
     }
-
-    string parseZip(IReadOnlyCollection<ZipArchiveEntry> entries)
-    {
-        foreach (var entrie in entries)
-        {
-            string fileName = entrie.FullName;
-            Stream stream = entrie.Open();
-            string fullName = Path.Combine(Path.GetTempPath(), fileName);
-            string filename = Path.GetFileName(fullName);
-            if (filename == "")
-            {
-                var toto2 = entrie.GetType();
-            }
-            //fullNamesOfFiles.Add(fullName);
-            using (FileStream fileStream = new FileStream(fullName, FileMode.Create, FileAccess.Write))
-            {
-                stream.CopyTo(fileStream);
-            }
-
-        }
-
-        string toto = "";
-        return toto;
-    }
-
 
     /// <summary>
     /// create new pdf document to put image into it after that

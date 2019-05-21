@@ -53,7 +53,7 @@ namespace ImageProcessUI
                 //sp.Children.Clear();
                 ImageProcessBack.FullNameOfImagesToProcess.Clear();
                 TextBoxListFiles.Text = "";
-                foreach (String fileName in openFileDialog.FileNames)
+                foreach (string fileName in openFileDialog.FileNames)
                 {
                     //ShowThumbnail(fileName);
                     ImageProcessBack.FullNameOfImagesToProcess.Add(fileName);
