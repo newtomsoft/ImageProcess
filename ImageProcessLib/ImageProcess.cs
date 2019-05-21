@@ -24,133 +24,137 @@ namespace ImageProcessLib
         public ImageProcess(string fullNameOfFile)
         {
             FullNameOfFile = fullNameOfFile;
-            var indexSlash = FullNameOfFile.LastIndexOf('\\');
-            NameOfDirectory = FullNameOfFile.Substring(0, indexSlash + 1);
-            NameOfFile = FullNameOfFile.Substring(indexSlash + 1);
+            NameOfDirectory = Path.GetDirectoryName(FullNameOfFile);
+            NameOfFile = Path.GetFileName(FullNameOfFile);
             try
             {
                 Bitmap = new FreeImageBitmap(FullNameOfFile);
                 FormatImage = Bitmap.ImageFormat;
-                FreeImageBitmap bitmapTemp = new FreeImageBitmap(Bitmap.GetColorConvertedInstance(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP));
-                Bitmap.Dispose();
-                Bitmap = bitmapTemp;
+                Bitmap.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP);
                 Width = Bitmap.Width;
                 Height = Bitmap.Height;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                try
-                {
-                    PdfDocument pdfDocument = PdfReader.Open(FullNameOfFile);
-                    PdfPages allPdfPages = pdfDocument.Pages;
-                    foreach (PdfPage pdfPage in allPdfPages)
-                    {
-                        var elements = pdfPage.Elements;
-                        foreach (var element in elements)
-                        {
-                            var toto1 = element.Key;
-                            var toto2 = element.Value;
-                        }
-                        var key_PdfItem = pdfPage.GetEnumerator();
-                    }
-                }
-                catch (Exception e)
-                {
-                    FormatImage = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
-                    Width = 0;
-                    Height = 0;
-                    throw e;
-                }
-            }
 
+                FormatImage = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
+                Width = 0;
+                Height = 0;
+                throw e;
+            }
         }
         public ImageProcess(MemoryStream theStream, string fullNameOfImage)
         {
             FullNameOfFile = fullNameOfImage;
-            var indexSlash = FullNameOfFile.LastIndexOf('\\');
-            NameOfDirectory = FullNameOfFile.Substring(0, indexSlash + 1);
-            NameOfFile = FullNameOfFile.Substring(indexSlash + 1);
-
+            NameOfDirectory = Path.GetDirectoryName(FullNameOfFile) + "\\";
+            NameOfFile = Path.GetFileName(FullNameOfFile);
             Bitmap = new FreeImageBitmap(theStream, FREE_IMAGE_FORMAT.FIF_JPEG);
+            //Bitmap = new FreeImageBitmap(theStream);
+            Bitmap.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP);
             FormatImage = Bitmap.ImageFormat;
             Width = Bitmap.Width;
             Height = Bitmap.Height;
         }
 
         void IDisposable.Dispose() => ((IDisposable)Bitmap).Dispose();
-        private int GetNumberOfSimilarColumnsAtLeft(int stripLevel)
-        {
-            int i = 0;
-            while (IsColumnHaveSimilarColors(i++, stripLevel)) ;
-            return i - 1;
-        }
-        private int GetNumberOfSimilarColumnsAtRight(int stripLevel)
-        {
-            int i = Width - 1;
-            while (IsColumnHaveSimilarColors(i--, stripLevel)) ;
-            return Width - i - 2;
-        }
-        private int GetNumberOfSimilarLinesAtTop(int stripLevel)
-        {
-            int i = Height - 1;
-            while (IsLineHaveSimilarColors(i--, stripLevel)) ;
-            return Height - i - 2;
-        }
-        private int GetNumberOfSimilarLinesAtBottom(int stripLevel)
-        {
-            int i = 0;
-            while (IsLineHaveSimilarColors(i++, stripLevel)) ;
-            return i - 1;
-        }
-        private bool IsColumnHaveSimilarColors(int indexCol, int level)
+        private bool IsEdgeHaveSimilarColors(int thickness, ImageEdge edge, int level)
         {
             double minimumStdDeviation = level;
             double step;
             int nbCount;
             int count;
-            if (Height > MaxNumberOfPointsForEstimateSimilarColors)
+            int heightOrWidth = Height;
+            int moveStrip = 0;
+            int beginIndexStrip = 0;
+            switch (edge)
             {
-                step = (double)Height / MaxNumberOfPointsForEstimateSimilarColors;
+                case ImageEdge.left:
+                    heightOrWidth = Height;
+                    moveStrip = 1;
+                    beginIndexStrip = 0;
+                    break;
+                case ImageEdge.right:
+                    heightOrWidth = Height;
+                    moveStrip = -1;
+                    beginIndexStrip = Width - 1;
+                    break;
+                case ImageEdge.top:
+                    heightOrWidth = Width;
+                    moveStrip = -1;
+                    beginIndexStrip = Height - 1;
+                    break;
+                case ImageEdge.bottom:
+                    heightOrWidth = Width;
+                    moveStrip = 1;
+                    beginIndexStrip = 0;
+                    break;
+            }
+            if (heightOrWidth * thickness > MaxNumberOfPointsForEstimateSimilarColors)
+            {
+                step = (double)heightOrWidth * thickness / MaxNumberOfPointsForEstimateSimilarColors;
                 nbCount = MaxNumberOfPointsForEstimateSimilarColors;
             }
             else
             {
                 step = 1;
-                nbCount = Height;
+                nbCount = heightOrWidth * thickness;
             }
 
             Color colorPixel;
-            if (indexCol < 0 || indexCol >= Width)
-            {
-                return false;
-            }
             ulong sumColorR = 0, sumColorG = 0, sumColorB = 0;
-
-            double jDouble = 0;
-            int j;
+            double indexStepWithDot = 0;
+            int indexStepInt;
+            int indexStrip = beginIndexStrip;
             for (count = 0; count < nbCount; count++)
             {
-                j = (int)Math.Round(jDouble);
-                colorPixel = Bitmap.GetPixel(indexCol, j);
+                indexStepInt = (int)Math.Round(indexStepWithDot);
+                if (indexStepInt >= heightOrWidth)
+                {
+                    indexStrip += moveStrip;
+                    indexStepInt -= heightOrWidth;
+                    indexStepWithDot -= heightOrWidth;
+                }
+                if(edge == ImageEdge.bottom || edge == ImageEdge.top)
+                {
+                    colorPixel = Bitmap.GetPixel(indexStepInt, indexStrip);
+                }
+                else
+                {
+                    colorPixel = Bitmap.GetPixel(indexStrip, indexStepInt);
+                }
                 sumColorR += colorPixel.R;
                 sumColorG += colorPixel.G;
                 sumColorB += colorPixel.B;
-                jDouble += step;
+                indexStepWithDot += step;
             }
             double averageR = sumColorR / (double)nbCount;
             double averageG = sumColorG / (double)nbCount;
             double averageB = sumColorB / (double)nbCount;
 
             double R2 = 0, G2 = 0, B2 = 0;
-            jDouble = 0;
+            indexStepWithDot = 0;
+            indexStrip = beginIndexStrip;
             for (count = 0; count < nbCount; count++)
             {
-                j = (int)Math.Round(jDouble);
-                colorPixel = Bitmap.GetPixel(indexCol, j);
+                indexStepInt = (int)Math.Round(indexStepWithDot);
+                if (indexStepInt >= heightOrWidth)
+                {
+                    indexStrip += moveStrip;
+                    indexStepInt -= heightOrWidth;
+                    indexStepWithDot -= heightOrWidth;
+                }
+                if (edge == ImageEdge.bottom || edge == ImageEdge.top)
+                {
+                    colorPixel = Bitmap.GetPixel(indexStepInt, indexStrip);
+                }
+                else
+                {
+                    colorPixel = Bitmap.GetPixel(indexStrip, indexStepInt);
+                }
                 R2 += Math.Pow(colorPixel.R - averageR, 2);
                 G2 += Math.Pow(colorPixel.G - averageG, 2);
                 B2 += Math.Pow(colorPixel.B - averageB, 2);
-                jDouble += step;
+                indexStepWithDot += step;
             }
             double stdDeviationR = Math.Sqrt(R2 / nbCount), stdDeviationG = Math.Sqrt(G2 / nbCount), stdDeviationB = Math.Sqrt(B2 / nbCount);
             if (stdDeviationR <= minimumStdDeviation && stdDeviationG <= minimumStdDeviation && stdDeviationB <= minimumStdDeviation)
@@ -162,79 +166,42 @@ namespace ImageProcessLib
                 return false;
             }
         }
-        private bool IsLineHaveSimilarColors(int indexLine, int level)
-        {
-            double minimumStdDeviation = level;
-            double step;
-            int nbCount;
-            int count;
-            if (Width > MaxNumberOfPointsForEstimateSimilarColors)
-            {
-                step = (double)Width / MaxNumberOfPointsForEstimateSimilarColors;
-                nbCount = MaxNumberOfPointsForEstimateSimilarColors;
-            }
-            else
-            {
-                step = 1;
-                nbCount = Width;
-            }
-
-            Color colorPixel;
-            if (indexLine < 0 || indexLine >= Height)
-            {
-                return false;
-            }
-            ulong sumColorR = 0, sumColorG = 0, sumColorB = 0;
-            double iDouble = 0;
-            int i;
-            for (count = 0; count < nbCount; count++)
-            {
-                i = (int)Math.Round(iDouble);
-                colorPixel = Bitmap.GetPixel(i, indexLine);
-                sumColorR += colorPixel.R;
-                sumColorG += colorPixel.G;
-                sumColorB += colorPixel.B;
-                iDouble += step;
-            }
-            double averageR = sumColorR / (double)nbCount;
-            double averageG = sumColorG / (double)nbCount;
-            double averageB = sumColorB / (double)nbCount;
-
-            double R2 = 0, G2 = 0, B2 = 0;
-            iDouble = 0;
-            for (count = 0; count < nbCount; count++)
-            {
-                i = (int)Math.Round(iDouble);
-                colorPixel = Bitmap.GetPixel(i, indexLine);
-                R2 += Math.Pow(colorPixel.R - averageR, 2);
-                G2 += Math.Pow(colorPixel.G - averageG, 2);
-                B2 += Math.Pow(colorPixel.B - averageB, 2);
-                iDouble += step;
-            }
-            double stdDeviationA = Math.Sqrt(A2 / nbCount), stdDeviationR = Math.Sqrt(R2 / nbCount), stdDeviationG = Math.Sqrt(G2 / nbCount), stdDeviationB = Math.Sqrt(B2 / Width);
-            if (stdDeviationA < minimumStdDeviation && stdDeviationR < minimumStdDeviation && stdDeviationG < minimumStdDeviation && stdDeviationB < minimumStdDeviation)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
-        }
         public void DeleteStrips(int stripLevel)
         {
+            const int initialThickness = 256;
+            int currentThickness;
+            bool toDelete = true, toDeleteEdge;
+            int edgeValue = 0, left, top, right, bottom;
+            int[] ltrb = new int[4];
+            bool boolEdge;
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
             {
-                int left, top, right, bottom;
-                bool toDelete = true;
                 while (toDelete)
                 {
-                    left = GetNumberOfSimilarColumnsAtLeft(stripLevel);
-                    top = GetNumberOfSimilarLinesAtTop(stripLevel);
-                    right = GetNumberOfSimilarColumnsAtRight(stripLevel);
-                    bottom = GetNumberOfSimilarLinesAtBottom(stripLevel);
-
+                    foreach (ImageEdge currentEdge in Enum.GetValues(typeof(ImageEdge)))
+                    {
+                        toDeleteEdge = true;
+                        currentThickness = initialThickness;
+                        while (toDeleteEdge)
+                        {
+                            boolEdge = IsEdgeHaveSimilarColors(currentThickness, currentEdge, stripLevel);
+                            if (boolEdge)
+                            {
+                                toDeleteEdge = false;
+                            }
+                            else
+                            {
+                                currentThickness /= 2;
+                                toDeleteEdge = currentThickness==0?false:true;
+                            }
+                            edgeValue = currentThickness;
+                        }
+                        ltrb[(int)currentEdge] = edgeValue;
+                    }
+                    left = ltrb[(int)ImageEdge.left];
+                    top = ltrb[(int)ImageEdge.top];
+                    right = ltrb[(int)ImageEdge.right];
+                    bottom = ltrb[(int)ImageEdge.bottom];
                     if (left + right < Width && bottom + top < Height)
                     {
                         Bitmap.EnlargeCanvas<bool>(-left, -top, -right, -bottom, null);
@@ -253,7 +220,6 @@ namespace ImageProcessLib
                     {
                         throw new Exception("All pixels are similar");
                     }
-
                 }
             }
         }
@@ -262,7 +228,7 @@ namespace ImageProcessLib
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
             {
                 string fileExtension = ".webp";
-                Directory.CreateDirectory(NameOfDirectory + pathImageSave);
+                Directory.CreateDirectory(Path.Combine(NameOfDirectory, pathImageSave));
                 Bitmap.Save(NameOfDirectory + pathImageSave + NameOfFile + "free" + fileExtension, FREE_IMAGE_FORMAT.FIF_UNKNOWN); //TODO
             }
         }
@@ -306,7 +272,7 @@ namespace ImageProcessLib
                 bitmap.Dispose();
             }
         }
-        public void SaveTo(MemoryStream memoryStream)
+        public void Save(MemoryStream memoryStream)
         {
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
             {
@@ -320,7 +286,6 @@ namespace ImageProcessLib
                 }
             }
         }
-
         public void SaveTo(FileFormat outputFileFormat, string pathImageSave = @"Save\")
         {
             FREE_IMAGE_FORMAT outputFormat;
@@ -366,10 +331,10 @@ namespace ImageProcessLib
                         outputFormat = FormatImage;
                         break;
                 }
-                Directory.CreateDirectory(NameOfDirectory + pathImageSave);
+                Directory.CreateDirectory(Path.Combine(NameOfDirectory, pathImageSave));
                 try
                 {
-                    string fullNameToSave = NameOfDirectory + pathImageSave + NameOfFile + fileExtension;
+                    string fullNameToSave = Path.Combine(NameOfDirectory, pathImageSave, NameOfFile + fileExtension);
                     if (outputFormat != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
                     {
                         Bitmap.Save(fullNameToSave, outputFormat);
@@ -388,7 +353,7 @@ namespace ImageProcessLib
                         xgr.Dispose();
                         filestream.Dispose();
                         File.Delete(fullNameToSave);
-                        thePdfDocument.Save(NameOfDirectory + pathImageSave + NameOfFile + ".pdf");
+                        thePdfDocument.Save(Path.Combine(NameOfDirectory, pathImageSave, NameOfFile + ".pdf"));
                         thePdfDocument.Close();
                         thePdfDocument.Dispose();
                     }

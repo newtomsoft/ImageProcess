@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileFormat.cs" />
+    <Compile Include="ImageEdge.cs" />
     <Compile Include="ImageProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

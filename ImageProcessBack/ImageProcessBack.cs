@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Text.RegularExpressions;
 using ImageProcessLib;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
@@ -67,42 +68,78 @@ public class ImageProcessBack
             listErrors = "Erreur\nMerci de choisir des images";
             return listErrors;
         }
-
         if (PdfFusion)
         {
             InitPdfDocument();
         }
         foreach (string fullNameOfImage in FullNameOfImagesToProcess)
         {
-            List<MemoryStream> memoryStreams = new List<MemoryStream>();
-            try
+            string mimeType = MimeType.getFromFile(fullNameOfImage);
+            List<MemoryStream> memorystreams = new List<MemoryStream>();
+            List<string> fullNamesOfimages = new List<string>();
+            FileFormat fileToReadType = FileFormat.Unknow;
+
+
+            // TODO clean code 2 switchs / factorize
+            // TODO use temp file for archives / pdf ?
+            switch (mimeType)
             {
-                memoryStreams = OpenToMemoryStreams(fullNameOfImage);
-            }
-            catch
-            {
-                try
-                {
+                case "application/pdf":
                     PdfClown pdfFile = new PdfClown();
-                    memoryStreams = pdfFile.InitiateProcess(fullNameOfImage);
-                }
-                catch
-                {
-                    Stream fs = File.OpenRead(fullNameOfImage);
-                    MemoryStream singleMemoryStream = new MemoryStream();
-                    fs.CopyTo(singleMemoryStream);
-                    memoryStreams.Add(singleMemoryStream);
-                }
+                    memorystreams = pdfFile.GetImages(fullNameOfImage);
+                    fileToReadType = FileFormat.Pdf;
+                    break;
+                case var someVal when new Regex(@"application/x-zip.*").IsMatch(someVal):
+                    memorystreams = OpenZipToMemoryStreams(fullNameOfImage);
+                    fullNamesOfimages = OpenZipToTempFiles(fullNameOfImage);
+                    // TODO : exploit files created instrad of memorystreams
+                    fileToReadType = FileFormat.Zip;
+                    break;
+                case var someVal when new Regex(@"image/.*").IsMatch(someVal):
+                    fileToReadType = FileFormat.Image;
+                    break;
+                default:
+                    break;
             }
 
-
-            try
+            switch (fileToReadType)
             {
-                int i = 0; // TODO cleancode
-                foreach (MemoryStream memorystream in memoryStreams)
-                {
-                    i++;
-                    using (ImageProcess imageToProcess = new ImageProcess(memorystream, fullNameOfImage + i.ToString()))
+                case FileFormat.Pdf:
+                case FileFormat.Zip:
+                    int i = 0; // TODO cleancode
+                    foreach (MemoryStream memorystream in memorystreams)
+                    {
+                        i++;
+                        using (ImageProcess imageToProcess = new ImageProcess(memorystream, fullNameOfImage + i.ToString()))
+                        {
+                            if (DeleteStrip)
+                            {
+                                try
+                                {
+                                    imageToProcess.DeleteStrips(StripLevel);
+                                }
+                                catch (Exception ex)
+                                {
+                                    listErrors += "Erreur : " + ex.Message + " sur " + fullNameOfImage + "(image " + i + ") => bordures inchangées\n";
+                                }
+                            }
+
+                            if (PdfFusion)
+                            {
+                                MemoryStream memoryStream = new MemoryStream();
+                                imageToProcess.Save(memoryStream);
+                                AddPageToPdfDocument(memoryStream);
+                            }
+                            else
+                            {
+                                imageToProcess.SaveTo(ImageFormatToSave, PathSave);
+                            }
+                        }
+                    }
+                    break;
+
+                case FileFormat.Image:
+                    using (ImageProcess imageToProcess = new ImageProcess(fullNameOfImage))
                     {
                         if (DeleteStrip)
                         {
@@ -119,20 +156,25 @@ public class ImageProcessBack
                         if (PdfFusion)
                         {
                             MemoryStream memoryStream = new MemoryStream();
-                            imageToProcess.SaveTo(memoryStream);
+                            imageToProcess.Save(memoryStream);
                             AddPageToPdfDocument(memoryStream);
                         }
                         else
                         {
                             imageToProcess.SaveTo(ImageFormatToSave, PathSave);
                         }
+
                     }
-                }
+                    if (DeleteOrigin)
+                    {
+                        File.Delete(fullNameOfImage);
+                    }
+                    break;
+
+
             }
-            catch (Exception ex)
-            {
-                listErrors += "Erreur : " + ex.Message + "sur image " + fullNameOfImage + "\n";
-            }
+
+
         }
 
         if (PdfFusion)
@@ -145,7 +187,7 @@ public class ImageProcessBack
         return contentEnd + listErrors;
     }
 
-    private List<MemoryStream> OpenToMemoryStreams(string fullNameOfImage)
+    private List<MemoryStream> OpenZipToMemoryStreams(string fullNameOfImage)
     {
         List<MemoryStream> memoryStreams = new List<MemoryStream>();
         ZipArchive zip;
@@ -153,18 +195,43 @@ public class ImageProcessBack
         {
             zip = ZipFile.Open(fullNameOfImage, ZipArchiveMode.Read);
             foreach (var entrie in zip.Entries)
-            {              
+            {
                 Stream stream = entrie.Open();
                 MemoryStream memoryStream = new MemoryStream();
                 stream.CopyTo(memoryStream);
                 memoryStreams.Add(memoryStream);
             }
         }
-        catch 
+        catch
         {
             throw;
         }
         return memoryStreams;
+    }
+    private List<string> OpenZipToTempFiles(string fullNameOfImage)
+    {
+        List<string> fullNamesOfFiles = new List<string>();
+        ZipArchive zip;
+        try
+        {
+            zip = ZipFile.Open(fullNameOfImage, ZipArchiveMode.Read);
+            foreach (var entrie in zip.Entries)
+            {
+                string fileName = entrie.FullName;
+                Stream stream = entrie.Open();
+                fullNamesOfFiles.Add(fileName);
+                using (FileStream fileStream = new FileStream(Path.Combine(Path.GetTempPath(),fileName), FileMode.Create, FileAccess.Write))
+                {
+                    stream.CopyTo(fileStream);
+                }
+
+            }
+        }
+        catch
+        {
+            throw;
+        }
+        return fullNamesOfFiles;
     }
 
     /// <summary>

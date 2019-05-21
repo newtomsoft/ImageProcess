@@ -14,7 +14,7 @@ public class PdfClown
 {
     public int index;
 
-    public List<MemoryStream> InitiateProcess(string FileName)
+    public List<MemoryStream> GetImages(string FileName)
     {
         List<MemoryStream> memoryStreams = new List<MemoryStream>();
         org.pdfclown.files.File file;
@@ -69,7 +69,7 @@ public class PdfClown
                         if (header.ContainsKey(PdfName.Type) && header[PdfName.Type].Equals(PdfName.XObject) && header[PdfName.Subtype].Equals(PdfName.Image))
                         {
                             IBuffer body1 = ((PdfStream)dataObject).GetBody(false);
-                            MemoryStream memoryStream = ExportImage(body1, @"D:\" + "Image_" + (index++) + ".png");
+                            MemoryStream memoryStream = ExportImage(body1);
                             memoryStreams.Add(memoryStream);
                         }
                     }
@@ -78,7 +78,7 @@ public class PdfClown
         }
         return memoryStreams;
     }
-    private MemoryStream ExportImage(IBuffer data, string outputPath)
+    private MemoryStream ExportImage(IBuffer data)
     {
         try
         {
@@ -89,7 +89,7 @@ public class PdfClown
         }
         catch (Exception e)
         {
-            throw new Exception(outputPath + " file writing has failed.", e);
+            throw new Exception(" file writing has failed.", e);
         }
     }
 }

@@ -3,6 +3,7 @@
     public enum FileFormat
     {
         Unknow,
+        Image,
         Webp,
         Jpg,
         Jp2,
@@ -10,6 +11,7 @@
         Png,
         Tiff,
         Gif,
-        Bmp
+        Bmp,
+        Zip,
     }
 }
