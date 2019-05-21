@@ -97,6 +97,7 @@ public class ImageProcessBack
                     break;
                 case var someVal when new Regex(@"image/.*").IsMatch(someVal):
                     fileToReadType = FileFormat.Image;
+                    imagesFullNames.Add(fullNameOfImage);
                     break;
                 default:
                     break;
@@ -105,7 +106,6 @@ public class ImageProcessBack
             switch (fileToReadType)
             {
                 case FileFormat.Pdf:
-                case FileFormat.Zip:
                     int i = 0; // TODO cleancode
                     foreach (MemoryStream memorystream in memorystreams)
                     {
@@ -137,44 +137,43 @@ public class ImageProcessBack
                         }
                     }
                     break;
-
+                case FileFormat.Zip:
                 case FileFormat.Image:
-                    using (ImageProcess imageToProcess = new ImageProcess(fullNameOfImage))
+                    foreach (string imageFullName in imagesFullNames)
                     {
-                        if (DeleteStrip)
+                        using (ImageProcess imageToProcess = new ImageProcess(imageFullName))
                         {
-                            try
+                            if (DeleteStrip)
                             {
-                                imageToProcess.DeleteStrips(StripLevel);
+                                try
+                                {
+                                    imageToProcess.DeleteStrips(StripLevel);
+                                }
+                                catch (Exception ex)
+                                {
+                                    listErrors += "Erreur : " + ex.Message + " sur image " + imageFullName + " => bordures inchangées\n";
+                                }
                             }
-                            catch (Exception ex)
+
+                            if (PdfFusion)
                             {
-                                listErrors += "Erreur : " + ex.Message + " sur image " + fullNameOfImage + " => bordures inchangées\n";
+                                MemoryStream memoryStream = new MemoryStream();
+                                imageToProcess.Save(memoryStream);
+                                AddPageToPdfDocument(memoryStream);
                             }
-                        }
+                            else
+                            {
+                                imageToProcess.SaveTo(ImageFormatToSave, PathSave);
+                            }
 
-                        if (PdfFusion)
-                        {
-                            MemoryStream memoryStream = new MemoryStream();
-                            imageToProcess.Save(memoryStream);
-                            AddPageToPdfDocument(memoryStream);
                         }
-                        else
+                        if (DeleteOrigin || fileToReadType == FileFormat.Zip)
                         {
-                            imageToProcess.SaveTo(ImageFormatToSave, PathSave);
+                            File.Delete(imageFullName);
                         }
-
-                    }
-                    if (DeleteOrigin)
-                    {
-                        File.Delete(fullNameOfImage);
                     }
                     break;
-
-
             }
-
-
         }
 
         if (PdfFusion)
