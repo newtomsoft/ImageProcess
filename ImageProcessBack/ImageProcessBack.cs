@@ -81,7 +81,7 @@ public class ImageProcessBack
 
 
             // TODO clean code 2 switchs / factorize
-            // TODO use temp file for archives / pdf ?
+            // TODO use temp file for pdf
             switch (mimeType)
             {
                 case "application/pdf":
@@ -92,7 +92,6 @@ public class ImageProcessBack
                 case var someVal when new Regex(@"application/x-zip.*").IsMatch(someVal):
                     memorystreams = OpenZipToMemoryStreams(fullNameOfImage);
                     imagesFullNames = OpenZipToTempFiles(fullNameOfImage);
-                    // TODO : exploit files created instrad of memorystreams
                     fileToReadType = FileFormat.Zip;
                     break;
                 case var someVal when new Regex(@"image/.*").IsMatch(someVal):
