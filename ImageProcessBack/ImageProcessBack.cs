@@ -36,6 +36,11 @@ public class ImageProcessBack
     /// </summary>
     public string PathSave;
     /// <summary>
+    /// directory path where save image(s)
+    /// </summary>
+    public string FullPathSave;
+
+    /// <summary>
     /// full name of all images we want to process
     /// </summary>
     public List<string> FullNameOfImagesToProcess;
@@ -186,7 +191,7 @@ public class ImageProcessBack
         ZipArchive zip;
         try
         {
-            zip = ZipFile.OpenRead(fullNameOfImage);
+            zip = ZipFile.OpenRead(fileZip);
             var entries = zip.Entries;
             List<ZipArchiveEntry> listFiles = new List<ZipArchiveEntry>();
             foreach (var entrie in entries)
