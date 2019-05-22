@@ -9,14 +9,15 @@ using System.IO;
 using org.pdfclown.bytes;
 using org.pdfclown.objects;
 using org.pdfclown.documents.contents.xObjects;
+using Path = System.IO.Path;
 
 public class PdfClown
 {
-    public int index;
+    public int indexImage=0;
 
-    public List<MemoryStream> GetImages(string FileName)
+    public List<string> GetImages(string FileName)
     {
-        List<MemoryStream> memoryStreams = new List<MemoryStream>();
+        List<string> filesNames = new List<string>();
         org.pdfclown.files.File file;
         Document document;
         try
@@ -32,16 +33,16 @@ public class PdfClown
         foreach (Page page in document.Pages)
         {
             stamper.Page = page;
-            memoryStreams.AddRange(Extract(new ContentScanner(page), page));
+            filesNames.AddRange(Extract(new ContentScanner(page), page));
             stamper.Flush();
 
         }
-        return memoryStreams;
+        return filesNames;
     }
 
-    private List<MemoryStream> Extract(ContentScanner level, Page page)
+    private List<string> Extract(ContentScanner level, Page page)
     {
-        List<MemoryStream> memoryStreams = new List<MemoryStream>();
+        List<string> filesNames = new List<string>();
         if (level == null)
             return null;
 
@@ -50,7 +51,7 @@ public class PdfClown
             ContentObject content = level.Current;
             if (content is ContainerObject)
             {
-                memoryStreams.AddRange(Extract(level.ChildLevel, page));
+                filesNames.AddRange(Extract(level.ChildLevel, page));
             }
             else if (content is GraphicsObject)
             {
@@ -69,23 +70,24 @@ public class PdfClown
                         if (header.ContainsKey(PdfName.Type) && header[PdfName.Type].Equals(PdfName.XObject) && header[PdfName.Subtype].Equals(PdfName.Image))
                         {
                             IBuffer body1 = ((PdfStream)dataObject).GetBody(false);
-                            MemoryStream memoryStream = ExportImage(body1);
-                            memoryStreams.Add(memoryStream);
+                            filesNames.Add(SaveTempImage(body1, indexImage++.ToString()));
                         }
                     }
                 }
             }
         }
-        return memoryStreams;
+        return filesNames;
     }
-    private MemoryStream ExportImage(IBuffer data)
+    private string SaveTempImage(IBuffer data, string fileName)
     {
+        string fullName = Path.Combine(Path.GetTempPath(), fileName);
         try
         {
-            MemoryStream memoryStream = new MemoryStream();
-            BinaryWriter memoryWriter = new BinaryWriter(memoryStream);
+            FileStream fileStream = new FileStream(fullName, FileMode.Create, FileAccess.Write);
+            BinaryWriter memoryWriter = new BinaryWriter(fileStream);
             memoryWriter.Write(data.ToByteArray());
-            return memoryStream;
+            fileStream.Dispose();
+            return fullName;
         }
         catch (Exception e)
         {

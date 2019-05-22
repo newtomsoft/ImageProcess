@@ -222,12 +222,12 @@ namespace ImageProcessLib
         }
         public void SaveToWebpFree(string pathImageSave = @"Save_webp\")
         {
-            if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
-            {
-                string fileExtension = ".webp";
-                //Directory.CreateDirectory(Path.Combine(NameOfDirectory, pathImageSave));
-                //Bitmap.Save(NameOfDirectory + pathImageSave + NameOfFile + "free" + fileExtension, FREE_IMAGE_FORMAT.FIF_UNKNOWN); //TODO
-            }
+            //if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
+            //{
+            //    string fileExtension = ".webp";
+            //    Directory.CreateDirectory(Path.Combine(NameOfDirectory, pathImageSave));
+            //    Bitmap.Save(NameOfDirectory + pathImageSave + NameOfFile + "free" + fileExtension, FREE_IMAGE_FORMAT.FIF_UNKNOWN); //TODO
+            //}
         }
         public void SaveToWebp(string fullNameToSave)
         {

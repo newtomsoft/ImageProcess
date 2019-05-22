@@ -88,12 +88,11 @@ public class ImageProcessBack
             List<string> imagesFullNames = new List<string>();
             FileFormat fileToReadType = FileFormat.Unknow;
 
-            // TODO use temp file for pdf
             switch (mimeType)
             {
                 case "application/pdf":
                     PdfClown pdfFile = new PdfClown();
-                    memorystreams = pdfFile.GetImages(fullNameOfImage);
+                    imagesFullNames = pdfFile.GetImages(fullNameOfImage);
                     fileToReadType = FileFormat.Pdf;
                     break;
                 case var someVal when new Regex(@"application/x-zip.*").IsMatch(someVal):
@@ -107,77 +106,40 @@ public class ImageProcessBack
                 default:
                     break;
             }
-            switch (fileToReadType)
+            foreach (string imageFullName in imagesFullNames)
             {
-                case FileFormat.Pdf:
-                    int i = 0; // TODO cleancode
-                    foreach (MemoryStream memorystream in memorystreams)
+                using (ImageProcess imageToProcess = new ImageProcess(imageFullName))
+                {
+                    if (DeleteStrip)
                     {
-                        i++;
-                        using (ImageProcess imageToProcess = new ImageProcess(memorystream, fullNameOfImage + i.ToString()))
+                        try
                         {
-                            if (DeleteStrip)
-                            {
-                                try
-                                {
-                                    imageToProcess.DeleteStrips(StripLevel);
-                                }
-                                catch (Exception ex)
-                                {
-                                    listErrors += "Erreur : " + ex.Message + " sur " + fullNameOfImage + "(image " + i + ") => bordures inchangées\n";
-                                }
-                            }
-
-                            if (PdfFusion)
-                            {
-                                MemoryStream memoryStream = new MemoryStream();
-                                imageToProcess.Save(memoryStream);
-                                AddPageToPdfDocument(memoryStream);
-                            }
-                            else
-                            {
-                                imageToProcess.SaveTo(ImageFormatToSave, FullPathSave);
-                            }
+                            imageToProcess.DeleteStrips(StripLevel);
+                        }
+                        catch (Exception ex)
+                        {
+                            listErrors += "Erreur : " + ex.Message + " sur image " + imageFullName + " => bordures inchangées\n";
                         }
                     }
-                    break;
-                case FileFormat.Zip:
-                case FileFormat.Image:
-                    foreach (string imageFullName in imagesFullNames)
+
+                    if (PdfFusion)
                     {
-                        using (ImageProcess imageToProcess = new ImageProcess(imageFullName))
-                        {
-                            if (DeleteStrip)
-                            {
-                                try
-                                {
-                                    imageToProcess.DeleteStrips(StripLevel);
-                                }
-                                catch (Exception ex)
-                                {
-                                    listErrors += "Erreur : " + ex.Message + " sur image " + imageFullName + " => bordures inchangées\n";
-                                }
-                            }
-
-                            if (PdfFusion)
-                            {
-                                MemoryStream memoryStream = new MemoryStream();
-                                imageToProcess.Save(memoryStream);
-                                AddPageToPdfDocument(memoryStream);
-                            }
-                            else
-                            {
-                                imageToProcess.SaveTo(ImageFormatToSave, FullPathSave);
-                            }
-
-                        }
-                        if (DeleteOrigin || fileToReadType == FileFormat.Zip)
-                        {
-                            File.Delete(imageFullName);
-                        }
+                        MemoryStream memoryStream = new MemoryStream();
+                        imageToProcess.Save(memoryStream);
+                        AddPageToPdfDocument(memoryStream);
                     }
-                    break;
+                    else
+                    {
+                        imageToProcess.SaveTo(ImageFormatToSave, FullPathSave);
+                    }
+
+                }
+                if (DeleteOrigin || fileToReadType == FileFormat.Zip || fileToReadType == FileFormat.Pdf)
+                {
+                    File.Delete(imageFullName);
+                }
             }
+            break;
         }
 
         if (PdfFusion)
@@ -189,6 +151,12 @@ public class ImageProcessBack
         //TextBoxListFiles.Text = "";
         return contentEnd + listErrors;
     }
+
+    private List<string> OpenPdfToTempFiles(string fullNameOfImage)
+    {
+        throw new NotImplementedException();
+    }
+
     private List<string> OpenZipToTempFiles(string fileZip)
     {
         List<string> fullNamesOfFiles = new List<string>();
