@@ -36,10 +36,13 @@ public class ImageProcessBack
     /// </summary>
     public string PathSave;
     /// <summary>
-    /// directory path where save image(s)
+    /// directory full path where save image(s)
     /// </summary>
     public string FullPathSave;
-
+    /// <summary>
+    /// directory full path where are files to convert
+    /// </summary>
+    public string FullPathOriginFiles;
     /// <summary>
     /// full name of all images we want to process
     /// </summary>
@@ -67,6 +70,7 @@ public class ImageProcessBack
     /// <returns>string with all warning and errors for show in a MessageBox or similar to alert user</returns>
     public string Process()
     {
+        FullPathSave = Path.Combine(FullPathOriginFiles, PathSave);
         string listErrors = "";
         if (FullNameOfImagesToProcess.Count == 0)
         {
@@ -132,7 +136,7 @@ public class ImageProcessBack
                             }
                             else
                             {
-                                imageToProcess.SaveTo(ImageFormatToSave, PathSave);
+                                imageToProcess.SaveTo(ImageFormatToSave, FullPathSave);
                             }
                         }
                     }
@@ -163,7 +167,7 @@ public class ImageProcessBack
                             }
                             else
                             {
-                                imageToProcess.SaveTo(ImageFormatToSave, PathSave);
+                                imageToProcess.SaveTo(ImageFormatToSave, FullPathSave);
                             }
 
                         }

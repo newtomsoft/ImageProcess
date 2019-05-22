@@ -15,7 +15,6 @@ namespace ImageProcessLib
         public FreeImageBitmap Bitmap { get; private set; }
         public string FullNameOfFile { get; }
         public string NameOfFile { get; }
-        public string NameOfDirectory { get; }
         public FREE_IMAGE_FORMAT FormatImage { get; }
         public int Width { get; private set; }
         public int Height { get; private set; }
@@ -24,7 +23,6 @@ namespace ImageProcessLib
         public ImageProcess(string fullNameOfFile)
         {
             FullNameOfFile = fullNameOfFile;
-            NameOfDirectory = Path.GetDirectoryName(FullNameOfFile);
             NameOfFile = Path.GetFileName(FullNameOfFile);
             try
             {
@@ -46,7 +44,6 @@ namespace ImageProcessLib
         public ImageProcess(MemoryStream theStream, string fullNameOfImage)
         {
             FullNameOfFile = fullNameOfImage;
-            NameOfDirectory = Path.GetDirectoryName(FullNameOfFile) + "\\";
             NameOfFile = Path.GetFileName(FullNameOfFile);
             Bitmap = new FreeImageBitmap(theStream, FREE_IMAGE_FORMAT.FIF_JPEG);
             //Bitmap = new FreeImageBitmap(theStream);
@@ -228,8 +225,8 @@ namespace ImageProcessLib
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
             {
                 string fileExtension = ".webp";
-                Directory.CreateDirectory(Path.Combine(NameOfDirectory, pathImageSave));
-                Bitmap.Save(NameOfDirectory + pathImageSave + NameOfFile + "free" + fileExtension, FREE_IMAGE_FORMAT.FIF_UNKNOWN); //TODO
+                //Directory.CreateDirectory(Path.Combine(NameOfDirectory, pathImageSave));
+                //Bitmap.Save(NameOfDirectory + pathImageSave + NameOfFile + "free" + fileExtension, FREE_IMAGE_FORMAT.FIF_UNKNOWN); //TODO
             }
         }
         public void SaveToWebp(string fullNameToSave)
@@ -286,7 +283,7 @@ namespace ImageProcessLib
                 }
             }
         }
-        public void SaveTo(FileFormat outputFileFormat, string pathImageSave = @"Save\")
+        public void SaveTo(FileFormat outputFileFormat, string fullPathImageSave)
         {
             FREE_IMAGE_FORMAT outputFormat;
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
@@ -331,10 +328,10 @@ namespace ImageProcessLib
                         outputFormat = FormatImage;
                         break;
                 }
-                Directory.CreateDirectory(Path.Combine(NameOfDirectory, pathImageSave));
+                Directory.CreateDirectory(fullPathImageSave);
                 try
                 {
-                    string fullNameToSave = Path.Combine(NameOfDirectory, pathImageSave, NameOfFile + fileExtension);
+                    string fullNameToSave = Path.Combine(fullPathImageSave, NameOfFile + fileExtension);
                     if (outputFormat != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
                     {
                         Bitmap.Save(fullNameToSave, outputFormat);
@@ -353,7 +350,7 @@ namespace ImageProcessLib
                         xgr.Dispose();
                         filestream.Dispose();
                         File.Delete(fullNameToSave);
-                        thePdfDocument.Save(Path.Combine(NameOfDirectory, pathImageSave, NameOfFile + ".pdf"));
+                        thePdfDocument.Save(Path.Combine(fullPathImageSave, NameOfFile + ".pdf"));
                         thePdfDocument.Close();
                         thePdfDocument.Dispose();
                     }
