@@ -186,7 +186,7 @@ public class ImageProcessBack
         ZipArchive zip;
         try
         {
-            zip = ZipFile.Open(fileZip, ZipArchiveMode.Read);
+            zip = ZipFile.OpenRead(fullNameOfImage);
             var entries = zip.Entries;
             List<ZipArchiveEntry> listFiles = new List<ZipArchiveEntry>();
             foreach (var entrie in entries)
