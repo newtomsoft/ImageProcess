@@ -106,6 +106,10 @@ public class ImageProcessBack
                 default:
                     break;
             }
+            if(imagesFullNames.Count==0)
+            {
+                listErrors += "pas d'images trouvées dans " + fullNameOfImage + "\n";
+            }
             foreach (string imageFullName in imagesFullNames)
             {
                 using (ImageProcess imageToProcess = new ImageProcess(imageFullName))
