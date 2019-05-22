@@ -121,7 +121,6 @@ public class ImageProcessBack
                             listErrors += "Erreur : " + ex.Message + " sur image " + imageFullName + " => bordures inchangées\n";
                         }
                     }
-
                     if (PdfFusion)
                     {
                         MemoryStream memoryStream = new MemoryStream();
@@ -132,7 +131,6 @@ public class ImageProcessBack
                     {
                         imageToProcess.SaveTo(ImageFormatToSave, FullPathSave);
                     }
-
                 }
                 if (DeleteOrigin || fileToReadType == FileFormat.Zip || fileToReadType == FileFormat.Pdf)
                 {
@@ -151,12 +149,6 @@ public class ImageProcessBack
         //TextBoxListFiles.Text = "";
         return contentEnd + listErrors;
     }
-
-    private List<string> OpenPdfToTempFiles(string fullNameOfImage)
-    {
-        throw new NotImplementedException();
-    }
-
     private List<string> OpenZipToTempFiles(string fileZip)
     {
         List<string> fullNamesOfFiles = new List<string>();
@@ -218,10 +210,8 @@ public class ImageProcessBack
     /// </summary>
     public void SavePdfDocument()
     {
-        string fullNameOfOneImage = FullNameOfImagesToProcess[0];
-        string pathToSave = Path.GetDirectoryName(fullNameOfOneImage) + @"\SavePdf\";
-        Directory.CreateDirectory(pathToSave);
-        ThePdfDocument.Save(pathToSave + "SavefromImages.pdf");
+        Directory.CreateDirectory(FullPathSave);
+        ThePdfDocument.Save(Path.Combine(FullPathSave, "fromImageProcess.pdf"));
         ThePdfDocument.Close();
         ThePdfDocument.Dispose();
     }

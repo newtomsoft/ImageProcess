@@ -106,7 +106,7 @@ namespace ImageProcessUI
                     ImageProcessBack.PathSave = @"saveGif\";
                     break;
                 case "ButtonFormatPdfFusion":
-                    ImageProcessBack.PathSave = "";
+                    ImageProcessBack.PathSave = @"savePdf\";
                     ImageProcessBack.PdfFusion = true;
                     break;
                 case "ButtonFormatPdfSingle":
