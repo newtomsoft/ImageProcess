@@ -212,7 +212,7 @@ public class ImageProcessBack
         ZipArchive zip;
         try
         {
-            zip = ZipFile.Open(fullNameOfImage, ZipArchiveMode.Read);
+            zip = ZipFile.OpenRead(fullNameOfImage);
             var entries = zip.Entries;
             bool recurse;
             //TODO recurse
