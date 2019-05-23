@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
 using System.Text.RegularExpressions;
 using ImageProcessLib;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
+using SharpCompress.Readers;
 
 /// <summary>
 /// back of the solution
@@ -141,9 +140,7 @@ public class ImageProcessBack
                     File.Delete(imageFullName);
                 }
             }
-            break;
         }
-
         if (PdfFusion)
         {
             SavePdfDocument();
@@ -153,33 +150,28 @@ public class ImageProcessBack
         //TextBoxListFiles.Text = "";
         return contentEnd + listErrors;
     }
-    private List<string> OpenZipToTempFiles(string fileZip)
+    static List<string> OpenZipToTempFiles(string fileZip)
     {
         List<string> fullNamesOfFiles = new List<string>();
-        ZipArchive zip;
-        try
+        using (Stream stream = File.OpenRead(fileZip))
+        using (var reader = ReaderFactory.Open(stream))
         {
-            zip = ZipFile.OpenRead(fileZip);
-            var entries = zip.Entries;
-            List<ZipArchiveEntry> listFiles = new List<ZipArchiveEntry>();
-            foreach (var entrie in entries)
+            while (reader.MoveToNextEntry())
             {
-                string fileName = entrie.FullName;
-                string fullName = Path.Combine(Path.GetTempPath(), fileName);
-                if (Path.GetFileName(fullName) == "") continue;
-                fullNamesOfFiles.Add(fullName);
-                Stream stream = entrie.Open();
-                Directory.CreateDirectory(Path.GetDirectoryName(fullName));
-                using (FileStream fileStream = new FileStream(fullName, FileMode.Create, FileAccess.Write))
+                if (!reader.Entry.IsDirectory)
                 {
-                    stream.CopyTo(fileStream);
+                    using (var entryStream = reader.OpenEntryStream())
+                    {
+                        string fileName = reader.Entry.ToString();
+                        string fullName = Path.Combine(Path.GetTempPath(), fileName);
+                        using (FileStream fileStream = new FileStream(fullName, FileMode.Create, FileAccess.Write))
+                        {
+                            entryStream.CopyTo(fileStream);
+                        }
+                        fullNamesOfFiles.Add(fullName);
+                    }
                 }
             }
-            zip.Dispose();
-        }
-        catch
-        {
-            throw;
         }
         return fullNamesOfFiles;
     }

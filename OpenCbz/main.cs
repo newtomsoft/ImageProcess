@@ -1,4 +1,5 @@
 ﻿using SharpCompress.Archives.Zip;
+using SharpCompress.Readers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,36 +20,28 @@ namespace OpenCbz
         static List<string> OpenZipToTempFiles(string fileZip)
         {
             List<string> fullNamesOfFiles = new List<string>();
-            ZipArchive zip;
-            try
+            using (Stream stream = File.OpenRead(fileZip))
+            using (var reader = ReaderFactory.Open(stream))
             {
-                zip = ZipArchive.Open(fileZip);
-                var entries = zip.Entries;
-                List<ZipArchiveEntry> listFiles = new List<ZipArchiveEntry>();
-                foreach (var entrie in entries)
+                while (reader.MoveToNextEntry())
                 {
-                    string fileName = entrie.ToString();
-                    Stream stream = entrie.OpenEntryStream();
-                    string fullName = Path.Combine(Path.GetTempPath(), fileName);
-                    if (Path.GetFileName(fullName) == "") continue;
-                    fullNamesOfFiles.Add(fullName);
-                    Directory.CreateDirectory(Path.GetDirectoryName(fullName));
-                    using (FileStream fileStream = new FileStream(fullName, FileMode.Create, FileAccess.Write))
+                    if (!reader.Entry.IsDirectory)
                     {
-                        stream.CopyTo(fileStream);
+                        using (var entryStream = reader.OpenEntryStream())
+                        {
+                            string fileName = reader.Entry.ToString();
+                            string fullName = Path.Combine(Path.GetTempPath(), fileName);
+                            using (FileStream fileStream = new FileStream(fullName, FileMode.Create, FileAccess.Write))
+                            {
+                                entryStream.CopyTo(fileStream);
+                            }
+                            fullNamesOfFiles.Add(fullName);
+                        }
                     }
                 }
-                zip.Dispose();
-            }
-            catch
-            {
-                throw;
             }
             return fullNamesOfFiles;
         }
-
-
     }
-
 }
 
