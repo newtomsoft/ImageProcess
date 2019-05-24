@@ -150,7 +150,7 @@ public class ImageProcessBack
         //TextBoxListFiles.Text = "";
         return contentEnd + listErrors;
     }
-    static List<string> OpenZipToTempFiles(string fileZip)
+    List<string> OpenZipToTempFiles(string fileZip)
     {
         List<string> fullNamesOfFiles = new List<string>();
         using (Stream stream = File.OpenRead(fileZip))
