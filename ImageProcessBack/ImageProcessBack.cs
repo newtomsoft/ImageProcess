@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using ImageProcessLib;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
 using SharpCompress.Readers;
 
 /// <summary>
@@ -90,9 +91,8 @@ public class ImageProcessBack
             switch (mimeType)
             {
                 case "application/pdf":
-                    PdfClown pdfFile = new PdfClown();
-                    imagesFullNames = pdfFile.GetImages(fullNameOfImage);
                     fileToReadType = FileFormat.Pdf;
+                    imagesFullNames = PdfImgExtraction.ExtractImage(fullNameOfImage);
                     break;
                 case var someVal when new Regex(@"application/x-zip.*").IsMatch(someVal):
                     imagesFullNames = OpenZipToTempFiles(fullNameOfImage);
