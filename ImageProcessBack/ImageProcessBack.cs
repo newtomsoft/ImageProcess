@@ -83,11 +83,9 @@ public class ImageProcessBack
         }
         foreach (string fullNameOfImage in FullNameOfImagesToProcess)
         {
-            string mimeType = MimeType.getFromFile(fullNameOfImage);
-            List<MemoryStream> memorystreams = new List<MemoryStream>();
             List<string> imagesFullNames = new List<string>();
             FileFormat fileToReadType = FileFormat.Unknow;
-
+            string mimeType = MimeType.getFromFile(fullNameOfImage);
             switch (mimeType)
             {
                 case "application/pdf":
@@ -95,8 +93,8 @@ public class ImageProcessBack
                     imagesFullNames = PdfImgExtraction.ExtractImage(fullNameOfImage);
                     break;
                 case var someVal when new Regex(@"application/x-zip.*").IsMatch(someVal):
-                    imagesFullNames = OpenZipToTempFiles(fullNameOfImage);
                     fileToReadType = FileFormat.Zip;
+                    imagesFullNames = OpenZipToTempFiles(fullNameOfImage);
                     break;
                 case var someVal when new Regex(@"image/.*").IsMatch(someVal):
                     fileToReadType = FileFormat.Image;
@@ -105,7 +103,7 @@ public class ImageProcessBack
                 default:
                     break;
             }
-            if(imagesFullNames.Count==0)
+            if (imagesFullNames.Count == 0)
             {
                 listErrors += "pas d'images trouvées dans " + fullNameOfImage + "\n";
             }
@@ -139,6 +137,10 @@ public class ImageProcessBack
                 {
                     File.Delete(imageFullName);
                 }
+            }
+            if (DeleteOrigin && (fileToReadType == FileFormat.Zip || fileToReadType == FileFormat.Pdf))
+            {
+                File.Delete(fullNameOfImage);
             }
         }
         if (PdfFusion)

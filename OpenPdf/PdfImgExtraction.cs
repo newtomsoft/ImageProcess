@@ -2,51 +2,38 @@
 using System.IO;
 using Path = System.IO.Path;
 using iTextSharp.text.pdf;
-using PdfName = iTextSharp.text.pdf.PdfName;
-using PdfObject = iTextSharp.text.pdf.PdfObject;
 using iTextSharp.text.pdf.parser;
 
 public class PdfImgExtraction
 {
-    static public List<string> ExtractImage(string fileName)
+    public static List<string> ExtractImage(string fileName)
     {
-        List<string> returnFilesNames = new List<string>();
-        // existing pdf path
-        PdfReader reader = new PdfReader(fileName);
-        PRStream pst;
-        PdfImageObject pio;
-        PdfObject po;
-        // number of objects in pdf document
-        int n = reader.XrefSize;
-        FileStream fs;
-        // set image file location
-        for (int i = 0; i < n; i++)
+        List<string> filesNames = new List<string>();
+        PdfReader pdfDoc = new PdfReader(fileName);
+        int objectsNumber = pdfDoc.XrefSize;
+        int imageFoundIndex = 0;
+        for (int i = 0; i < objectsNumber; i++)
         {
-            // get the object at the index i in the objects collection
-            po = reader.GetPdfObject(i);
-            // object not found so continue
-            if (po == null || !po.IsStream())
-                continue; // TODO clean code
-            //cast object to stream
-            pst = (PRStream)po;
-            //get the object type
-            PdfObject type = pst.Get(PdfName.SUBTYPE);
-            //check if the object is the image type object
-            if (type != null && type.ToString().Equals(PdfName.IMAGE.ToString()))
+            PdfObject currentpdfObject = pdfDoc.GetPdfObject(i);
+            if (currentpdfObject != null && currentpdfObject.IsStream())
             {
-                //get the image
-                pio = new PdfImageObject(pst);
-                string fullName = Path.Combine(Path.GetTempPath(), "image" + i + ".jpg"); //todo clean code
-                fs = new FileStream(fullName, FileMode.Create);
-                //read bytes of image in to an array
-                byte[] imgdata = pio.GetImageAsBytes();
-                //write the bytes array to file
-                fs.Write(imgdata, 0, imgdata.Length);
-                fs.Flush();
-                fs.Close();
-                returnFilesNames.Add(fullName);
+                PRStream currentPdfReaderStream = (PRStream)currentpdfObject;
+                PdfObject type = currentPdfReaderStream.Get(PdfName.SUBTYPE);
+                if (type != null && type.ToString().Equals(PdfName.IMAGE.ToString()))
+                {
+                    PdfImageObject pdfImageObject = new PdfImageObject(currentPdfReaderStream);
+                    string imageName = "image" + ++imageFoundIndex;
+                    string imageFullName = Path.Combine(Path.GetTempPath(), imageName);
+                    FileStream fs = new FileStream(imageFullName, FileMode.Create);
+                    byte[] imgdata = pdfImageObject.GetImageAsBytes();
+                    fs.Write(imgdata, 0, imgdata.Length);
+                    fs.Flush();
+                    fs.Close();
+                    filesNames.Add(imageFullName);
+                }
             }
         }
-        return returnFilesNames;
+        pdfDoc.Dispose();
+        return filesNames;
     }
 }

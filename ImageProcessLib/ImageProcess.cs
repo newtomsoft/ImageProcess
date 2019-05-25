@@ -46,7 +46,6 @@ namespace ImageProcessLib
             FullNameOfFile = fullNameOfImage;
             NameOfFile = Path.GetFileName(FullNameOfFile);
             Bitmap = new FreeImageBitmap(theStream, FREE_IMAGE_FORMAT.FIF_JPEG);
-            //Bitmap = new FreeImageBitmap(theStream);
             Bitmap.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP);
             FormatImage = Bitmap.ImageFormat;
             Width = Bitmap.Width;
@@ -350,7 +349,8 @@ namespace ImageProcessLib
                         xgr.Dispose();
                         filestream.Dispose();
                         File.Delete(fullNameToSave);
-                        thePdfDocument.Save(Path.Combine(fullPathImageSave, NameOfFile + ".pdf"));
+                        string extension = ".pdf";
+                        thePdfDocument.Save(Path.Combine(fullPathImageSave, NameOfFile+extension));
                         thePdfDocument.Close();
                         thePdfDocument.Dispose();
                     }
