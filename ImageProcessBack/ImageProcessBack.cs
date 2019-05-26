@@ -6,6 +6,7 @@ using ImageProcessLib;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
+using SharpCompress.Archives;
 using SharpCompress.Readers;
 
 /// <summary>
@@ -92,9 +93,12 @@ public class ImageProcessBack
                     fileToReadType = FileFormat.Pdf;
                     imagesFullNames = PdfImgExtraction.ExtractImage(fullNameOfImage);
                     break;
-                case var someVal when new Regex(@"application/x-zip.*").IsMatch(someVal):
+                case "application/octet-stream":
+                case "application/x-rar-compressed":
+                case "application/x-zip-compressed":
+                case "multipart/x-zip":
                     fileToReadType = FileFormat.Zip;
-                    imagesFullNames = OpenZipToTempFiles(fullNameOfImage);
+                    imagesFullNames = OpenCompressedFileToFiles(fullNameOfImage);
                     break;
                 case var someVal when new Regex(@"image/.*").IsMatch(someVal):
                     fileToReadType = FileFormat.Image;
@@ -152,31 +156,52 @@ public class ImageProcessBack
         //TextBoxListFiles.Text = "";
         return contentEnd + listErrors;
     }
-    List<string> OpenZipToTempFiles(string fileZip)
+    List<string> OpenCompressedFileToFiles(string compressedFile)
     {
         List<string> fullNamesOfFiles = new List<string>();
-        using (Stream stream = File.OpenRead(fileZip))
-        using (var reader = ReaderFactory.Open(stream))
+        IArchive archive = ArchiveFactory.Open(compressedFile);
+        foreach (IArchiveEntry entrie in archive.Entries)
         {
-            while (reader.MoveToNextEntry())
+            if (!entrie.IsDirectory)
             {
-                if (!reader.Entry.IsDirectory)
+                var fileName = entrie.Key;
+                string fullName = Path.Combine(Path.GetTempPath(), fileName);
+                string directoryName = Path.GetDirectoryName(fullName);
+                Directory.CreateDirectory(directoryName);
+                using (FileStream fileStream = new FileStream(fullName, FileMode.Create, FileAccess.Write))
                 {
-                    using (var entryStream = reader.OpenEntryStream())
-                    {
-                        string fileName = reader.Entry.ToString();
-                        string fullName = Path.Combine(Path.GetTempPath(), fileName);
-                        using (FileStream fileStream = new FileStream(fullName, FileMode.Create, FileAccess.Write))
-                        {
-                            entryStream.CopyTo(fileStream);
-                        }
-                        fullNamesOfFiles.Add(fullName);
-                    }
+                    entrie.WriteTo(fileStream);
                 }
+                fullNamesOfFiles.Add(fullName);
             }
         }
         return fullNamesOfFiles;
     }
+    //List<string> OpenZipToTempFiles(string fileZip)
+    //{
+    //    List<string> fullNamesOfFiles = new List<string>();
+    //    using (Stream stream = File.OpenRead(fileZip))
+    //    using (var reader = ReaderFactory.Open(stream))
+    //    {
+    //        while (reader.MoveToNextEntry())
+    //        {
+    //            if (!reader.Entry.IsDirectory)
+    //            {
+    //                using (var entryStream = reader.OpenEntryStream())
+    //                {
+    //                    string fileName = reader.Entry.ToString();
+    //                    string fullName = Path.Combine(Path.GetTempPath(), fileName);
+    //                    using (FileStream fileStream = new FileStream(fullName, FileMode.Create, FileAccess.Write))
+    //                    {
+    //                        entryStream.CopyTo(fileStream);
+    //                    }
+    //                    fullNamesOfFiles.Add(fullName);
+    //                }
+    //            }
+    //        }
+    //    }
+    //    return fullNamesOfFiles;
+    //}
 
     /// <summary>
     /// create new pdf document to put image into it after that
