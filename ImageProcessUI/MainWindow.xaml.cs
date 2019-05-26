@@ -43,7 +43,7 @@ namespace ImageProcessUI
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "Images files |*.jpg;*.webp;*.bmp;*.jp2;*.png;*.tif;*.gif;*.pdf|" + "All files |*.*",
+                Filter = "Images files |*.jpg;*.webp;*.bmp;*.jp2;*.png;*.tif;*.gif|" + "Documents/Archives |*.pdf;*.zip;*.cbz;*.rar;*.cbr;*.7z;*.cb7|" + "All files |*.*",
                 Multiselect = true,
                 Title = "Choisir les images à traiter"
             };
