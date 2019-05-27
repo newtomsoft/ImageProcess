@@ -21,6 +21,9 @@ class MimeType
     public static string getFromFile(string filename)
     {
         const string genericMime = "application/octet-stream";
+        const string webpMime = "image/webp";
+        const string jpeg2000Mime = "image/jp2";
+
         if (!File.Exists(filename))
             throw new FileNotFoundException(filename + " not found");
 
@@ -46,19 +49,14 @@ class MimeType
                 byte b1 = buffer[1];
                 byte b2 = buffer[2];
                 byte b3 = buffer[3];
-                byte b8 = buffer[8];
-                byte b9 = buffer[9];
-                byte b10 = buffer[10];
-                byte b11 = buffer[11];
-                if( b0 == 'R' && b1 == 'I' && b2 == 'F' && b3 == 'F' &&
-                    b8 == 'W' && b9 == 'E' && b10 == 'B' && b11 == 'P')
-                {
-                    return mime = "image/webp";
-                }
                 byte b4 = buffer[4];
                 byte b5 = buffer[5];
                 byte b6 = buffer[6];
                 byte b7 = buffer[7];
+                byte b8 = buffer[8];
+                byte b9 = buffer[9];
+                byte b10 = buffer[10];
+                byte b11 = buffer[11];
                 byte b16 = buffer[16];
                 byte b17 = buffer[17];
                 byte b18 = buffer[18];
@@ -66,21 +64,25 @@ class MimeType
                 byte b20 = buffer[20];
                 byte b21 = buffer[21];
                 byte b22 = buffer[22];
+                if ( b0 == 'R' && b1 == 'I' && b2 == 'F' && b3 == 'F' &&
+                    b8 == 'W' && b9 == 'E' && b10 == 'B' && b11 == 'P')
+                {
+                    mime = webpMime;
+                    return mime;
+                }
                 if (b4 == 'j' && b5 == 'P' && b6 == ' ' && b7 == ' ' &&
                     b16 == 'f' && b17 == 't' && b18 == 'y' && b19 == 'p' && b20 == 'j' && b21 == 'p' && b22 == '2')
                 {
-                    return mime = "image/jpeg2000";
+                    mime = jpeg2000Mime;
+                    return mime;
                 }
             }
-
             return mime;
         }
         catch (Exception)
         {
-            return "unknown/unknown";
+            return genericMime;
         }
     }
-
-
 }
 
