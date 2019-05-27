@@ -70,7 +70,7 @@ public class ImageProcessBack
     /// </summary>
     /// <returns>string with all warning and errors for show in a MessageBox or similar to alert user</returns>
     public string Process()
-    {      
+    {
         string listErrors = "";
         if (FullNameOfImagesToProcess.Count == 0)
         {
@@ -119,14 +119,7 @@ public class ImageProcessBack
                     {
                         if (DeleteStrip)
                         {
-                            //try
-                            //{
-                                imageToProcess.DeleteStrips(StripLevel);
-                            //}
-                            //catch (Exception ex)
-                            //{
-                            //    listErrors += "Erreur : " + ex.Message + " sur image " + imageFullName + "\n";
-                            //}
+                            imageToProcess.DeleteStrips(StripLevel);
                         }
                         if (PdfFusion)
                         {
@@ -138,11 +131,12 @@ public class ImageProcessBack
                         {
                             imageToProcess.SaveTo(ImageFormatToSave, FullPathSave);
                         }
-                        if (DeleteOrigin || fileToReadType == FileFormat.Zip || fileToReadType == FileFormat.Pdf)
-                        {
-                                File.Delete(imageFullName);
-                        }
                     }
+                    if (DeleteOrigin || fileToReadType == FileFormat.Zip || fileToReadType == FileFormat.Pdf)
+                    {
+                        File.Delete(imageFullName);
+                    }
+
                 }
                 catch (Exception ex)
                 {

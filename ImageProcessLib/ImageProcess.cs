@@ -112,7 +112,6 @@ namespace ImageProcessLib
                 }
                 try
                 {
-
                     if (edge == ImageEdge.bottom || edge == ImageEdge.top)
                     {
                         colorPixel = Bitmap.GetPixel(indexStepInt, indexStrip);
