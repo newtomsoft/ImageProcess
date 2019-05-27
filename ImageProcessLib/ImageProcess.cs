@@ -110,13 +110,21 @@ namespace ImageProcessLib
                     indexStepInt -= heightOrWidth;
                     indexStepWithDot -= heightOrWidth;
                 }
-                if(edge == ImageEdge.bottom || edge == ImageEdge.top)
+                try
                 {
-                    colorPixel = Bitmap.GetPixel(indexStepInt, indexStrip);
+
+                    if (edge == ImageEdge.bottom || edge == ImageEdge.top)
+                    {
+                        colorPixel = Bitmap.GetPixel(indexStepInt, indexStrip);
+                    }
+                    else
+                    {
+                        colorPixel = Bitmap.GetPixel(indexStrip, indexStepInt);
+                    }
                 }
-                else
+                catch
                 {
-                    colorPixel = Bitmap.GetPixel(indexStrip, indexStepInt);
+                    throw new Exception("Tous les pixels sont similaires"); 
                 }
                 sumColorR += colorPixel.R;
                 sumColorG += colorPixel.G;
@@ -139,13 +147,20 @@ namespace ImageProcessLib
                     indexStepInt -= heightOrWidth;
                     indexStepWithDot -= heightOrWidth;
                 }
-                if (edge == ImageEdge.bottom || edge == ImageEdge.top)
+                try
                 {
-                    colorPixel = Bitmap.GetPixel(indexStepInt, indexStrip);
+                    if (edge == ImageEdge.bottom || edge == ImageEdge.top)
+                    {
+                        colorPixel = Bitmap.GetPixel(indexStepInt, indexStrip);
+                    }
+                    else
+                    {
+                        colorPixel = Bitmap.GetPixel(indexStrip, indexStepInt);
+                    }
                 }
-                else
+                catch
                 {
-                    colorPixel = Bitmap.GetPixel(indexStrip, indexStepInt);
+                    throw new Exception("Tous les pixels sont similaires");
                 }
                 R2 += Math.Pow(colorPixel.R - averageR, 2);
                 G2 += Math.Pow(colorPixel.G - averageG, 2);
@@ -214,7 +229,7 @@ namespace ImageProcessLib
                     }
                     else
                     {
-                        throw new Exception("All pixels are similar");
+                        throw new Exception("Tous les pixels sont similaires");
                     }
                 }
             }

@@ -113,33 +113,40 @@ public class ImageProcessBack
             }
             foreach (string imageFullName in imagesFullNames)
             {
-                using (ImageProcess imageToProcess = new ImageProcess(imageFullName))
+                try
                 {
-                    if (DeleteStrip)
+                    using (ImageProcess imageToProcess = new ImageProcess(imageFullName))
                     {
-                        try
+                        if (DeleteStrip)
                         {
-                            imageToProcess.DeleteStrips(StripLevel);
+                            //try
+                            //{
+                                imageToProcess.DeleteStrips(StripLevel);
+                            //}
+                            //catch (Exception ex)
+                            //{
+                            //    listErrors += "Erreur : " + ex.Message + " sur image " + imageFullName + "\n";
+                            //}
                         }
-                        catch (Exception ex)
+                        if (PdfFusion)
                         {
-                            listErrors += "Erreur : " + ex.Message + " sur image " + imageFullName + " => bordures inchangées\n";
+                            MemoryStream memoryStream = new MemoryStream();
+                            imageToProcess.Save(memoryStream);
+                            AddPageToPdfDocument(memoryStream);
                         }
-                    }
-                    if (PdfFusion)
-                    {
-                        MemoryStream memoryStream = new MemoryStream();
-                        imageToProcess.Save(memoryStream);
-                        AddPageToPdfDocument(memoryStream);
-                    }
-                    else
-                    {
-                        imageToProcess.SaveTo(ImageFormatToSave, FullPathSave);
+                        else
+                        {
+                            imageToProcess.SaveTo(ImageFormatToSave, FullPathSave);
+                        }
+                        if (DeleteOrigin || fileToReadType == FileFormat.Zip || fileToReadType == FileFormat.Pdf)
+                        {
+                                File.Delete(imageFullName);
+                        }
                     }
                 }
-                if (DeleteOrigin || fileToReadType == FileFormat.Zip || fileToReadType == FileFormat.Pdf)
+                catch (Exception ex)
                 {
-                    File.Delete(imageFullName);
+                    listErrors += "Erreur : " + ex.Message + " sur fichier " + imageFullName + "\n";
                 }
             }
             if (DeleteOrigin && (fileToReadType == FileFormat.Zip || fileToReadType == FileFormat.Pdf))
@@ -177,32 +184,6 @@ public class ImageProcessBack
         }
         return fullNamesOfFiles;
     }
-    //List<string> OpenZipToTempFiles(string fileZip)
-    //{
-    //    List<string> fullNamesOfFiles = new List<string>();
-    //    using (Stream stream = File.OpenRead(fileZip))
-    //    using (var reader = ReaderFactory.Open(stream))
-    //    {
-    //        while (reader.MoveToNextEntry())
-    //        {
-    //            if (!reader.Entry.IsDirectory)
-    //            {
-    //                using (var entryStream = reader.OpenEntryStream())
-    //                {
-    //                    string fileName = reader.Entry.ToString();
-    //                    string fullName = Path.Combine(Path.GetTempPath(), fileName);
-    //                    using (FileStream fileStream = new FileStream(fullName, FileMode.Create, FileAccess.Write))
-    //                    {
-    //                        entryStream.CopyTo(fileStream);
-    //                    }
-    //                    fullNamesOfFiles.Add(fullName);
-    //                }
-    //            }
-    //        }
-    //    }
-    //    return fullNamesOfFiles;
-    //}
-
     /// <summary>
     /// create new pdf document to put image into it after that
     /// </summary>
