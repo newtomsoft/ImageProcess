@@ -31,5 +31,19 @@
         <StackPanel Margin="10,144,10,10">
             <TextBox x:Name="TextBoxListFiles"  TextWrapping="Wrap"/>
         </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Background="LightBlue" Height="40">
+            <Label Margin="10,0,0,0" Height="23" Name="Label1">
+                Current File:
+            </Label>
+            <Label Margin="5,0,0,0" Height="25" Name="FileNameLabel" Width="300" />
+            <Button Margin="5,0,0,0" Height="23" Name="BrowseButton" Width="75" Click="BrowseButton_Click">
+                Browse
+            </Button>
+        </StackPanel>
+        <StackPanel >
+            <Image Name="ImageViewer1" Height="400" Width="400" />
+        </StackPanel>
+
     </Grid>
 </Window>

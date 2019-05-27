@@ -21,6 +21,7 @@ using RadioButton = System.Windows.Controls.RadioButton;
 using CheckBox = System.Windows.Controls.CheckBox;
 using MessageBox = System.Windows.MessageBox;
 using Path = System.IO.Path;
+using Xceed.Wpf.AvalonDock.Layout;
 
 namespace ImageProcessUI
 {
@@ -60,6 +61,14 @@ namespace ImageProcessUI
                     ImageProcessBack.FullNameOfImagesToProcess.Add(fileName);
                     TextBoxListFiles.Text += fileName + "\n";
                 }
+                // TODO
+                string selectedFileName = openFileDialog.FileNames[0];
+                FileNameLabel.Content = selectedFileName;
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(selectedFileName);
+                bitmap.EndInit();
+                ImageViewer1.Source = bitmap;
             }
         }
         private void CheckBoxStrips(object sender, RoutedEventArgs e)
@@ -162,6 +171,46 @@ namespace ImageProcessUI
             i.Source = src;
             i.Stretch = Stretch.Uniform;
             //sp.Children.Add(i);
+        }
+
+        private void CreateViewImageDynamically()
+        {
+            // Create Image and set its width and height  
+            Image dynamicImage = new Image();
+            dynamicImage.Stretch = Stretch.Fill;
+            dynamicImage.StretchDirection = StretchDirection.Both;
+            dynamicImage.Width = 300;
+            dynamicImage.Height = 200;
+
+            // Create a BitmapSource  
+            BitmapImage bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(@"C:\Books\Book WPF\How do I\ImageSample\ImageSample\Flower.JPG");
+            bitmap.EndInit();
+
+            // Set Image.Source  
+            dynamicImage.Source = bitmap;
+
+            // Add Image to Window  
+            //LayoutRoot.Children.Add(dynamicImage);
+        }
+
+        private void BrowseButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = "Image files (*.jpg)|*.jpg|All Files (*.*)|*.*";
+            dlg.RestoreDirectory = true;
+
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string selectedFileName = dlg.FileName;
+                FileNameLabel.Content = selectedFileName;
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(selectedFileName);
+                bitmap.EndInit();
+                ImageViewer1.Source = bitmap;
+            }
         }
     }
 }
