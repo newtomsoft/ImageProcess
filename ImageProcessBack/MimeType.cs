@@ -46,10 +46,10 @@ class MimeType
             // add mimes not known by FindMimeFromData
             if (mime == genericMime)
             {
-                ArraySegment<byte> buffer_0_3 = new ArraySegment<byte>(buffer, 0, 4);
-                ArraySegment<byte> buffer_4_7 = new ArraySegment<byte>(buffer, 4, 4);
-                ArraySegment<byte> buffer_8_11 = new ArraySegment<byte>(buffer, 8, 4);
-                ArraySegment<byte> buffer_16_22 = new ArraySegment<byte>(buffer, 16, 7);
+                var buffer_0_3 = new ArraySegment<byte>(buffer, 0, 4);
+                var buffer_4_7 = new ArraySegment<byte>(buffer, 4, 4);
+                var buffer_8_11 = new ArraySegment<byte>(buffer, 8, 4);
+                var buffer_16_22 = new ArraySegment<byte>(buffer, 16, 7);
 
                 byte[] array_RIFF = { (byte)'R', (byte)'I', (byte)'F', (byte)'F' };
                 byte[] array_WEBP = { (byte)'W', (byte)'E', (byte)'B', (byte)'P' };
