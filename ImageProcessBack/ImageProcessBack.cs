@@ -70,14 +70,14 @@ public class ImageProcessBack
     /// </summary>
     /// <returns>string with all warning and errors for show in a MessageBox or similar to alert user</returns>
     public string Process()
-    {
-        FullPathSave = Path.Combine(FullPathOriginFiles, PathSave);
+    {      
         string listErrors = "";
         if (FullNameOfImagesToProcess.Count == 0)
         {
             listErrors = "Erreur\nMerci de choisir des images";
             return listErrors;
         }
+        FullPathSave = Path.Combine(FullPathOriginFiles, PathSave);
         if (PdfFusion)
         {
             InitPdfDocument();
