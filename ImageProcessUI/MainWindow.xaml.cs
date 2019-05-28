@@ -58,17 +58,22 @@ namespace ImageProcessUI
                 foreach (string fileName in openFileDialog.FileNames)
                 {
                     //ShowThumbnail(fileName);
+                    try
+                    {
+                        BitmapImage bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.UriSource = new Uri(fileName);
+                        bitmap.EndInit();
+                        ImageViewer1.Source = bitmap;
+                    }
+                    catch
+                    {
+
+                    }
                     ImageProcessBack.FullNameOfImagesToProcess.Add(fileName);
                     TextBoxListFiles.Text += fileName + "\n";
                 }
-                // TODO
-                string selectedFileName = openFileDialog.FileNames[0];
-                FileNameLabel.Content = selectedFileName;
-                BitmapImage bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.UriSource = new Uri(selectedFileName);
-                bitmap.EndInit();
-                ImageViewer1.Source = bitmap;
+               
             }
         }
         private void CheckBoxStrips(object sender, RoutedEventArgs e)
@@ -193,24 +198,6 @@ namespace ImageProcessUI
 
             // Add Image to Window  
             //LayoutRoot.Children.Add(dynamicImage);
-        }
-
-        private void BrowseButton_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog dlg = new OpenFileDialog();
-            dlg.Filter = "Image files (*.jpg)|*.jpg|All Files (*.*)|*.*";
-            dlg.RestoreDirectory = true;
-
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                string selectedFileName = dlg.FileName;
-                FileNameLabel.Content = selectedFileName;
-                BitmapImage bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.UriSource = new Uri(selectedFileName);
-                bitmap.EndInit();
-                ImageViewer1.Source = bitmap;
-            }
         }
     }
 }
