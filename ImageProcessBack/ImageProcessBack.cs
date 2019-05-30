@@ -47,7 +47,7 @@ public class ImageProcessBack
     /// <summary>
     /// full name of all images we want to process
     /// </summary>
-    public List<string> FullNameOfImagesToProcess;
+    public List<string> FullNameOfFilesToProcess;
     /// <summary>
     /// The pdf document if we convert image into this format
     /// </summary>
@@ -62,7 +62,7 @@ public class ImageProcessBack
         PdfFusion = false;
         DeleteOrigin = false;
         DeleteStrip = false;
-        FullNameOfImagesToProcess = new List<string>();
+        FullNameOfFilesToProcess = new List<string>();
         ImageFormatToSave = FileFormat.Unknow;
     }
     /// <summary>
@@ -72,7 +72,7 @@ public class ImageProcessBack
     public string Process()
     {
         string listErrors = "";
-        if (FullNameOfImagesToProcess.Count == 0)
+        if (FullNameOfFilesToProcess.Count == 0)
         {
             listErrors = "Erreur\nMerci de choisir des images";
             return listErrors;
@@ -82,34 +82,34 @@ public class ImageProcessBack
         {
             InitPdfDocument();
         }
-        foreach (string fullNameOfImage in FullNameOfImagesToProcess)
+        foreach (string fullNameOfFile in FullNameOfFilesToProcess)
         {
             List<string> imagesFullNames = new List<string>();
             FileFormat fileToReadType = FileFormat.Unknow;
-            string mimeType = MimeType.getFromFile(fullNameOfImage);
+            string mimeType = MimeType.getFromFile(fullNameOfFile);
             switch (mimeType)
             {
                 case "application/pdf":
                     fileToReadType = FileFormat.Pdf;
-                    imagesFullNames = PdfImgExtraction.ExtractImage(fullNameOfImage);
+                    imagesFullNames = PdfImgExtraction.ExtractImage(fullNameOfFile);
                     break;
                 case "application/octet-stream":
                 case "application/x-rar-compressed":
                 case "application/x-zip-compressed":
                 case "multipart/x-zip":
                     fileToReadType = FileFormat.Zip;
-                    imagesFullNames = OpenCompressedFileToFiles(fullNameOfImage);
+                    imagesFullNames = OpenCompressedFileToFiles(fullNameOfFile);
                     break;
                 case var someVal when new Regex(@"image/.*").IsMatch(someVal):
                     fileToReadType = FileFormat.Image;
-                    imagesFullNames.Add(fullNameOfImage);
+                    imagesFullNames.Add(fullNameOfFile);
                     break;
                 default:
                     break;
             }
             if (imagesFullNames.Count == 0)
             {
-                listErrors += "pas d'images trouvées dans " + fullNameOfImage + "\n";
+                listErrors += "pas d'images trouvées dans " + fullNameOfFile + "\n";
             }
             foreach (string imageFullName in imagesFullNames)
             {
@@ -145,7 +145,7 @@ public class ImageProcessBack
             }
             if (DeleteOrigin && (fileToReadType == FileFormat.Zip || fileToReadType == FileFormat.Pdf))
             {
-                File.Delete(fullNameOfImage);
+                File.Delete(fullNameOfFile);
             }
         }
         if (PdfFusion)
@@ -153,7 +153,7 @@ public class ImageProcessBack
             SavePdfDocument();
         }
         string contentEnd = "Fin de traitement\n";
-        FullNameOfImagesToProcess.Clear();
+        FullNameOfFilesToProcess.Clear();
         //TextBoxListFiles.Text = "";
         return contentEnd + listErrors;
     }

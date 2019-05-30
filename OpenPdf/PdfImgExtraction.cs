@@ -21,15 +21,23 @@ public class PdfImgExtraction
                 PdfObject type = currentPdfReaderStream.Get(PdfName.SUBTYPE);
                 if (type != null && type.ToString().Equals(PdfName.IMAGE.ToString()))
                 {
-                    PdfImageObject pdfImageObject = new PdfImageObject(currentPdfReaderStream);
-                    string imageName = "image" + ++imageFoundIndex;
-                    string imageFullName = Path.Combine(Path.GetTempPath(), imageName);
-                    FileStream fs = new FileStream(imageFullName, FileMode.Create);
-                    byte[] imgdata = pdfImageObject.GetImageAsBytes();
-                    fs.Write(imgdata, 0, imgdata.Length);
-                    fs.Flush();
-                    fs.Close();
-                    filesNames.Add(imageFullName);
+                    try
+                    {
+                        PdfImageObject pdfImageObject = new PdfImageObject(currentPdfReaderStream);
+                        string imageName = "image" + ++imageFoundIndex;
+                        string imageFullName = Path.Combine(Path.GetTempPath(), imageName);
+                        FileStream fs = new FileStream(imageFullName, FileMode.Create);
+                        byte[] imgdata = pdfImageObject.GetImageAsBytes();
+                        fs.Write(imgdata, 0, imgdata.Length);
+                        fs.Flush();
+                        fs.Close();
+                        filesNames.Add(imageFullName);
+                    }
+                    catch
+                    {
+
+                    }
+                    
                 }
             }
         }

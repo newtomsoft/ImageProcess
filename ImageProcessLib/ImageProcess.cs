@@ -288,6 +288,7 @@ namespace ImageProcessLib
             {
                 try
                 {
+                    // TODO change format if jpg is not optimal (2 colors etc)
                     Bitmap.Save(memoryStream, FREE_IMAGE_FORMAT.FIF_JPEG);
                 }
                 catch (Exception ex)
