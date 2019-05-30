@@ -297,7 +297,7 @@ namespace ImageProcessLib
                 }
             }
         }
-        public void SaveTo(FileFormat outputFileFormat, string fullPathImageSave)
+        public void SaveTo(FileType outputFileFormat, string fullPathImageSave)
         {
             FREE_IMAGE_FORMAT outputFormat;
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
@@ -305,35 +305,35 @@ namespace ImageProcessLib
                 string fileExtension;
                 switch (outputFileFormat)
                 {
-                    case FileFormat.Jp2:
+                    case FileType.Jp2:
                         outputFormat = FREE_IMAGE_FORMAT.FIF_JP2;
                         fileExtension = ".jp2";
                         break;
-                    case FileFormat.Jpg:
+                    case FileType.Jpg:
                         outputFormat = FREE_IMAGE_FORMAT.FIF_JPEG;
                         fileExtension = ".jpg";
                         break;
-                    case FileFormat.Png:
+                    case FileType.Png:
                         outputFormat = FREE_IMAGE_FORMAT.FIF_PNG;
                         fileExtension = ".png";
                         break;
-                    case FileFormat.Tiff:
+                    case FileType.Tiff:
                         outputFormat = FREE_IMAGE_FORMAT.FIF_TIFF;
                         fileExtension = ".tif";
                         break;
-                    case FileFormat.Gif:
+                    case FileType.Gif:
                         outputFormat = FREE_IMAGE_FORMAT.FIF_GIF;
                         fileExtension = ".gif";
                         break;
-                    case FileFormat.Bmp:
+                    case FileType.Bmp:
                         outputFormat = FREE_IMAGE_FORMAT.FIF_BMP;
                         fileExtension = ".bmp";
                         break;
-                    case FileFormat.Webp:
+                    case FileType.Webp:
                         outputFormat = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
                         fileExtension = ".webp";
                         break;
-                    case FileFormat.Pdf:
+                    case FileType.Pdf:
                         outputFormat = FREE_IMAGE_FORMAT.FIF_JPEG;
                         fileExtension = ".jpg";
                         break;
@@ -354,7 +354,7 @@ namespace ImageProcessLib
                     {
                         SaveToWebp(fullNameToSave);
                     }
-                    if (outputFileFormat == FileFormat.Pdf)
+                    if (outputFileFormat == FileType.Pdf)
                     {
                         PdfDocument thePdfDocument = new PdfDocument();
                         FileStream filestream = new FileStream(fullNameToSave, FileMode.Open);

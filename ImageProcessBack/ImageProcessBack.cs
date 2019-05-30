@@ -55,7 +55,7 @@ public class ImageProcessBack
     /// <summary>
     /// format of image or document we want to save (jpg, png, pdf)
     /// </summary>
-    public FileFormat ImageFormatToSave;
+    public FileType ImageFormatToSave;
     #endregion
     public ImageProcessBack()
     {
@@ -63,7 +63,7 @@ public class ImageProcessBack
         DeleteOrigin = false;
         DeleteStrip = false;
         FullNameOfFilesToProcess = new List<string>();
-        ImageFormatToSave = FileFormat.Unknow;
+        ImageFormatToSave = FileType.Unknow;
     }
     /// <summary>
     /// process all images or files containing images in <c>FullNameOfImagesToProcess</c>
@@ -85,23 +85,27 @@ public class ImageProcessBack
         foreach (string fullNameOfFile in FullNameOfFilesToProcess)
         {
             List<string> imagesFullNames = new List<string>();
-            FileFormat fileToReadType = FileFormat.Unknow;
+            FileType fileToReadType = FileType.Unknow;
             string mimeType = MimeType.getFromFile(fullNameOfFile);
             switch (mimeType)
             {
                 case "application/pdf":
-                    fileToReadType = FileFormat.Pdf;
+                    fileToReadType = FileType.Pdf;
                     imagesFullNames = PdfImgExtraction.ExtractImage(fullNameOfFile);
                     break;
                 case "application/octet-stream":
                 case "application/x-rar-compressed":
                 case "application/x-zip-compressed":
                 case "multipart/x-zip":
-                    fileToReadType = FileFormat.Archive;
+                    fileToReadType = FileType.Archive;
                     imagesFullNames = OpenCompressedFileToFiles(fullNameOfFile);
                     break;
+                case "image/pjpeg":
+                case "image/jp2":
+                case "image/webp":
+                case "image/x-png":
                 case var someVal when new Regex(@"image/.*").IsMatch(someVal):
-                    fileToReadType = FileFormat.Image;
+                    fileToReadType = FileType.Image;
                     imagesFullNames.Add(fullNameOfFile);
                     break;
                 default:
@@ -132,7 +136,7 @@ public class ImageProcessBack
                             imageToProcess.SaveTo(ImageFormatToSave, FullPathSave);
                         }
                     }
-                    if (DeleteOrigin || fileToReadType == FileFormat.Archive || fileToReadType == FileFormat.Pdf)
+                    if (DeleteOrigin || fileToReadType == FileType.Archive || fileToReadType == FileType.Pdf)
                     {
                         File.Delete(imageFullName);
                     }
@@ -143,7 +147,7 @@ public class ImageProcessBack
                     listErrors += "Erreur : " + ex.Message + " sur fichier " + imageFullName + "\n";
                 }
             }
-            if (DeleteOrigin && (fileToReadType == FileFormat.Archive || fileToReadType == FileFormat.Pdf))
+            if (DeleteOrigin && (fileToReadType == FileType.Archive || fileToReadType == FileType.Pdf))
             {
                 File.Delete(fullNameOfFile);
             }

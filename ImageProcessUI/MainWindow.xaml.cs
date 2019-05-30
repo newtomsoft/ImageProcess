@@ -82,27 +82,27 @@ namespace ImageProcessUI
             switch (format)
             {
                 case "ButtonFormatSame":
-                    ImageProcessBack.ImageFormatToSave = FileFormat.Unknow;
+                    ImageProcessBack.ImageFormatToSave = FileType.Unknow;
                     ImageProcessBack.PathSave = @"save\";
                     break;
                 case "ButtonFormatPng":
-                    ImageProcessBack.ImageFormatToSave = FileFormat.Png;
+                    ImageProcessBack.ImageFormatToSave = FileType.Png;
                     ImageProcessBack.PathSave = @"savePng\";
                     break;
                 case "ButtonFormatJp2":
-                    ImageProcessBack.ImageFormatToSave = FileFormat.Jp2;
+                    ImageProcessBack.ImageFormatToSave = FileType.Jp2;
                     ImageProcessBack.PathSave = @"saveJp2\";
                     break;
                 case "ButtonFormatJpg":
-                    ImageProcessBack.ImageFormatToSave = FileFormat.Jpg;
+                    ImageProcessBack.ImageFormatToSave = FileType.Jpg;
                     ImageProcessBack.PathSave = @"saveJpg\";
                     break;
                 case "ButtonFormatTiff":
-                    ImageProcessBack.ImageFormatToSave = FileFormat.Tiff;
+                    ImageProcessBack.ImageFormatToSave = FileType.Tiff;
                     ImageProcessBack.PathSave = @"saveTiff\";
                     break;
                 case "ButtonFormatGif":
-                    ImageProcessBack.ImageFormatToSave = FileFormat.Gif;
+                    ImageProcessBack.ImageFormatToSave = FileType.Gif;
                     ImageProcessBack.PathSave = @"saveGif\";
                     break;
                 case "ButtonFormatPdfFusion":
@@ -110,11 +110,11 @@ namespace ImageProcessUI
                     ImageProcessBack.PdfFusion = true;
                     break;
                 case "ButtonFormatPdfSingle":
-                    ImageProcessBack.ImageFormatToSave = FileFormat.Pdf;
+                    ImageProcessBack.ImageFormatToSave = FileType.Pdf;
                     ImageProcessBack.PathSave = @"savePdf\";
                     break;
                 case "ButtonFormatWebp":
-                    ImageProcessBack.ImageFormatToSave = FileFormat.Webp;
+                    ImageProcessBack.ImageFormatToSave = FileType.Webp;
                     ImageProcessBack.PathSave = @"saveWebp\";
                     break;
             }

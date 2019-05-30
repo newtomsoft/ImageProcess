@@ -1,6 +1,6 @@
 ﻿namespace ImageProcessLib
 {
-    public enum FileFormat
+    public enum FileType
     {
         Unknow,
         Image,
