@@ -51,11 +51,11 @@ public class ImageProcessBack
     /// <summary>
     /// The pdf document if we convert image into this format
     /// </summary>
-    public PdfDocument ThePdfDocument;
+    public PdfDocument pdfDocument;
     /// <summary>
-    /// format of image or document we want to save (jpg, png, pdf)
+    /// type of image or document we want to save (jpg, png, pdf)
     /// </summary>
-    public FileType ImageFormatToSave;
+    public FileType ImageTypeToSave;
     #endregion
     public ImageProcessBack()
     {
@@ -63,7 +63,7 @@ public class ImageProcessBack
         DeleteOrigin = false;
         DeleteStrip = false;
         FullNameOfFilesToProcess = new List<string>();
-        ImageFormatToSave = FileType.Unknow;
+        ImageTypeToSave = FileType.Unknow;
     }
     /// <summary>
     /// process all images or files containing images in <c>FullNameOfImagesToProcess</c>
@@ -77,7 +77,6 @@ public class ImageProcessBack
             listErrors = "Erreur\nMerci de choisir des images";
             return listErrors;
         }
-        FullPathSave = Path.Combine(FullPathOriginFiles, PathSave);
         if (PdfFusion)
         {
             InitPdfDocument();
@@ -92,6 +91,7 @@ public class ImageProcessBack
                 case "application/pdf":
                     fileToReadType = FileType.Pdf;
                     imagesFullNames = PdfImgExtraction.ExtractImage(fullNameOfFile);
+                    PathSave = Path.GetFileNameWithoutExtension(fullNameOfFile);
                     break;
                 case "application/octet-stream":
                 case "application/x-rar-compressed":
@@ -99,6 +99,7 @@ public class ImageProcessBack
                 case "multipart/x-zip":
                     fileToReadType = FileType.Archive;
                     imagesFullNames = OpenCompressedFileToFiles(fullNameOfFile);
+                    PathSave = Path.GetFileNameWithoutExtension(fullNameOfFile);
                     break;
                 case var someVal when new Regex(@"image/.*").IsMatch(someVal):
                     fileToReadType = FileType.Image;
@@ -111,6 +112,7 @@ public class ImageProcessBack
             {
                 listErrors += "pas d'images trouvées dans " + fullNameOfFile + "\n";
             }
+            FullPathSave = Path.Combine(FullPathOriginFiles, PathSave);
             foreach (string imageFullName in imagesFullNames)
             {
                 try
@@ -129,7 +131,7 @@ public class ImageProcessBack
                         }
                         else
                         {
-                            imageToProcess.SaveTo(ImageFormatToSave, FullPathSave);
+                            imageToProcess.SaveTo(ImageTypeToSave, FullPathSave);
                         }
                     }
                     if (DeleteOrigin || fileToReadType == FileType.Archive || fileToReadType == FileType.Pdf)
@@ -183,7 +185,7 @@ public class ImageProcessBack
     /// </summary>
     public void InitPdfDocument()
     {
-        ThePdfDocument = new PdfDocument();
+        pdfDocument = new PdfDocument();
     }
     /// <summary>
     /// add a page into the pdf document witch is into the <c>memoryStream</c>
@@ -194,7 +196,7 @@ public class ImageProcessBack
         try
         {
             XImage img = XImage.FromStream(memoryStream);
-            XGraphics xgr = XGraphics.FromPdfPage(ThePdfDocument.AddPage(new PdfPage { Width = img.PointWidth, Height = img.PointHeight }));
+            XGraphics xgr = XGraphics.FromPdfPage(pdfDocument.AddPage(new PdfPage { Width = img.PointWidth, Height = img.PointHeight }));
             xgr.DrawImage(img, 0, 0);
             xgr.Dispose();
         }
@@ -209,9 +211,9 @@ public class ImageProcessBack
     public void SavePdfDocument()
     {
         Directory.CreateDirectory(FullPathSave);
-        ThePdfDocument.Save(Path.Combine(FullPathSave, "fromImageProcess.pdf"));
-        ThePdfDocument.Close();
-        ThePdfDocument.Dispose();
+        pdfDocument.Save(Path.Combine(FullPathSave, "MergedImages.pdf"));
+        pdfDocument.Close();
+        pdfDocument.Dispose();
     }
 }
 
