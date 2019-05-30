@@ -97,7 +97,7 @@ public class ImageProcessBack
                 case "application/x-rar-compressed":
                 case "application/x-zip-compressed":
                 case "multipart/x-zip":
-                    fileToReadType = FileFormat.Zip;
+                    fileToReadType = FileFormat.Archive;
                     imagesFullNames = OpenCompressedFileToFiles(fullNameOfFile);
                     break;
                 case var someVal when new Regex(@"image/.*").IsMatch(someVal):
@@ -132,7 +132,7 @@ public class ImageProcessBack
                             imageToProcess.SaveTo(ImageFormatToSave, FullPathSave);
                         }
                     }
-                    if (DeleteOrigin || fileToReadType == FileFormat.Zip || fileToReadType == FileFormat.Pdf)
+                    if (DeleteOrigin || fileToReadType == FileFormat.Archive || fileToReadType == FileFormat.Pdf)
                     {
                         File.Delete(imageFullName);
                     }
@@ -143,7 +143,7 @@ public class ImageProcessBack
                     listErrors += "Erreur : " + ex.Message + " sur fichier " + imageFullName + "\n";
                 }
             }
-            if (DeleteOrigin && (fileToReadType == FileFormat.Zip || fileToReadType == FileFormat.Pdf))
+            if (DeleteOrigin && (fileToReadType == FileFormat.Archive || fileToReadType == FileFormat.Pdf))
             {
                 File.Delete(fullNameOfFile);
             }

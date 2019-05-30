@@ -12,6 +12,6 @@
         Tiff,
         Gif,
         Bmp,
-        Zip,
+        Archive,
     }
 }
