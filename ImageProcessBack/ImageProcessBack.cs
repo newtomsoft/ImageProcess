@@ -104,7 +104,10 @@ public class ImageProcessBack
                 case "image/jp2":
                 case "image/webp":
                 case "image/x-png":
-                case var someVal when new Regex(@"image/.*").IsMatch(someVal):
+                case "image/tiff":
+                case "image/gif":
+                case "image/bmp":
+                //case var someVal when new Regex(@"image/.*").IsMatch(someVal):
                     fileToReadType = FileType.Image;
                     imagesFullNames.Add(fullNameOfFile);
                     break;
