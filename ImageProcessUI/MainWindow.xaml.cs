@@ -51,13 +51,13 @@ namespace ImageProcessUI
             if (dr == System.Windows.Forms.DialogResult.OK)
             {
                 //sp.Children.Clear();
-                ImageProcessBack.FullNameOfImagesToProcess.Clear();
+                ImageProcessBack.FullNameOfFilesToProcess.Clear();
                 TextBoxListFiles.Text = "";
                 ImageProcessBack.FullPathOriginFiles = Path.GetDirectoryName(openFileDialog.FileNames[0]);
                 foreach (string fileName in openFileDialog.FileNames)
                 {
                     //ShowThumbnail(fileName);
-                    ImageProcessBack.FullNameOfImagesToProcess.Add(fileName);
+                    ImageProcessBack.FullNameOfFilesToProcess.Add(fileName);
                     TextBoxListFiles.Text += fileName + "\n";
                 }
             }
@@ -82,27 +82,27 @@ namespace ImageProcessUI
             switch (format)
             {
                 case "ButtonFormatSame":
-                    ImageProcessBack.ImageFormatToSave = FileFormat.Unknow;
+                    ImageProcessBack.ImageTypeToSave = FileType.Unknow;
                     ImageProcessBack.PathSave = @"save\";
                     break;
                 case "ButtonFormatPng":
-                    ImageProcessBack.ImageFormatToSave = FileFormat.Png;
+                    ImageProcessBack.ImageTypeToSave = FileType.Png;
                     ImageProcessBack.PathSave = @"savePng\";
                     break;
                 case "ButtonFormatJp2":
-                    ImageProcessBack.ImageFormatToSave = FileFormat.Jp2;
+                    ImageProcessBack.ImageTypeToSave = FileType.Jp2;
                     ImageProcessBack.PathSave = @"saveJp2\";
                     break;
                 case "ButtonFormatJpg":
-                    ImageProcessBack.ImageFormatToSave = FileFormat.Jpg;
+                    ImageProcessBack.ImageTypeToSave = FileType.Jpg;
                     ImageProcessBack.PathSave = @"saveJpg\";
                     break;
                 case "ButtonFormatTiff":
-                    ImageProcessBack.ImageFormatToSave = FileFormat.Tiff;
+                    ImageProcessBack.ImageTypeToSave = FileType.Tiff;
                     ImageProcessBack.PathSave = @"saveTiff\";
                     break;
                 case "ButtonFormatGif":
-                    ImageProcessBack.ImageFormatToSave = FileFormat.Gif;
+                    ImageProcessBack.ImageTypeToSave = FileType.Gif;
                     ImageProcessBack.PathSave = @"saveGif\";
                     break;
                 case "ButtonFormatPdfFusion":
@@ -110,11 +110,11 @@ namespace ImageProcessUI
                     ImageProcessBack.PdfFusion = true;
                     break;
                 case "ButtonFormatPdfSingle":
-                    ImageProcessBack.ImageFormatToSave = FileFormat.Pdf;
+                    ImageProcessBack.ImageTypeToSave = FileType.Pdf;
                     ImageProcessBack.PathSave = @"savePdf\";
                     break;
                 case "ButtonFormatWebp":
-                    ImageProcessBack.ImageFormatToSave = FileFormat.Webp;
+                    ImageProcessBack.ImageTypeToSave = FileType.Webp;
                     ImageProcessBack.PathSave = @"saveWebp\";
                     break;
             }
@@ -143,7 +143,7 @@ namespace ImageProcessUI
             string titleEnd = "Traitement";
             string contentEnd = stringReturn;
             MessageBox.Show(contentEnd, titleEnd, buttonEnd, iconEnd);
-            ImageProcessBack.FullNameOfImagesToProcess.Clear();
+            ImageProcessBack.FullNameOfFilesToProcess.Clear();
             TextBoxListFiles.Text = "";
         }
         private void ShowThumbnail(string filename)
