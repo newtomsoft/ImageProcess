@@ -1,32 +1,20 @@
 ﻿using SharpCompress.Archives;
-using SharpCompress.Archives.Zip;
-using SharpCompress.Readers;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ManageCompressedFile
 {
-    class Program
+    public class CompressedFile
     {
-        static void Main()
-        {
-            OpenCompressedFileToFiles("test.cbz");
-
-        }
-        static List<string> OpenCompressedFileToFiles(string compressedFile)
+        public static List<string> ExtractFilesToTempPath(string compressedFile)
         {
             List<string> fullNamesOfFiles = new List<string>();
             IArchive archive = ArchiveFactory.Open(compressedFile);
             foreach (IArchiveEntry entrie in archive.Entries)
             {
-                if(!entrie.IsDirectory)
+                if (!entrie.IsDirectory)
                 {
-                    var fileName = entrie.ToString();
+                    var fileName = entrie.Key;
                     string fullName = Path.Combine(Path.GetTempPath(), fileName);
                     string directoryName = Path.GetDirectoryName(fullName);
                     Directory.CreateDirectory(directoryName);
@@ -41,4 +29,3 @@ namespace ManageCompressedFile
         }
     }
 }
-

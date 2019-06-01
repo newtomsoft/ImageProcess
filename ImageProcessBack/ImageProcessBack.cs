@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using ImageProcessLib;
-using PdfSharp.Drawing;
-using PdfSharp.Pdf;
-using PdfSharp.Pdf.IO;
 using SharpCompress.Archives;
-using SharpCompress.Readers;
+using ManageCompressedFile;
 
 /// <summary>
 /// back of the solution
-/// manage image processing and call libraries that decode / encode images
+/// manage image processing and call libraries that decode/encode images and extract images from archives/pdf
 /// </summary>
 public class ImageProcessBack
 {
@@ -98,7 +95,7 @@ public class ImageProcessBack
                 case "application/x-zip-compressed":
                 case "multipart/x-zip":
                     fileToReadType = FileType.Archive;
-                    imagesFullNames = OpenCompressedFileToFiles(fullNameOfFile);
+                    imagesFullNames = CompressedFile.ExtractFilesToTempPath(fullNameOfFile);
                     PathSave = Path.GetFileNameWithoutExtension(fullNameOfFile);
                     break;
                 case var someVal when new Regex(@"image/.*").IsMatch(someVal):
@@ -158,27 +155,6 @@ public class ImageProcessBack
         FullNameOfFilesToProcess.Clear();
         //TextBoxListFiles.Text = "";
         return contentEnd + listErrors;
-    }
-    List<string> OpenCompressedFileToFiles(string compressedFile)
-    {
-        List<string> fullNamesOfFiles = new List<string>();
-        IArchive archive = ArchiveFactory.Open(compressedFile);
-        foreach (IArchiveEntry entrie in archive.Entries)
-        {
-            if (!entrie.IsDirectory)
-            {
-                var fileName = entrie.Key;
-                string fullName = Path.Combine(Path.GetTempPath(), fileName);
-                string directoryName = Path.GetDirectoryName(fullName);
-                Directory.CreateDirectory(directoryName);
-                using (FileStream fileStream = new FileStream(fullName, FileMode.Create, FileAccess.Write))
-                {
-                    entrie.WriteTo(fileStream);
-                }
-                fullNamesOfFiles.Add(fullName);
-            }
-        }
-        return fullNamesOfFiles;
     }
 }
 
