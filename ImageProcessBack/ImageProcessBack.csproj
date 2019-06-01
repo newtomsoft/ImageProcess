@@ -75,7 +75,7 @@
       <Project>{AB5D7E27-B5DB-4185-897C-AEC17D14334A}</Project>
       <Name>ManageCompressedFile</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OpenPdf\ManagePdf.csproj">
+    <ProjectReference Include="..\ManagePdf\ManagePdf.csproj">
       <Project>{e68d0645-9c9d-4435-98c1-9bee0302e857}</Project>
       <Name>ManagePdf</Name>
     </ProjectReference>
