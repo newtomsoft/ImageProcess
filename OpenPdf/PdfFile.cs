@@ -3,9 +3,47 @@ using System.IO;
 using Path = System.IO.Path;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
+using PdfSharp.Drawing;
 
 public class PdfFile
 {
+    PdfSharp.Pdf.PdfDocument ThePdfDocument;
+    /// <summary>
+    /// create new pdf document to put image into it after that
+    /// </summary>
+    public PdfFile()
+    {
+        ThePdfDocument = new PdfSharp.Pdf.PdfDocument();
+    }
+    /// <summary>
+    /// add a page into the pdf document witch is into the <c>memoryStream</c>
+    /// </summary>
+    /// <param name="memoryStream"></param>
+    public void AddImage(MemoryStream memoryStream)
+    {
+        try
+        {
+            XImage img = XImage.FromStream(memoryStream);
+            XGraphics xgr = XGraphics.FromPdfPage(ThePdfDocument.AddPage(new PdfSharp.Pdf.PdfPage { Width = img.PointWidth, Height = img.PointHeight }));
+            xgr.DrawImage(img, 0, 0);
+            xgr.Dispose();
+        }
+        catch
+        {
+            //Console.WriteLine("Image not supported by tool. Please convert before in jpg/gif/png/tiff");
+        }
+    }
+    /// <summary>
+    /// save the pdf document
+    /// </summary>
+    public void Save(string fullPathSave)
+    {
+        Directory.CreateDirectory(fullPathSave);
+        ThePdfDocument.Save(Path.Combine(fullPathSave, "MergedImages.pdf"));
+        ThePdfDocument.Close();
+        ThePdfDocument.Dispose();
+    }
+
     public static List<string> ExtractImage(string fileName)
     {
         List<string> filesNames = new List<string>();
@@ -36,7 +74,6 @@ public class PdfFile
                     catch
                     {
                     }
-                    
                 }
             }
         }

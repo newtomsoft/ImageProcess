@@ -49,9 +49,9 @@ public class ImageProcessBack
     /// </summary>
     public List<string> FullNameOfFilesToProcess;
     /// <summary>
-    /// The pdf document if we convert image into this format
+    /// The pdf if we convert image into this format
     /// </summary>
-    public PdfDocument pdfDocument;
+    public PdfFile PdfToSave;
     /// <summary>
     /// type of image or document we want to save (jpg, png, pdf)
     /// </summary>
@@ -79,7 +79,7 @@ public class ImageProcessBack
         }
         if (PdfFusion)
         {
-            InitPdfDocument();
+            PdfToSave = new PdfFile();
         }
         foreach (string fullNameOfFile in FullNameOfFilesToProcess)
         {
@@ -127,7 +127,7 @@ public class ImageProcessBack
                         {
                             MemoryStream memoryStream = new MemoryStream();
                             imageToProcess.Save(memoryStream);
-                            AddPageToPdfDocument(memoryStream);
+                            PdfToSave.AddImage(memoryStream);
                         }
                         else
                         {
@@ -152,7 +152,7 @@ public class ImageProcessBack
         }
         if (PdfFusion)
         {
-            SavePdfDocument();
+            PdfToSave.Save(FullPathSave);
         }
         string contentEnd = "Fin de traitement\n";
         FullNameOfFilesToProcess.Clear();
@@ -179,41 +179,6 @@ public class ImageProcessBack
             }
         }
         return fullNamesOfFiles;
-    }
-    /// <summary>
-    /// create new pdf document to put image into it after that
-    /// </summary>
-    public void InitPdfDocument()
-    {
-        pdfDocument = new PdfDocument();
-    }
-    /// <summary>
-    /// add a page into the pdf document witch is into the <c>memoryStream</c>
-    /// </summary>
-    /// <param name="memoryStream"></param>
-    public void AddPageToPdfDocument(MemoryStream memoryStream)
-    {
-        try
-        {
-            XImage img = XImage.FromStream(memoryStream);
-            XGraphics xgr = XGraphics.FromPdfPage(pdfDocument.AddPage(new PdfPage { Width = img.PointWidth, Height = img.PointHeight }));
-            xgr.DrawImage(img, 0, 0);
-            xgr.Dispose();
-        }
-        catch
-        {
-            Console.WriteLine("Image not supported by tool. Please convert before in jpg/gif/png/tiff");
-        }
-    }
-    /// <summary>
-    /// save the pdf document after adding all images into
-    /// </summary>
-    public void SavePdfDocument()
-    {
-        Directory.CreateDirectory(FullPathSave);
-        pdfDocument.Save(Path.Combine(FullPathSave, "MergedImages.pdf"));
-        pdfDocument.Close();
-        pdfDocument.Dispose();
     }
 }
 
