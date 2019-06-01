@@ -75,9 +75,9 @@
       <Project>{fdb7f94b-96a8-4bb0-8b70-2a701238f5cf}</Project>
       <Name>OpenCbz</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OpenPdf\OpenPdf.csproj">
+    <ProjectReference Include="..\OpenPdf\ManagePdf.csproj">
       <Project>{e68d0645-9c9d-4435-98c1-9bee0302e857}</Project>
-      <Name>OpenPdf</Name>
+      <Name>ManagePdf</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

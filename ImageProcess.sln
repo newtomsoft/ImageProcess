@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageProcessBack", "ImagePr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenCbz", "OpenCbz\OpenCbz.csproj", "{FDB7F94B-96A8-4BB0-8B70-2A701238F5CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPdf", "OpenPdf\OpenPdf.csproj", "{E68D0645-9C9D-4435-98C1-9BEE0302E857}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagePdf", "OpenPdf\ManagePdf.csproj", "{E68D0645-9C9D-4435-98C1-9BEE0302E857}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

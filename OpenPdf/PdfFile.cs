@@ -4,7 +4,7 @@ using Path = System.IO.Path;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 
-public class PdfImgExtraction
+public class PdfFile
 {
     public static List<string> ExtractImage(string fileName)
     {
@@ -35,7 +35,6 @@ public class PdfImgExtraction
                     }
                     catch
                     {
-
                     }
                     
                 }
