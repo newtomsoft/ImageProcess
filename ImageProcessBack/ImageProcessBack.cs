@@ -1,9 +1,9 @@
-﻿using System;
+﻿using ImageProcessLib;
+using ManageCompressedFile;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using ImageProcessLib;
-using ManageCompressedFile;
 
 /// <summary>
 /// back of the solution

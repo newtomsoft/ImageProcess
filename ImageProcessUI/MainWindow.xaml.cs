@@ -1,14 +1,14 @@
-﻿using System;
+﻿using ImageProcessLib;
+using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Forms;
-using ImageProcessLib;
-using RadioButton = System.Windows.Controls.RadioButton;
 using CheckBox = System.Windows.Controls.CheckBox;
 using MessageBox = System.Windows.MessageBox;
 using Path = System.IO.Path;
+using RadioButton = System.Windows.Controls.RadioButton;
 
 namespace ImageProcessUI
 {

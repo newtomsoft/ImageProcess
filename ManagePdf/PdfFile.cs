@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using Path = System.IO.Path;
-using iTextSharp.text.pdf;
+﻿using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 using PdfSharp.Drawing;
+using System.Collections.Generic;
+using System.IO;
+using Path = System.IO.Path;
 
 public class PdfFile
 {

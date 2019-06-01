@@ -120,7 +120,7 @@ namespace ImageProcessLib
                 }
                 catch
                 {
-                    throw new Exception("Tous les pixels sont similaires"); 
+                    throw new Exception("Tous les pixels sont similaires");
                 }
                 sumColorR += colorPixel.R;
                 sumColorG += colorPixel.G;
@@ -199,7 +199,7 @@ namespace ImageProcessLib
                             else
                             {
                                 currentThickness /= 2;
-                                toDeleteEdge = currentThickness==0?false:true;
+                                toDeleteEdge = currentThickness == 0 ? false : true;
                             }
                             edgeValue = currentThickness;
                         }
