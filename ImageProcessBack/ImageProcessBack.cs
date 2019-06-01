@@ -90,7 +90,7 @@ public class ImageProcessBack
             {
                 case "application/pdf":
                     fileToReadType = FileType.Pdf;
-                    imagesFullNames = PdfFile.ExtractImage(fullNameOfFile);
+                    imagesFullNames = PdfFile.ExtractImagesToTempPath(fullNameOfFile);
                     PathSave = Path.GetFileNameWithoutExtension(fullNameOfFile);
                     break;
                 case "application/octet-stream":

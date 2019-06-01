@@ -43,8 +43,7 @@ public class PdfFile
         ThePdfDocument.Close();
         ThePdfDocument.Dispose();
     }
-
-    public static List<string> ExtractImage(string fileName)
+    public static List<string> ExtractImagesToTempPath(string fileName)
     {
         List<string> filesNames = new List<string>();
         PdfReader pdfDoc = new PdfReader(fileName);
