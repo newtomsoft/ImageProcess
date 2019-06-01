@@ -56,13 +56,11 @@ class MimeType
 
                 if (buffer_0_3.SequenceEqual(array_RIFF) && buffer_8_11.SequenceEqual(array_WEBP))
                 {
-                    mime = webpMime;
-                    return mime;
+                    return webpMime;
                 }
                 if (buffer_4_7.SequenceEqual(array_jP) && buffer_16_22.SequenceEqual(array_ftypjp2))
                 {
-                    mime = jpeg2000Mime;
-                    return mime;
+                    return jpeg2000Mime;
                 }
             }
             return mime;
