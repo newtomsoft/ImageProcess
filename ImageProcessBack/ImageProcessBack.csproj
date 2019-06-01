@@ -36,15 +36,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PdfSharp, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\PDFsharp.1.50.5147\lib\net20\PdfSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="PdfSharp.Charting, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\PDFsharp.1.50.5147\lib\net20\PdfSharp.Charting.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpCompress, Version=0.23.0.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpCompress.0.23.0\lib\net45\SharpCompress.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -64,20 +55,19 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ImageProcessLib\ImageProcessLib.csproj">
       <Project>{9642bd09-fcca-4c7d-9130-1add7967dde3}</Project>
       <Name>ImageProcessLib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OpenCbz\OpenCbz.csproj">
-      <Project>{fdb7f94b-96a8-4bb0-8b70-2a701238f5cf}</Project>
-      <Name>OpenCbz</Name>
+    <ProjectReference Include="..\ManageCompressedFile\ManageCompressedFile.csproj">
+      <Project>{AB5D7E27-B5DB-4185-897C-AEC17D14334A}</Project>
+      <Name>ManageCompressedFile</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OpenPdf\OpenPdf.csproj">
+    <ProjectReference Include="..\ManagePdf\ManagePdf.csproj">
       <Project>{e68d0645-9c9d-4435-98c1-9bee0302e857}</Project>
-      <Name>OpenPdf</Name>
+      <Name>ManagePdf</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Les informations générales relatives à un assembly dépendent de
 // l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
 // associées à un assembly.
-[assembly: AssemblyTitle("OpenCbz")]
+[assembly: AssemblyTitle("ManageCompressedFile")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("OpenCbz")]
+[assembly: AssemblyProduct("ManageCompressedFile")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Le GUID suivant est pour l'ID de la typelib si ce projet est exposé à COM
-[assembly: Guid("fdb7f94b-96a8-4bb0-8b70-2a701238f5cf")]
+[assembly: Guid("ab5d7e27-b5db-4185-897c-aec17d14334a")]
 
 // Les informations de version pour un assembly se composent des quatre valeurs suivantes :
 //
