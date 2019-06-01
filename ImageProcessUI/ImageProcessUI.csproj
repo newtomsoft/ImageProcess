@@ -102,15 +102,6 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="Umbrella.DynamicImage.Abstractions, Version=2.6.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Umbrella.DynamicImage.Abstractions.2.6.1\lib\netstandard2.0\Umbrella.DynamicImage.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Umbrella.FileSystem.Abstractions, Version=2.6.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Umbrella.FileSystem.Abstractions.2.6.1\lib\netstandard2.0\Umbrella.FileSystem.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Umbrella.Utilities, Version=2.6.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Umbrella.Utilities.2.6.1\lib\net461\Umbrella.Utilities.dll</HintPath>
-    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />

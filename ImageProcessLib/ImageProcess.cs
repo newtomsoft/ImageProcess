@@ -1,8 +1,5 @@
 ﻿using FreeImageAPI;
 using ImageProcessor.Plugins.WebP.Imaging.Formats;
-using PdfSharp.Drawing;
-using PdfSharp.Pdf;
-using PdfSharp.Pdf.IO;
 using System;
 using System.Drawing;
 using System.IO;
@@ -297,13 +294,13 @@ namespace ImageProcessLib
                 }
             }
         }
-        public void SaveTo(FileType outputFileFormat, string fullPathImageSave)
+        public void SaveTo(FileType outputFileType, string fullPathImageSave)
         {
             FREE_IMAGE_FORMAT outputFormat;
             if (FormatImage != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
             {
                 string fileExtension;
-                switch (outputFileFormat)
+                switch (outputFileType)
                 {
                     case FileType.Jp2:
                         outputFormat = FREE_IMAGE_FORMAT.FIF_JP2;
@@ -335,7 +332,7 @@ namespace ImageProcessLib
                         break;
                     case FileType.Pdf:
                         outputFormat = FREE_IMAGE_FORMAT.FIF_JPEG;
-                        fileExtension = ".jpg";
+                        fileExtension = ".pdf";
                         break;
                     default:
                         fileExtension = "";
@@ -346,28 +343,21 @@ namespace ImageProcessLib
                 try
                 {
                     string fullNameToSave = Path.Combine(fullPathImageSave, NameOfFile + fileExtension);
-                    if (outputFormat != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
+                    if (outputFileType != FileType.Pdf && outputFormat != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
                     {
                         Bitmap.Save(fullNameToSave, outputFormat);
                     }
-                    else
+                    else if (outputFormat == FREE_IMAGE_FORMAT.FIF_UNKNOWN)
                     {
                         SaveToWebp(fullNameToSave);
                     }
-                    if (outputFileFormat == FileType.Pdf)
+                    else if (outputFileType == FileType.Pdf)
                     {
-                        PdfDocument thePdfDocument = new PdfDocument();
-                        FileStream filestream = new FileStream(fullNameToSave, FileMode.Open);
-                        XImage img = XImage.FromStream(filestream);
-                        XGraphics xgr = XGraphics.FromPdfPage(thePdfDocument.AddPage(new PdfPage { Width = img.PointWidth, Height = img.PointHeight }));
-                        xgr.DrawImage(img, 0, 0);
-                        xgr.Dispose();
-                        filestream.Dispose();
-                        File.Delete(fullNameToSave);
-                        string extension = ".pdf";
-                        thePdfDocument.Save(Path.Combine(fullPathImageSave, NameOfFile+extension));
-                        thePdfDocument.Close();
-                        thePdfDocument.Dispose();
+                        MemoryStream memoryStream = new MemoryStream();
+                        Bitmap.Save(memoryStream, FREE_IMAGE_FORMAT.FIF_JPEG); // TODO optimize if jpg is not better format
+                        PdfFile pdfFile = new PdfFile();
+                        pdfFile.AddImage(memoryStream);
+                        pdfFile.Save(fullPathImageSave, NameOfFile + fileExtension);
                     }
                 }
                 catch (Exception ex)

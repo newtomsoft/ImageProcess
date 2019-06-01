@@ -148,7 +148,7 @@ public class ImageProcessBack
         }
         if (PdfFusion)
         {
-            PdfToSave.Save(FullPathSave);
+            PdfToSave.Save(FullPathSave, "mergedImages.pdf");
         }
         string contentEnd = "Fin de traitement\n";
         FullNameOfFilesToProcess.Clear();

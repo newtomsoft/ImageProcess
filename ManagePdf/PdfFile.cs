@@ -36,10 +36,10 @@ public class PdfFile
     /// <summary>
     /// save the pdf document
     /// </summary>
-    public void Save(string fullPathSave)
+    public void Save(string fullPathSave, string fileName)
     {
         Directory.CreateDirectory(fullPathSave);
-        ThePdfDocument.Save(Path.Combine(fullPathSave, "MergedImages.pdf"));
+        ThePdfDocument.Save(Path.Combine(fullPathSave, fileName));
         ThePdfDocument.Close();
         ThePdfDocument.Dispose();
     }
