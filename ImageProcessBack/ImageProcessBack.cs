@@ -155,8 +155,6 @@ public class ImageProcessBack
             SavePdfDocument();
         }
         string contentEnd = "Fin de traitement\n";
-        FullNameOfFilesToProcess.Clear();
-        //TextBoxListFiles.Text = "";
         return contentEnd + listErrors;
     }
     List<string> OpenCompressedFileToFiles(string compressedFile)

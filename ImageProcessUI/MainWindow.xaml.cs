@@ -52,7 +52,7 @@ namespace ImageProcessUI
             {
                 //sp.Children.Clear();
                 ImageProcessBack.FullNameOfFilesToProcess.Clear();
-                TextBoxListFiles.Text = "";
+                TextBoxListFiles.Text = string.Empty;
                 ImageProcessBack.FullPathOriginFiles = Path.GetDirectoryName(openFileDialog.FileNames[0]);
                 foreach (string fileName in openFileDialog.FileNames)
                 {
@@ -143,8 +143,11 @@ namespace ImageProcessUI
             string titleEnd = "Traitement";
             string contentEnd = stringReturn;
             MessageBox.Show(contentEnd, titleEnd, buttonEnd, iconEnd);
-            ImageProcessBack.FullNameOfFilesToProcess.Clear();
-            TextBoxListFiles.Text = "";
+            if (ImageProcessBack.DeleteOrigin)
+            {
+                ImageProcessBack.FullNameOfFilesToProcess.Clear();
+                TextBoxListFiles.Text = string.Empty;
+            }
         }
         private void ShowThumbnail(string filename)
         {
