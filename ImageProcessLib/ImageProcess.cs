@@ -31,7 +31,6 @@ namespace ImageProcessLib
             }
             catch (Exception e)
             {
-
                 FormatImage = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
                 Width = 0;
                 Height = 0;
@@ -286,7 +285,7 @@ namespace ImageProcessLib
                 try
                 {
                     // TODO change format if jpg is not optimal (2 colors etc)
-                    Bitmap.Save(memoryStream, FREE_IMAGE_FORMAT.FIF_JPEG);
+                    Bitmap.Save(memoryStream, FREE_IMAGE_FORMAT.FIF_PNG);
                 }
                 catch (Exception ex)
                 {
@@ -356,7 +355,7 @@ namespace ImageProcessLib
                         MemoryStream memoryStream = new MemoryStream();
                         Bitmap.Save(memoryStream, FREE_IMAGE_FORMAT.FIF_JPEG); // TODO optimize if jpg is not better format
                         PdfFile pdfFile = new PdfFile();
-                        pdfFile.AddImage(memoryStream);
+                        pdfFile.AddImage(ref memoryStream);
                         pdfFile.Save(fullPathImageSave, NameOfFile + fileExtension);
                     }
                 }

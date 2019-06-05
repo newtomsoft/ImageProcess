@@ -19,13 +19,46 @@ public class PdfFile
     /// add a page into the pdf document witch is into the <c>memoryStream</c>
     /// </summary>
     /// <param name="memoryStream"></param>
-    public void AddImage(MemoryStream memoryStream)
+    public void AddImage(ref MemoryStream memoryStream)
     {
         try
         {
             XImage img = XImage.FromStream(memoryStream);
-            XGraphics xgr = XGraphics.FromPdfPage(ThePdfDocument.AddPage(new PdfSharp.Pdf.PdfPage { Width = img.PointWidth, Height = img.PointHeight }));
-            xgr.DrawImage(img, 0, 0);
+            AddImage(ref img);
+            img.Dispose();
+        }
+        catch
+        {
+            //Console.WriteLine("Image not supported by tool. Please convert before in jpg/gif/png/tiff");
+        }
+    }
+    /// <summary>
+    /// add a page into the pdf document witch is the <c>fullFileName</c>
+    /// </summary>
+    /// <param name="fullFileName"></param>
+    public void AddImage(string fullFileName)
+    {
+        try
+        {
+            XImage img = XImage.FromFile(fullFileName);
+            AddImage(ref img);
+            img.Dispose();
+        }
+        catch
+        {
+            //Console.WriteLine("Image not supported by tool. Please convert before in jpg/gif/png/tiff");
+        }
+    }
+    /// <summary>
+    /// add a page into the pdf document witch is the <c>ximage</c>
+    /// </summary>
+    /// <param name="ximage"></param>
+    private void AddImage(ref XImage ximage)
+    {
+        try
+        {
+            XGraphics xgr = XGraphics.FromPdfPage(ThePdfDocument.AddPage(new PdfSharp.Pdf.PdfPage { Width = ximage.PointWidth, Height = ximage.PointHeight }));
+            xgr.DrawImage(ximage, 0, 0);
             xgr.Dispose();
         }
         catch

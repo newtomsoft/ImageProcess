@@ -119,11 +119,15 @@ public class ImageProcessBack
                         {
                             imageToProcess.DeleteStrips(StripLevel);
                         }
-                        if (PdfFusion)
+                        if (PdfFusion && DeleteStrip)
                         {
                             MemoryStream memoryStream = new MemoryStream();
                             imageToProcess.Save(memoryStream);
-                            PdfToSave.AddImage(memoryStream);
+                            PdfToSave.AddImage(ref memoryStream);
+                        }
+                        else if (PdfFusion && !DeleteStrip)
+                        {
+                            PdfToSave.AddImage(imageFullName);
                         }
                         else
                         {
