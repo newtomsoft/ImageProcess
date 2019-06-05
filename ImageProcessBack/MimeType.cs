@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 class MimeType
 {
@@ -17,7 +19,7 @@ class MimeType
     uint dwReserverd
     );
 
-    public static string getFromFile(string filename)
+    public static string GetFromFile(string filename)
     {
         const string genericMime = "application/octet-stream";
         const string webpMime = "image/webp";
@@ -68,6 +70,28 @@ class MimeType
         catch (Exception)
         {
             return genericMime;
+        }
+    }
+    public static string GetExtension(string filename)
+    {
+        const string mimeUnknown = ".unknown";
+        Dictionary<string, string> mimeTypeToExtension = new Dictionary<string, string>();
+        mimeTypeToExtension.Add("image/x-png", ".png");
+        mimeTypeToExtension.Add("image/webp", ".webp");
+        mimeTypeToExtension.Add("image/jp2", ".jp2");
+        mimeTypeToExtension.Add("image/jpeg", ".jpg");
+        mimeTypeToExtension.Add("image/pjpeg", ".jpg");
+        mimeTypeToExtension.Add("image/tiff", ".tif");
+        mimeTypeToExtension.Add("image/gif", ".tif");
+
+        string mime = GetFromFile(filename);
+        if (mimeTypeToExtension.TryGetValue(mime, out string value))
+        {
+            return value;
+        }
+        else
+        {
+            return mimeUnknown;
         }
     }
 }

@@ -81,7 +81,7 @@ public class ImageProcessBack
         {
             List<string> imagesFullNames = new List<string>();
             FileType fileToReadType = FileType.Unknow;
-            string mimeType = MimeType.getFromFile(fullNameOfFile);
+            string mimeType = MimeType.GetFromFile(fullNameOfFile);
             switch (mimeType)
             {
                 case "application/pdf":
@@ -116,6 +116,21 @@ public class ImageProcessBack
                     if (!DeleteStrip && PdfFusion)
                     {
                         PdfToSave.AddImage(imageFullName);
+                    }
+                    else if (!DeleteStrip && ImageTypeToSave==FileType.Pdf)
+                    {
+                        PdfFile pdfFile = new PdfFile();
+                        pdfFile.AddImage(imageFullName);
+                        string nameOfFile = Path.GetFileName(imageFullName);
+                        string fileExtension = ".pdf";
+                        pdfFile.Save(FullPathSave, nameOfFile + fileExtension);
+                    }
+                    else if(!DeleteStrip && ImageTypeToSave == FileType.Unknow) //if no pre-process and no conversion selected
+                    {
+                        Directory.CreateDirectory(FullPathSave);
+                        string fileToSaveExtension = MimeType.GetExtension(imageFullName);
+                        string fileName = Path.GetFileNameWithoutExtension(imageFullName) + fileToSaveExtension;
+                        File.Copy(imageFullName, Path.Combine(FullPathSave, fileName));
                     }
                     else
                     {
