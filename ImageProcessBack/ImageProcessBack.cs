@@ -113,25 +113,28 @@ public class ImageProcessBack
             {
                 try
                 {
-                    using (ImageProcess imageToProcess = new ImageProcess(imageFullName))
+                    if (!DeleteStrip && PdfFusion)
                     {
-                        if (DeleteStrip)
+                        PdfToSave.AddImage(imageFullName);
+                    }
+                    else
+                    {
+                        using (ImageProcess imageToProcess = new ImageProcess(imageFullName))
                         {
-                            imageToProcess.DeleteStrips(StripLevel);
-                        }
-                        if (PdfFusion && DeleteStrip)
-                        {
-                            MemoryStream memoryStream = new MemoryStream();
-                            imageToProcess.Save(memoryStream);
-                            PdfToSave.AddImage(ref memoryStream);
-                        }
-                        else if (PdfFusion && !DeleteStrip)
-                        {
-                            PdfToSave.AddImage(imageFullName);
-                        }
-                        else
-                        {
-                            imageToProcess.SaveTo(ImageTypeToSave, FullPathSave);
+                            if (DeleteStrip)
+                            {
+                                imageToProcess.DeleteStrips(StripLevel);
+                            }
+                            if (PdfFusion)
+                            {
+                                MemoryStream memoryStream = new MemoryStream();
+                                imageToProcess.Save(memoryStream);
+                                PdfToSave.AddImage(ref memoryStream);
+                            }
+                            else
+                            {
+                                imageToProcess.SaveTo(ImageTypeToSave, FullPathSave);
+                            }
                         }
                     }
                     if (DeleteOrigin || fileToReadType == FileType.Archive || fileToReadType == FileType.Pdf)
