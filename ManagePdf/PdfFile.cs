@@ -1,6 +1,7 @@
 ﻿using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 using PdfSharp.Drawing;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Path = System.IO.Path;
@@ -29,7 +30,7 @@ public class PdfFile
         }
         catch
         {
-            //Console.WriteLine("Image not supported by tool. Please convert before in jpg/gif/png/tiff");
+            throw new Exception("Image non supportée. Utiliser fichier BMP, PNG, GIF, JPEG, TIFF, ou PDF");
         }
     }
     /// <summary>
@@ -46,7 +47,7 @@ public class PdfFile
         }
         catch
         {
-            //Console.WriteLine("Image not supported by tool. Please convert before in jpg/gif/png/tiff");
+            throw new Exception("Image non supportée. Utiliser fichier BMP, PNG, GIF, JPEG, TIFF, ou PDF");
         }
     }
     /// <summary>
@@ -63,7 +64,7 @@ public class PdfFile
         }
         catch
         {
-            //Console.WriteLine("Image not supported by tool. Please convert before in jpg/gif/png/tiff");
+            throw;
         }
     }
     /// <summary>
@@ -72,7 +73,16 @@ public class PdfFile
     public void Save(string fullPathSave, string fileName)
     {
         Directory.CreateDirectory(fullPathSave);
-        ThePdfDocument.Save(Path.Combine(fullPathSave, fileName));
+        try
+        {
+            ThePdfDocument.Save(Path.Combine(fullPathSave, fileName));
+        }
+        catch
+        {
+            ThePdfDocument.Close();
+            ThePdfDocument.Dispose();
+            throw new Exception("Sauvegarde du pdf impossible");
+        }
         ThePdfDocument.Close();
         ThePdfDocument.Dispose();
     }
@@ -95,7 +105,10 @@ public class PdfFile
                     {
                         PdfImageObject pdfImageObject = new PdfImageObject(currentPdfReaderStream);
                         string imageName = "image" + ++imageFoundIndex;
-                        string imageFullName = Path.Combine(Path.GetTempPath(), imageName);
+                        string subdirectory = Path.GetFileName(fileName).Replace('.', '_');
+                        string TempDirectory = Path.Combine(Path.GetTempPath(), subdirectory);
+                        Directory.CreateDirectory(TempDirectory);
+                        string imageFullName = Path.Combine(TempDirectory, imageName);
                         FileStream fs = new FileStream(imageFullName, FileMode.Create);
                         byte[] imgdata = pdfImageObject.GetImageAsBytes();
                         fs.Write(imgdata, 0, imgdata.Length);
@@ -105,6 +118,7 @@ public class PdfFile
                     }
                     catch
                     {
+                        // ignore object
                     }
                 }
             }

@@ -141,11 +141,10 @@ public class ImageProcessBack
                     {
                         File.Delete(imageFullName);
                     }
-
                 }
                 catch (Exception ex)
                 {
-                    listErrors += "Erreur : " + ex.Message + " sur fichier " + imageFullName + "\n";
+                    listErrors += "Avertissement : " + ex.Message + " sur fichier " + imageFullName + "\n";
                 }
             }
             if (DeleteOrigin && (fileToReadType == FileType.Archive || fileToReadType == FileType.Pdf))
@@ -155,7 +154,14 @@ public class ImageProcessBack
         }
         if (PdfFusion)
         {
-            PdfToSave.Save(FullPathSave, "mergedImages.pdf");
+            try
+            {
+                PdfToSave.Save(FullPathSave, "mergedImages.pdf");
+            }
+            catch (Exception ex)
+            {
+                listErrors += "Erreur : " + ex.Message;
+            }
         }
         string contentEnd = "Fin de traitement\n";
         return contentEnd + listErrors;
